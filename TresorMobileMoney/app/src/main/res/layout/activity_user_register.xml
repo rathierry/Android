@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/tresor_bgk"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/scrollbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/tresor_bg_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/userRegisterActivityExpandableButtonCredential"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/userRegisterColorExpandable"
+                    android:drawableLeft="@drawable/ic_insert_drive_file_black"
+                    android:drawableRight="@android:drawable/arrow_up_float"
+                    android:gravity="left|center"
+                    android:text="@string/activity_user_register_expandable_credential"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_white" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/userRegisterActivityExpandableLayoutCredential"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_white"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    app:ael_duration="400"
+                    app:ael_expanded="true"
+                    app:ael_interpolator="accelerate"
+                    app:ael_orientation="vertical">
+
+                    <include
+                        layout="@layout/activity_user_register_credential"
+                        android:visibility="visible" />
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/userRegisterActivityExpandableButtonInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/userRegisterColorExpandable"
+                    android:drawableLeft="@drawable/ic_person_black"
+                    android:drawableRight="@android:drawable/arrow_up_float"
+                    android:gravity="left|center"
+                    android:text="@string/activity_user_register_expandable_info"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_white" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/userRegisterActivityExpandableLayoutInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_white"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    app:ael_duration="400"
+                    app:ael_expanded="true"
+                    app:ael_interpolator="accelerate"
+                    app:ael_orientation="vertical">
+
+                    <include layout="@layout/activity_user_register_info" />
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/userRegisterActivityExpandableButtonContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/userRegisterColorExpandable"
+                    android:drawableLeft="@drawable/ic_language_black"
+                    android:drawableRight="@android:drawable/arrow_up_float"
+                    android:gravity="left|center"
+                    android:text="@string/activity_user_register_expandable_contact"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_white" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/userRegisterActivityExpandableLayoutContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_white"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    app:ael_duration="400"
+                    app:ael_expanded="true"
+                    app:ael_interpolator="accelerate"
+                    app:ael_orientation="vertical">
+
+                    <include layout="@layout/activity_user_register_contact" />
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+    </ScrollView>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/userRegisterActivityButtonAccount"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_bgk_btn_white"
+        android:gravity="center"
+        android:text="@string/activity_user_login_button_text_register"
+        android:textAllCaps="false"
+        android:textColor="@color/userLoginColorTextHint"
+        android:textSize="18sp" />
+
+</RelativeLayout>
