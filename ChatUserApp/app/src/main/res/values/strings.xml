@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">TR.Chat</string>
+
+    <!-- Internet Error -->
+    <string name="internet_connexion_error_title">Internet connection</string>
+    <string name="internet_connexion_error_message">Please connect your device to the Internet.</string>
+
+    <!-- Default Error -->
+    <string name="default_error_title">Error</string>
+    <string name="default_error_message">An error occurred. Please try again later!</string>
+
+    <!-- Logout -->
+    <string name="default_logout_title">Confirmation</string>
+    <string name="default_logout_message">Are you sure you want to log out ?</string>
+
+    <!-- Screen : splash -->
+
+    <!-- Screen : login -->
+    <string name="activity_login_toolbar_title">Screen: login</string>
+    <string name="activity_login_textView_login">Login</string>
+    <string name="activity_login_textView_userName_hint">enter username</string>
+    <string name="activity_login_textView_password_hint">enter password</string>
+    <string name="activity_login_btn_login">Login</string>
+    <string name="activity_login_textView_register">Click here to register</string>
+    <string name="activity_login_error_message_userName">can\'t be blank</string>
+    <string name="activity_login_error_message_password">can\'t be blank</string>
+    <string name="activity_login_error_message_user_not_found">user not found</string>
+    <string name="activity_login_error_message_password_not_correct">incorrect password</string>
+    <string name="activity_login_progress_dialog_message">Loading.....</string>
+    <string name="activity_login_error_dialog_title">LoginActivity: error</string>
+
+    <!-- Screen : register -->
+    <string name="activity_register_toolbar_title">Screen: register</string>
+    <string name="activity_register_textView_login">Register</string>
+    <string name="activity_register_textView_userName_hint">enter username</string>
+    <string name="activity_register_textView_password_hint">enter password</string>
+    <string name="activity_register_btn_register">Register</string>
+    <string name="activity_register_textView_register">Click here to login</string>
+
+    <string name="activity_register_error_message_userName">can\'t be blank</string>
+    <string name="activity_register_error_message_password">can\'t be blank</string>
+    <string name="activity_register_error_message_userName_matches">only alphabet or number allowed</string>
+    <string name="activity_register_error_message_length">at least 5 characters long</string>
+    <string name="activity_register_error_dialog_title">RegisterActivity: error</string>
+    <string name="activity_register_success_dialog_title">RegisterActivity: success</string>
+    <string name="activity_register_success_message">registration successful</string>
+    <string name="activity_register_success_message_user_exist">username already exists</string>
+
+    <!-- Screen : users -->
+    <string name="activity_users_toolbar_title">Screen: users</string>
+    <string name="activity_users_message_no_user">No users found!</string>
+    <string name="activity_users_logout">Logout</string>
+
+    <!-- Screen : main -->
+    <string name="activity_main_toolbar_title">Screen: main</string>
+
+    <!-- Screen : chat -->
+    <string name="activity_chat_toolbar_title">Screen: chat</string>
+    <string name="activity_chat_textView_hint">Write a message...</string>
+    <string name="activity_chat_error_title">Chat error</string>
+    <string name="activity_chat_error_message">You need write something in message input</string>
+</resources>

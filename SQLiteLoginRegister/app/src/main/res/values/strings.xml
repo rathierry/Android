@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">SQLiteLoginRegister</string>
+    <string name="logout">Are you sure you want to sign out?</string>
+
+    <!-- UserLogin -->
+    <string name="activity_user_editText_hint_name">Name</string>
+    <string name="activity_user_editText_hint_email">Email</string>
+    <string name="activity_user_editText_hint_password">Password</string>
+    <string name="activity_user_editText_hint_confirm_password">Confirm Password</string>
+    <string name="activity_user_button_text_login">Login</string>
+    <string name="activity_user_button_text_register">Register</string>
+    <string name="error_message_name">Enter Full Name</string>
+    <string name="error_message_email">Enter Valid Email</string>
+    <string name="error_message_age">Enter Age</string>
+    <string name="error_message_password">Enter Password</string>
+    <string name="activity_user_login_text_not_member">No account yet? Create one</string>
+    <string name="activity_user_login_error_valid_email_password">Wrong Email or Password</string>
+
+    <!-- UserRegister -->
+    <string name="activity_user_register_text_already_member">Already a member? Login</string>
+    <string name="error_email_exists">Email Already Exists</string>
+    <string name="error_password_match">Password Does Not Matches</string>
+    <string name="success_message">Registration Successful\n- Return to login\'screen -</string>
+
+    <!-- UserList -->
+    <string name="activity_user_list_toolBar_title">List of user</string>
+    <string name="activity_user_list_text_hello">Hello,</string>
+    <string name="activity_user_list_text_title">SQLite Database Login/Register</string>
+    <string name="activity_user_list_text_accounts">All Accounts</string>
+    <string name="activity_user_list_action_power">Logout user</string>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Nakay - UserInactivityApp</string>
+
+    <string name="activity_toolbar_title">UserInactivity</string>
+</resources>

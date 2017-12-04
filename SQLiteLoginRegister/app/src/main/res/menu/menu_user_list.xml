@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_power"
+        android:icon="@drawable/ic_power_white"
+        android:title="@string/activity_user_list_action_power"
+        app:showAsAction="ifRoom" />
+
+</menu>
