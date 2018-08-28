@@ -1,32 +1,22 @@
 package com.team.lezomadetana.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
 import com.team.lezomadetana.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by team on 28/08/2018.
  **/
 
-public class UserLoginActivity extends BaseActivity {
+public class UserRegisterActivity extends BaseActivity {
 
     // ===========================================================
     // Constants
     // ===========================================================
 
-    private static final int REQUEST_SIGNUP = 0;
-
     // ===========================================================
     // Fields
     // ===========================================================
-
-    @BindView(R.id.link_signup) TextView _signupLink;
 
     // ===========================================================
     // Constructors
@@ -43,20 +33,14 @@ public class UserLoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_login);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_user_register);
+    }
 
-        // event on click
-        /*_signupLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), UserRegisterActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-            }
-        });*/
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.push_left_out, R.anim.push_left_in);
     }
 
     // ===========================================================

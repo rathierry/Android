@@ -19,6 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- screen: splash -->
         <activity
             android:name=".activity.SplashActivity"
@@ -36,7 +37,14 @@
         <activity
             android:name=".activity.UserLoginActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <!-- screen: login -->
+        <activity
+            android:name=".activity.UserRegisterActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <!-- screen: main -->
         <activity
             android:name=".activity.MainActivity"
