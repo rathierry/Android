@@ -1,0 +1,10 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- screen: Splash -->
+    <dimen name="activity_splash_imageView_layout_size">135dp</dimen>
+    <dimen name="activity_splash_spinner_layout_size">40dp</dimen>
+    <dimen name="activity_splash_spinner_margin_bottom">75dp</dimen>
+</resources>
