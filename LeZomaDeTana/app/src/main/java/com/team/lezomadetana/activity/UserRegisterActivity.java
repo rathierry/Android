@@ -40,7 +40,7 @@ public class UserRegisterActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        overridePendingTransition(R.anim.push_left_out, R.anim.push_left_in);
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
     // ===========================================================
