@@ -1,15 +1,10 @@
-package com.team.lezomadetana.activity;
-
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-import com.team.lezomadetana.R;
+package com.team.lezomadetana.utils;
 
 /**
  * Created by team on 28/08/2018.
- **/
+**/
 
-public class MainActivity extends AppCompatActivity {
+public class ClassTemplate {
 
     // ===========================================================
     // Constants
@@ -30,12 +25,6 @@ public class MainActivity extends AppCompatActivity {
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
 
     // ===========================================================
     // Methods for Interfaces
