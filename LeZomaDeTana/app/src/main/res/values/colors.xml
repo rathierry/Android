@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Application -->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#E43F3F</color>
+    <color name="colorPrimaryDark">#E12929</color>
+    <color name="colorPrimaryDarker">#CC1D1D</color>
+    <color name="colorAccent">#FFFFFF</color>
 
     <!-- Another -->
     <color name="color_bg_intro_1">#0385a3</color>

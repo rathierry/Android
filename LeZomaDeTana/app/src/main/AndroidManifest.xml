@@ -19,6 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!-- screen: splash -->
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
@@ -31,8 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- auth activity -->
+        <!-- screen: login -->
+        <activity
+            android:name=".activity.UserLoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <!-- screen: main -->
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize"
