@@ -121,7 +121,7 @@ public class UserLoginActivity extends BaseActivity {
         _btnLogIn.setEnabled(false);
 
         // show spinner
-        showLoadingView(String.valueOf(R.string.app_spinner));
+        showLoadingView(getResources().getString(R.string.app_spinner));
 
         // save form inputs
         String email = _phoneText.getText().toString();
@@ -207,11 +207,11 @@ public class UserLoginActivity extends BaseActivity {
 
                         // check phone number
                         if (phone.equals("") || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
-                            inputDialog.setError(String.valueOf(R.string.user_login_input_error_phone));
+                            inputDialog.setError(getResources().getString(R.string.user_login_input_error_phone));
                             inputDialog.requestFocus();
                         } else {
                             // show spinner
-                            showLoadingView(String.valueOf(R.string.app_spinner));
+                            showLoadingView(getResources().getString(R.string.app_spinner));
                             // hide dialog
                             dialog.dismiss();
 
@@ -277,13 +277,13 @@ public class UserLoginActivity extends BaseActivity {
 
         // phone number
         if (phone.isEmpty() || TextUtils.isEmpty(phone) || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
-            _phoneText.setError(String.valueOf(R.string.user_login_input_error_phone));
+            _phoneText.setError(getResources().getString(R.string.user_login_input_error_phone));
             _phoneText.requestFocus();
             valid = false;
         }
         // password
         else if (password.isEmpty()) {
-            _passwordText.setError(String.valueOf(R.string.user_login_input_error_password));
+            _passwordText.setError(getResources().getString(R.string.user_login_input_error_password));
             _passwordText.requestFocus();
             valid = false;
         } else {
