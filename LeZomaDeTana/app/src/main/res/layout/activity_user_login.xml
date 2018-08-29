@@ -11,9 +11,12 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_login_relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_white">
+    android:background="@color/color_white"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <!--<TextView
         android:id="@+id/user_login_textView_title"
@@ -50,8 +53,7 @@
         android:layout_below="@+id/user_login_imageView_logo"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="150dp"
-        android:textColorHint="@color/color_black">
+        android:layout_marginTop="150dp">
 
         <EditText
             android:id="@+id/user_login_input_phone"
@@ -63,7 +65,6 @@
             android:textAlignment="viewStart"
             android:textAllCaps="true"
             android:textColor="@color/color_black"
-            android:textColorHint="@color/color_black"
             android:textSize="20sp"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
@@ -79,7 +80,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="225dp"
         android:gravity="center"
-        android:textColorHint="@color/color_black"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/color_black">
 
@@ -93,7 +93,6 @@
             android:textAlignment="viewStart"
             android:textAllCaps="true"
             android:textColor="@color/color_black"
-            android:textColorHint="@color/color_black"
             android:textSize="20sp"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
@@ -118,8 +117,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/user_login_textView_forgot_password"
-        android:layout_marginTop="35dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
         android:background="@color/colorPrimary"
         android:fontFamily="serif-monospace"
         android:text="E k e n a"
