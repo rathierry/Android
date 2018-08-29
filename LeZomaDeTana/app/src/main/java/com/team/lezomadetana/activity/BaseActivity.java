@@ -30,6 +30,8 @@ public class BaseActivity extends AppCompatActivity {
     public static int SPLASH_TIME_OUT = 2000;
     public static int LOADING_TIME_OUT = 3000;
 
+    public static String URL_API_SERVER = "http://......................";
+
     // ===========================================================
     // Fields
     // ===========================================================
