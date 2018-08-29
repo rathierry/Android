@@ -3,8 +3,26 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <!-- screen: Splash -->
+    <!-- screen: splash -->
     <dimen name="activity_splash_imageView_layout_size">135dp</dimen>
     <dimen name="activity_splash_spinner_layout_size">40dp</dimen>
     <dimen name="activity_splash_spinner_margin_bottom">75dp</dimen>
+
+    <!-- screen: user-login -->
+    <dimen name="activity_user_login_textView_layout_height">40dp</dimen>
+    <dimen name="activity_user_login_textView_size">24sp</dimen>
+    <dimen name="activity_user_login_imageView_layout_height">80dp</dimen>
+    <dimen name="activity_user_login_imageView_layout_marginTop">15dp</dimen>
+    <dimen name="activity_user_login_phone_text_input_layout_width">350dp</dimen>
+    <dimen name="activity_user_login_phone_text_input_layout_marginTop">150dp</dimen>
+    <dimen name="activity_user_login_phone_edit_text_size">20sp</dimen>
+    <dimen name="activity_user_login_password_text_input_layout_width">350dp</dimen>
+    <dimen name="activity_user_login_password_text_input_layout_marginTop">225dp</dimen>
+    <dimen name="activity_user_login_password_edit_text_size">20sp</dimen>
+    <dimen name="activity_user_login_textView_forgot_password_layout_marginTop">10dp</dimen>
+    <dimen name="activity_user_login_textView_forgot_password_size">18sp</dimen>
+    <dimen name="activity_user_login_btn_submit_layout_width">300dp</dimen>
+    <dimen name="activity_user_login_btn_submit_layout_marginTop">35dp</dimen>
+    <dimen name="activity_user_login_btn_submit_text_size">18sp</dimen>
+    <dimen name="activity_user_login_btn_footer_text_size">16sp</dimen>
 </resources>

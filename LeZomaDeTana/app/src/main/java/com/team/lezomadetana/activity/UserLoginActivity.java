@@ -66,7 +66,9 @@ public class UserLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
         ButterKnife.bind(this);
-        getSimCardInfo();
+
+        // TODO in future
+        // getSimCardInfo();
 
         // phone edit text
         _phoneText.addTextChangedListener(new TextWatcher() {
@@ -80,9 +82,6 @@ public class UserLoginActivity extends BaseActivity {
                 if (charSequence.length() == 10) {
                     View view = UserLoginActivity.this.getCurrentFocus();
                     if (view != null) {
-                        // hide keyboard
-                        /*InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);*/
                         // take focus on password edit text
                         _passwordText.requestFocus();
                     }
@@ -122,7 +121,7 @@ public class UserLoginActivity extends BaseActivity {
         _btnLogIn.setEnabled(false);
 
         // show spinner
-        showLoadingView("Miandry .....");
+        showLoadingView(String.valueOf(R.string.app_spinner));
 
         // save form inputs
         String email = _phoneText.getText().toString();
@@ -184,11 +183,11 @@ public class UserLoginActivity extends BaseActivity {
 
         // set dialog message
         builder
-                .setTitle("Famerenana")
+                .setTitle(R.string.user_login_forgot_pass_text_title)
                 .setIcon(R.drawable.info_black)
                 .setCancelable(false)
-                .setPositiveButton("Ekena", null)
-                .setNegativeButton("Ajanona", null);
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
         // create alert dialog
         final AlertDialog dialog = builder.create();
@@ -208,11 +207,11 @@ public class UserLoginActivity extends BaseActivity {
 
                         // check phone number
                         if (phone.equals("") || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
-                            inputDialog.setError("mampidira laharana finday (tarehimarika 10)");
+                            inputDialog.setError(String.valueOf(R.string.user_login_input_error_phone));
                             inputDialog.requestFocus();
                         } else {
                             // show spinner
-                            showLoadingView("Miandry .....");
+                            showLoadingView(String.valueOf(R.string.app_spinner));
                             // hide dialog
                             dialog.dismiss();
 
@@ -278,13 +277,13 @@ public class UserLoginActivity extends BaseActivity {
 
         // phone number
         if (phone.isEmpty() || TextUtils.isEmpty(phone) || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
-            _phoneText.setError("mampidira laharana finday (tarehimarika 10)");
+            _phoneText.setError(String.valueOf(R.string.user_login_input_error_phone));
             _phoneText.requestFocus();
             valid = false;
         }
         // password
         else if (password.isEmpty()) {
-            _passwordText.setError("mampidira teny miafina");
+            _passwordText.setError(String.valueOf(R.string.user_login_input_error_password));
             _passwordText.requestFocus();
             valid = false;
         } else {
