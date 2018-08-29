@@ -1,11 +1,17 @@
 package com.team.lezomadetana.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -68,6 +74,7 @@ public class UserLoginActivity extends BaseActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 // TODO
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 10) {
@@ -81,6 +88,7 @@ public class UserLoginActivity extends BaseActivity {
                     }
                 }
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
                 // TODO
@@ -114,9 +122,9 @@ public class UserLoginActivity extends BaseActivity {
         _btnLogIn.setEnabled(false);
 
         // show spinner
-        showLoadingView("Authentication .....");
+        showLoadingView("Miandry .....");
 
-        // save form inouts
+        // save form inputs
         String email = _phoneText.getText().toString();
         String password = _passwordText.getText().toString();
 
@@ -141,7 +149,103 @@ public class UserLoginActivity extends BaseActivity {
 
     @OnClick(R.id.user_login_textView_forgot_password)
     void showUserForgotPasswordActivity() {
-        Toast.makeText(this, "work in progress", Toast.LENGTH_SHORT).show();
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(UserLoginActivity.this);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.user_login_forgot_password, null);
+
+        // create alert builder and cast view
+        final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+
+        // set prompts xml to alertdialog builder
+        builder.setView(mView);
+
+        // edit text
+        final EditText inputDialog = (EditText) mView.findViewById(R.id.user_login_forgot_password_editText);
+        inputDialog.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 10) {
+                    // hide keyboard
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mView.getWindowToken(), 0);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO
+            }
+        });
+
+        // set dialog message
+        builder
+                .setTitle("Famerenana")
+                .setIcon(R.drawable.info_black)
+                .setCancelable(false)
+                .setPositiveButton("Ekena", null)
+                .setNegativeButton("Ajanona", null);
+
+        // create alert dialog
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button buttonOK = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(UserLoginActivity.this, android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // value
+                        String phone = inputDialog.getText().toString();
+
+                        // check phone number
+                        if (phone.equals("") || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
+                            inputDialog.setError("mampidira laharana finday (tarehimarika 10)");
+                            inputDialog.requestFocus();
+                        } else {
+                            // show spinner
+                            showLoadingView("Miandry .....");
+                            // hide dialog
+                            dialog.dismiss();
+
+                            // TODO: Implement your own forgotten password logic here.
+
+                            // after few times
+                            new Handler().postDelayed(
+                                    new Runnable() {
+                                        public void run() {
+                                            // on complete call either action
+                                            inputDialog.setText("");
+                                            inputDialog.setError(null);
+                                            hideLoadingView();
+                                        }
+                                    }, LOADING_TIME_OUT);
+                        }
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(UserLoginActivity.this, android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
     }
 
     // ===========================================================
