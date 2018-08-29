@@ -12,7 +12,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_white">
 
     <!--<TextView
         android:id="@+id/user_login_textView_title"
@@ -50,7 +51,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="150dp"
-        android:textColorHint="@color/color_white">
+        android:textColorHint="@color/color_black">
 
         <EditText
             android:id="@+id/user_login_input_phone"
@@ -61,8 +62,8 @@
             android:inputType="phone"
             android:textAlignment="viewStart"
             android:textAllCaps="true"
-            android:textColor="@color/color_white"
-            android:textColorHint="@color/color_white"
+            android:textColor="@color/color_black"
+            android:textColorHint="@color/color_black"
             android:textSize="20sp"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
@@ -78,9 +79,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="225dp"
         android:gravity="center"
-        android:textColorHint="@color/color_white"
+        android:textColorHint="@color/color_black"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/color_white">
+        app:passwordToggleTint="@color/color_black">
 
         <EditText
             android:id="@+id/user_login_input_password"
@@ -91,8 +92,8 @@
             android:inputType="textPassword"
             android:textAlignment="viewStart"
             android:textAllCaps="true"
-            android:textColor="@color/color_white"
-            android:textColorHint="@color/color_white"
+            android:textColor="@color/color_black"
+            android:textColorHint="@color/color_black"
             android:textSize="20sp"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
@@ -107,7 +108,7 @@
         android:fontFamily="serif-monospace"
         android:text="Teny miafina adino"
         android:textAlignment="textEnd"
-        android:textColor="@color/color_white"
+        android:textColor="@color/color_black"
         android:textSize="18sp"
         android:textStyle="bold"
         android:typeface="monospace" />
@@ -119,12 +120,12 @@
         android:layout_below="@+id/user_login_textView_forgot_password"
         android:layout_marginTop="35dp"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/background_light"
+        android:background="@color/colorPrimary"
         android:fontFamily="serif-monospace"
         android:text="E k e n a"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/color_pink"
+        android:textColor="@color/color_white"
         android:textSize="18sp"
         android:textStyle="bold"
         android:typeface="monospace" />
@@ -134,7 +135,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/color_pink"
+        android:background="@color/colorPrimaryDark"
         android:fontFamily="serif-monospace"
         android:text="Olona vaovao anoratra anarana"
         android:textAlignment="center"

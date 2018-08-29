@@ -63,18 +63,6 @@ public class BaseActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransitionExit();
-    }
-
-    @Override
-    public void startActivity(Intent intent) {
-        super.startActivity(intent);
-        overridePendingTransitionEnter();
-    }
-
     /**
      * Overrides the pending Activity transition by performing the "Enter" animation.
      */
