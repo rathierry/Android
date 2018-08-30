@@ -32,6 +32,8 @@ dependencies {
     // bind views and callbacks to fields and methods
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // drowp down spinner
+    implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'

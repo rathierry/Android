@@ -61,40 +61,23 @@ public class UserLoginActivity extends BaseActivity {
     // Methods from SuperClass
     // ===========================================================
 
+    /**
+     * Create activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
+
+        // initialize
         ButterKnife.bind(this);
-
-        // TODO in future
         // getSimCardInfo();
-
-        // phone edit text
-        _phoneText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // TODO
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 10) {
-                    View view = UserLoginActivity.this.getCurrentFocus();
-                    if (view != null) {
-                        // take focus on password edit text
-                        _passwordText.requestFocus();
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // TODO
-            }
-        });
+        phoneNumberTextChangedListener();
     }
 
+    /**
+     * When app is on pause'state
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -103,12 +86,18 @@ public class UserLoginActivity extends BaseActivity {
         _passwordText.setError(null);
     }
 
+    /**
+     * Device's back button
+     */
     @Override
     public void onBackPressed() {
         // disable going back to the MainActivity
         moveTaskToBack(false);
     }
 
+    /**
+     * Event onClick on validate button
+     */
     @OnClick(R.id.user_login_btn_validate)
     void submit() {
         // validate form
@@ -139,6 +128,9 @@ public class UserLoginActivity extends BaseActivity {
                 }, LOADING_TIME_OUT);
     }
 
+    /**
+     * Event onClick on register button
+     */
     @OnClick(R.id.user_login_btn_register)
     void showUserRegisterActivity() {
         // start the SignUp activity
@@ -146,6 +138,9 @@ public class UserLoginActivity extends BaseActivity {
         overridePendingTransitionEnter();
     }
 
+    /**
+     * Event onClick on forgot password textView
+     */
     @OnClick(R.id.user_login_textView_forgot_password)
     void showUserForgotPasswordActivity() {
         // get prompts xml view
@@ -255,49 +250,107 @@ public class UserLoginActivity extends BaseActivity {
     // Public Methods
     // ===========================================================
 
-    public void onLoginSuccess() {
-        _layout.requestFocus();
-        _phoneText.setText("");
-        _passwordText.setText("");
-        _phoneText.setError(null);
-        _passwordText.setError(null);
-        _btnLogIn.setEnabled(true);
-        hideLoadingView();
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
+    /**
+     * Change listener on phone number's text
+     */
+    private void phoneNumberTextChangedListener() {
+        // phone edit text
+        _phoneText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // TODO in future
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 10) {
+                    View view = UserLoginActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        // take focus on password edit text
+                        _passwordText.requestFocus();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // TODO in future
+            }
+        });
     }
 
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-        _btnLogIn.setEnabled(true);
-    }
-
-    public boolean validate() {
+    /**
+     * Validate form
+     */
+    private boolean validate() {
         boolean valid = true;
         String phone = _phoneText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // phone number
-        if (phone.isEmpty() || TextUtils.isEmpty(phone) || !(phone.matches("^[0-9-]+$")) || phone.length() != 10) {
+        if (phone.isEmpty() || TextUtils.isEmpty(phone) || !(phone.matches(numberRegex)) || phone.length() != 10) {
             _phoneText.setError(getResources().getString(R.string.user_login_input_error_phone));
             _phoneText.requestFocus();
             valid = false;
         }
         // password
-        else if (password.isEmpty()) {
+        else if (password.isEmpty() || TextUtils.isEmpty(password)) {
             _passwordText.setError(getResources().getString(R.string.user_login_input_error_password));
             _passwordText.requestFocus();
             valid = false;
         } else {
-            _phoneText.setError(null);
-            _phoneText.clearFocus();
-            _passwordText.setError(null);
-            _passwordText.clearFocus();
+            clearAllInputError();
+            clearAllInputFocus();
         }
         return valid;
     }
 
-    // ===========================================================
-    // Private Methods
-    // ===========================================================
+    /**
+     * Success register
+     */
+    private void onLoginSuccess() {
+        _layout.requestFocus();
+        resetAllInputText();
+        clearAllInputError();
+        _btnLogIn.setEnabled(true);
+        hideLoadingView();
+    }
+
+    /**
+     * Failed register
+     */
+    private void onLoginFailed() {
+        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        _btnLogIn.setEnabled(true);
+    }
+
+    /**
+     * Clear inputs error
+     */
+    private void clearAllInputError() {
+        _phoneText.setError(null);
+        _passwordText.setError(null);
+    }
+
+    /**
+     * Clear inputs focus
+     */
+    private void clearAllInputFocus() {
+        _phoneText.clearFocus();
+        _passwordText.clearFocus();
+    }
+
+    /**
+     * Reset inputs text
+     */
+    private void resetAllInputText() {
+        _phoneText.setText("");
+        _passwordText.setText("");
+    }
 
     // ===========================================================
     // Inner Classes/Interfaces

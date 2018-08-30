@@ -27,9 +27,16 @@ public class BaseActivity extends AppCompatActivity {
     // Constants
     // ===========================================================
 
+    // regex
+    public String nameRegex = "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$";
+    public String numberRegex = "^[0-9-]+$";
+    public String emailRegex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    // time
     public static int SPLASH_TIME_OUT = 2000;
     public static int LOADING_TIME_OUT = 3000;
 
+    // url
     public static String URL_API_SERVER = "http://......................";
 
     // ===========================================================

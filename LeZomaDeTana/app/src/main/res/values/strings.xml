@@ -27,4 +27,6 @@
 
     <!-- screen: user-register -->
     <string name="user_register_spinner_title">Asa atao</string>
+    <string name="user_register_input_error_re_password">avereno ampidirina ny teny miafina</string>
+    <string name="user_register_input_error_confirm_password">hamarino ny teny miafina</string>
 </resources>
