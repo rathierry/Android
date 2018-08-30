@@ -1,134 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/user_register_relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:background="@color/color_white"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
-    <LinearLayout
+    <ScrollView
+        style="@style/scrollbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:paddingTop="56dp">
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_splash" />
-
-        <!-- Name Label -->
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
 
-            <EditText
-                android:id="@+id/input_name"
+            <ImageView
+                android:id="@+id/user_register_imageView_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/activity_user_login_imageView_layout_height"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/activity_user_login_imageView_layout_marginTop"
+                android:gravity="center_horizontal|center_vertical"
+                android:src="@drawable/ic_splash" />
+
+            <!-- Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name"
-                android:inputType="textPersonName" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
-        <!-- Address Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+                <EditText
+                    android:id="@+id/user_register_input_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Anarana"
+                    android:inputType="textPersonName"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/input_address"
+            <!-- First Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_firstname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
-                android:inputType="textPostalAddress" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
+                <EditText
+                    android:id="@+id/user_register_input_firstname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Fanampiny"
+                    android:inputType="textPersonName"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
-        <!--  Email Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <EditText
-                android:id="@+id/input_email"
+            <!-- Phone Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
+                <EditText
+                    android:id="@+id/user_register_input_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Laharana finday"
+                    android:inputType="number"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_black"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
-        <!-- mobile number -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <EditText
-                android:id="@+id/input_mobile"
+            <!-- Occupation Text Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_occupation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Mobile Number"
-                android:inputType="number" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginTop="8dp">
 
-        <!-- Password Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+                <!-- Occupation Spinner Label (Spinner Element) -->
+                <Spinner
+                    android:id="@+id/user_register_spinner_occupation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:prompt="@string/user_register_spinner_title"
+                    android:spinnerMode="dialog" />
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/input_password"
+            <!-- Address Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
-        <!-- Password Re-enter Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+                <EditText
+                    android:id="@+id/user_regitser_input_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Adiresy"
+                    android:inputType="textPostalAddress"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/input_reEnterPassword"
+
+            <!--  Email Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Re-enter Password"
-                android:inputType="textPassword" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
 
-        <!-- Signup Button -->
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_signup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
-            android:padding="12dp"
-            android:text="Create Account" />
+                <EditText
+                    android:id="@+id/user_register_input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Mailaka"
+                    android:inputType="textEmailAddress"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:id="@+id/link_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:gravity="center"
-            android:text="Already a member? Login"
-            android:textSize="16dip" />
+            <!-- Password Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
-    </LinearLayout>
-</ScrollView>
+                <EditText
+                    android:id="@+id/user_register_input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Teny miafina"
+                    android:inputType="textPassword"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Password Re-enter Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_register_text_input_layout_re_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/user_register_input_re_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Avereno ny teny miafina"
+                    android:inputType="textPassword"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- SignUp Button -->
+            <Button
+                android:id="@+id/user_register_btn_validate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/colorPrimary"
+                android:fontFamily="serif-monospace"
+                android:text="@string/user_login_btn_submit"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/activity_user_login_btn_submit_text_size"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

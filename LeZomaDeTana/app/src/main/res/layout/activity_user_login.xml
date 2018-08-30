@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="serif-monospace"
             android:hint="@string/user_login_input_hint_phone"
-            android:inputType="phone"
+            android:inputType="number"
             android:textAlignment="viewStart"
             android:textAllCaps="true"
             android:textColor="@color/color_black"

@@ -17,11 +17,14 @@
     <string name="user_login_btn_submit">E k e n a</string>
     <string name="user_login_btn_register">Olona vaovao anoratra anarana</string>
 
-    <!-- spinner -->
+    <!-- loading -->
     <string name="app_spinner">Miandry .....</string>
 
     <!-- popup: user forgot password -->
     <string name="user_login_forgot_pass_text_title">Famerenana</string>
     <string name="user_login_forgot_pass_btn_ok">EKENA</string>
     <string name="user_login_forgot_pass_btn_cancel">AJANONA</string>
+
+    <!-- screen: user-register -->
+    <string name="user_register_spinner_title">Asa atao</string>
 </resources>
