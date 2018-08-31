@@ -290,13 +290,13 @@ public class UserRegisterActivity extends BaseActivity {
         boolean valid = true;
 
         // name
-        if (name.isEmpty() || TextUtils.isEmpty(name) /*|| !(name.matches(nameRegex))*/) {
+        if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
             _nameText.setError("Mampidira anarana");
             _nameText.requestFocus();
             valid = false;
         }
         // firstName
-        else if (firstName.isEmpty() || TextUtils.isEmpty(firstName) /*|| !(firstName.matches(nameRegex))*/) {
+        else if (firstName.isEmpty() || TextUtils.isEmpty(firstName) || !(firstName.matches(nameRegex))) {
             _firstNameText.setError("Mampidira fanamin'anarana");
             _firstNameText.requestFocus();
             valid = false;
@@ -314,7 +314,7 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // address
-        else if (address.isEmpty() || TextUtils.isEmpty(address) /*|| !(address.matches(nameRegex))*/) {
+        else if (address.isEmpty() || TextUtils.isEmpty(address) || !(address.matches(nameRegex))) {
             _addressText.setError("Mampidira adiresy");
             _addressText.requestFocus();
             valid = false;

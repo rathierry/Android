@@ -28,7 +28,7 @@ public class BaseActivity extends AppCompatActivity {
     // ===========================================================
 
     // regex
-    public String nameRegex = "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$";
+    public String nameRegex = "^[a-zA-Z-\\s\\w]+$";
     public String numberRegex = "^[0-9-]+$";
     public String emailRegex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
