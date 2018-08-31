@@ -224,8 +224,12 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         try {
-            String s = ((RadioButton) v).getText().toString();
-            Toast.makeText(UserRegisterActivity.this, "Province clicked: " + s, Toast.LENGTH_LONG).show();
+            int id = v.getId();
+            String name = ((RadioButton) v).getText().toString();
+            Toast.makeText(UserRegisterActivity.this, "Province clicked: " + name + " (id = " + id + ")", Toast.LENGTH_LONG).show();
+
+            // create region/ville
+            createRegionRadioButton(id, name);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
@@ -453,6 +457,9 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
+    /**
+     * Create all Province/Region
+     */
     @SuppressLint("ResourceAsColor")
     private void createProvinceRadioButton() {
         // create radioBtn element
@@ -497,6 +504,13 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
             _radioGroupProvince.addView(radioButtons[i]);
         }
 
+    }
+
+    /**
+     * Create all Region/Ville
+     */
+    private void createRegionRadioButton(int id, String province) {
+        //
     }
 
     /**
