@@ -1,6 +1,13 @@
 package com.team.lezomadetana.activity;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -9,11 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.utils.ImageCaptureUtil;
+import com.team.lezomadetana.view.UrlImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
@@ -37,11 +45,14 @@ public class UserRegisterActivity extends BaseActivity {
     // Fields
     // ===========================================================
 
+    private Bitmap _bitmapImage;
+    private Uri _fileUri;
+
     //@BindString(R.string.register_error) String registerErrorMessage;
     @BindView(R.id.user_register_relativeLayout)
     RelativeLayout _layout;
     @BindView(R.id.user_register_imageView_logo)
-    ImageView _avatarImage;
+    UrlImageView _avatarImage;
     @BindView(R.id.user_register_input_name)
     EditText _nameText;
     @BindView(R.id.user_register_input_firstname)
@@ -93,6 +104,8 @@ public class UserRegisterActivity extends BaseActivity {
         phoneNumberTextChangedListener();
         initSpinnerOccupation();
         passwordOnFocusChange();
+        // set image avatar to rounded
+        _avatarImage.useRoundedBitmap = true;
     }
 
     /**
@@ -119,6 +132,96 @@ public class UserRegisterActivity extends BaseActivity {
         super.onBackPressed();
         finish();
         overridePendingTransitionExit();
+    }
+
+    // store the file url as it will be null after returning from camera app
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // save file url in bundle as it will be null on screen orientation changes
+        outState.putParcelable("file_uri", _fileUri);
+    }
+
+    // restore activity state
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // get the file url
+        _fileUri = savedInstanceState.getParcelable("file_uri");
+    }
+
+    // receiving activity result method will be called after closing the camera
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case CAMERA_IMAGE_REQUEST_CODE:
+                // Make sure the request was successful (captured the image)
+                if (resultCode == Activity.RESULT_OK) {
+                    // Recycle unused bitmaps
+                    if (_bitmapImage != null) {
+                        _bitmapImage.recycle();
+                    }
+                    // display it in image view
+                    _bitmapImage = ImageCaptureUtil.getCapturedImage(_fileUri);
+                    _avatarImage.setImageBitmap(_bitmapImage);
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // user cancelled Image capture
+                } else {
+                    // failed to capture image
+                    new AlertDialog.Builder(UserRegisterActivity.this)
+                            .setTitle("Sary")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Miala tsiny fa tsy azo ny sary.")
+                            .setPositiveButton(android.R.string.yes, null)
+                            .setCancelable(false)
+                            .show();
+                }
+                break;
+
+            case GALLERY_IMAGE_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    // Recycle unused bitmaps
+                    if (_bitmapImage != null) {
+                        _bitmapImage.recycle();
+                    }
+                    _bitmapImage = ImageCaptureUtil.getImageFromGallery(this, data);
+                    // preview image
+                    _avatarImage.setImageBitmap(_bitmapImage);
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // user cancelled Image capture
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Event onClick on avatar image
+     */
+    @OnClick(R.id.user_register_imageView_logo)
+    void getUserAvatar() {
+        new AlertDialog.Builder(UserRegisterActivity.this)
+                .setTitle("Sary")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setMessage("Safidio ny fomba fakana sary")
+                .setCancelable(true)
+                .setPositiveButton("Tahirin-tsary", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        imageTypeFile();
+                    }
+                })
+                .setNegativeButton("Fakan-tsary", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        imageTypeCamera();
+                    }
+                })
+                .show();
     }
 
     /**
@@ -170,6 +273,32 @@ public class UserRegisterActivity extends BaseActivity {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * Camera type : camera
+     */
+    private void imageTypeCamera() {
+        // checking camera availability
+        if (!isDeviceSupportCamera()) {
+            showNotSupportedCameraErrorDialog();
+        } else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _fileUri = ImageCaptureUtil.getOutputMediaFileUri();
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, _fileUri);
+            startActivityForResult(intent, CAMERA_IMAGE_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * Camera type : galerie
+     */
+    private void imageTypeFile() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, GALLERY_IMAGE_REQUEST_CODE);
+    }
 
     /**
      * Change listener on phone number's text

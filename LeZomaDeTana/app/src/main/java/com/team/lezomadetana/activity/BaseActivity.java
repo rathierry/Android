@@ -4,8 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -36,6 +39,10 @@ public class BaseActivity extends AppCompatActivity {
     public static int SPLASH_TIME_OUT = 2000;
     public static int LOADING_TIME_OUT = 3000;
 
+    // take photo
+    public static final int CAMERA_IMAGE_REQUEST_CODE = 1;
+    public static final int GALLERY_IMAGE_REQUEST_CODE = 2;
+
     // url
     public static String URL_API_SERVER = "http://......................";
 
@@ -43,8 +50,9 @@ public class BaseActivity extends AppCompatActivity {
     // Fields
     // ===========================================================
 
-    private Context _context;
+    public static Context _context;
     private ProgressDialog _progressDialog;
+    private AlertDialog _alertDialog;
     private Dialog _dialog;
     private Typeface _font;
 
@@ -163,6 +171,56 @@ public class BaseActivity extends AppCompatActivity {
             _progressDialog.dismiss();
         }
         _progressDialog = null;
+    }
+
+    /**
+     * Hide alert dialog
+     */
+    protected void hideAlertDialog() {
+        if (_alertDialog != null && _alertDialog.isShowing()) {
+            _alertDialog.dismiss();
+        }
+        _alertDialog = null;
+    }
+
+    /**
+     * Checking device has connecting in internet or not
+     */
+    public static boolean isConnectedToInternet() {
+        ConnectivityManager cm = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected());
+    }
+
+    /**
+     * Checking device has camera hardware or not
+     */
+    protected boolean isDeviceSupportCamera() {
+        if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    /**
+     * Alerted user when his device does not support camera
+     */
+    protected void showNotSupportedCameraErrorDialog() {
+
+        this.hideAlertDialog();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setCancelable(false);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setTitle("Erreur appareil photo");
+        builder.setMessage("Désolé! Votre appareil ne supporte pas l\\'appareil photo.");
+        builder.setPositiveButton(android.R.string.ok, null);
+
+        _alertDialog = builder.show();
+
     }
 
     // ===========================================================

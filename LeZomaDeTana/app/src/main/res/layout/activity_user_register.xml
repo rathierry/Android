@@ -22,7 +22,7 @@
             android:paddingLeft="24dp"
             android:paddingRight="24dp">
 
-            <ImageView
+            <com.team.lezomadetana.view.UrlImageView
                 android:id="@+id/user_register_imageView_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/activity_user_login_imageView_layout_height"
