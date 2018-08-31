@@ -1,5 +1,6 @@
 package com.team.lezomadetana.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,10 +17,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.aakira.expandablelayout.ExpandableLayoutListener;
+import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.utils.ImageCaptureUtil;
 import com.team.lezomadetana.view.UrlImageView;
@@ -35,7 +43,7 @@ import butterknife.OnClick;
  * Created by team on 28/08/2018.
  **/
 
-public class UserRegisterActivity extends BaseActivity {
+public class UserRegisterActivity extends BaseActivity implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -44,9 +52,6 @@ public class UserRegisterActivity extends BaseActivity {
     // ===========================================================
     // Fields
     // ===========================================================
-
-    private Bitmap _bitmapImage;
-    private Uri _fileUri;
 
     //@BindString(R.string.register_error) String registerErrorMessage;
     @BindView(R.id.user_register_relativeLayout)
@@ -61,6 +66,14 @@ public class UserRegisterActivity extends BaseActivity {
     EditText _phoneText;
     @BindView(R.id.user_register_material_design_spinner)
     MaterialBetterSpinner _occupationSpinner;
+
+    @BindView(R.id.user_register_text_expandable_province)
+    TextView _textViewProvinceExpandable;
+    @BindView(R.id.user_register_expandable_layout_province)
+    ExpandableRelativeLayout _expandableProvince;
+    @BindView(R.id.user_register_radio_group_province)
+    RadioGroup _radioGroupProvince;
+
     @BindView(R.id.user_regitser_input_address)
     EditText _addressText;
     @BindView(R.id.user_register_input_password)
@@ -78,6 +91,11 @@ public class UserRegisterActivity extends BaseActivity {
     private String address;
     private String password;
     private String rePassword;
+
+    private Bitmap _bitmapImage;
+    private Uri _fileUri;
+
+    private CompoundButton.OnClickListener listener;
 
     // ===========================================================
     // Constructors
@@ -103,6 +121,8 @@ public class UserRegisterActivity extends BaseActivity {
         ButterKnife.bind(this);
         phoneNumberTextChangedListener();
         initSpinnerOccupation();
+        initExpandableListeners();
+        createProvinceRadioButton();
         passwordOnFocusChange();
         // set image avatar to rounded
         _avatarImage.useRoundedBitmap = true;
@@ -198,6 +218,16 @@ public class UserRegisterActivity extends BaseActivity {
 
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        try {
+            String s = ((RadioButton) v).getText().toString();
+            Toast.makeText(UserRegisterActivity.this, "Province clicked: " + s, Toast.LENGTH_LONG).show();
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
     }
 
@@ -359,6 +389,114 @@ public class UserRegisterActivity extends BaseActivity {
                 //Toast.makeText(parent.getContext(), "Asa atao dia : " + userOccupation + "\n(position n° " + position + ")", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Initialize expandable listeners
+     */
+    private void initExpandableListeners() {
+        // listener
+        listener = new CompoundButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.user_register_text_expandable_province:
+                        _expandableProvince.toggle();
+                        setListenerExpandable(_expandableProvince, _textViewProvinceExpandable);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
+        // province text expandable
+        _textViewProvinceExpandable.setOnClickListener(listener);
+    }
+
+    /**
+     * SetListener on expandable
+     */
+    private void setListenerExpandable(ExpandableRelativeLayout expandable, final TextView textView) {
+        expandable.setListener(new ExpandableLayoutListener() {
+            @Override
+            public void onAnimationStart() {
+            }
+
+            @Override
+            public void onAnimationEnd() {
+            }
+
+            // You can get notification that your expandable layout is going to open or close.
+            // So, you can set the animation synchronized with expanding animation.
+            @Override
+            public void onPreOpen() {
+            }
+
+            @Override
+            public void onPreClose() {
+            }
+
+            @Override
+            public void onOpened() {
+                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.arrow_up_float, 0);
+                textView.setBackgroundColor(ContextCompat.getColor(UserRegisterActivity.this, R.color.color_white));
+                textView.setTextColor(ContextCompat.getColor(UserRegisterActivity.this, R.color.color_black));
+            }
+
+            @Override
+            public void onClosed() {
+                textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+                textView.setBackgroundColor(ContextCompat.getColor(UserRegisterActivity.this, R.color.color_white));
+                textView.setTextColor(ContextCompat.getColor(UserRegisterActivity.this, R.color.color_black));
+            }
+        });
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private void createProvinceRadioButton() {
+        // create radioBtn element
+        final RadioButton[] radioButtons = new RadioButton[6];
+
+        // set radioGrp orientation
+        _radioGroupProvince.setOrientation(RadioGroup.VERTICAL);
+
+        // adding radioGrp element
+        for (int i = 0; i < 6; i++) {
+            // init
+            radioButtons[i] = new RadioButton(this);
+
+            // set id and text
+            radioButtons[i].setId(i);
+            radioButtons[i].setTextColor(ContextCompat.getColor(UserRegisterActivity.this, R.color.color_black));
+            radioButtons[i].setOnClickListener(this);
+            switch (i) {
+                case 0:
+                    radioButtons[i].setText("ANTSIRANANA");
+                    break;
+                case 1:
+                    radioButtons[i].setText("MAHAJANGA");
+                    break;
+                case 2:
+                    radioButtons[i].setText("TOAMASINA");
+                    break;
+                case 3:
+                    radioButtons[i].setText("ANTANANARIVO");
+                    break;
+                case 4:
+                    radioButtons[i].setText("FIANARANTSOA");
+                    break;
+                case 5:
+                    radioButtons[i].setText("TOLIARA");
+                    break;
+                default:
+                    break;
+            }
+
+            // add radioButtons in radioGrp
+            _radioGroupProvince.addView(radioButtons[i]);
+        }
+
     }
 
     /**

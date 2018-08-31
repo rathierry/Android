@@ -36,6 +36,8 @@ dependencies {
     implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
     // url image view
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    // expandable layout
+    implementation 'com.github.aakira:expandable-layout:1.4.2@aar'
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
