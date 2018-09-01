@@ -50,6 +50,7 @@
         <!-- screen: main -->
         <activity
             android:name=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoBar"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
     </application>

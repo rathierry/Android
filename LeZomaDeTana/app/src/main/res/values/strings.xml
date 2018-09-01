@@ -29,4 +29,21 @@
     <string name="user_register_spinner_title">Asa atao</string>
     <string name="user_register_input_error_re_password">avereno ampidirina ny teny miafina</string>
     <string name="user_register_input_error_confirm_password">hamarino ny teny miafina</string>
+
+
+    <!-- main activity menu -->
+    <string name="user_publish_menu_item">Fifanerasera</string>
+    <string name="user_chat_menu_item">Fifampiresahana</string>
+    <string name="user_currency_menu_item">Tolotra sy tinady</string>
+    <string name="user_parameter_title">Fanovana</string>
+    <string name="user_parameter_menu_item">Fikirana</string>
+
+    <!-- provider info -->
+    <string name="provider_contact">lezomadetana@mail.com</string>
+
+
+
+    <string name="navigation_drawer_open">Voahaina</string>
+    <string name="navigation_drawer_close">Hidina</string>
+
 </resources>
