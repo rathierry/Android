@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,7 @@ public class UserLoginActivity extends BaseActivity {
     // ===========================================================
     // Fields
     // ===========================================================
+    private SharedPreferences localPrefs;
 
     //@BindString(R.string.login_error) String loginErrorMessage;
     @BindView(R.id.user_login_relativeLayout)
@@ -78,12 +81,30 @@ public class UserLoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_login);
 
-        // initialize
-        ButterKnife.bind(this);
-        // getSimCardInfo();
-        phoneNumberTextChangedListener();
+        localPrefs = this.getPreferences(MODE_PRIVATE);
+
+        String userStr = localPrefs.getString("user","unknown");
+
+        if(userStr.equals("unknown")){
+            setContentView(R.layout.activity_user_login);
+
+            // initialize
+            ButterKnife.bind(this);
+            // getSimCardInfo();
+            phoneNumberTextChangedListener();
+
+            //init playerpref
+
+        }
+        else
+        {
+            startActivity(new Intent(UserLoginActivity.this,MainActivity.class));
+        }
+
+
+
+
     }
 
     /**
@@ -355,7 +376,9 @@ public class UserLoginActivity extends BaseActivity {
                 {
                     if(response.body().getSuccess())
                     {
-
+                        SharedPreferences.Editor edit = localPrefs.edit();
+                        edit.putString("user",response.body().toString());
+                        edit.commit();
                         startActivity(new Intent(UserLoginActivity.this,MainActivity.class));
                     }
                     else

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -100,6 +101,9 @@ public class UserRegisterActivity extends BaseActivity {
     private String password;
     private String rePassword;
 
+    SharedPreferences localPrefs;
+
+
     private Bitmap _bitmapImage;
 
     // ===========================================================
@@ -121,6 +125,7 @@ public class UserRegisterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
+        localPrefs = getPreferences(MODE_PRIVATE);
 
         // initialize
         ButterKnife.bind(this);
@@ -660,6 +665,9 @@ public class UserRegisterActivity extends BaseActivity {
                                 {
                                     if(response.body().getSuccess())
                                     {
+                                        SharedPreferences.Editor edit = localPrefs.edit();
+                                        edit.putString("user",response.body().toString());
+                                        edit.commit();
 
                                         startActivity(new Intent(UserRegisterActivity.this,MainActivity.class));
                                     }
