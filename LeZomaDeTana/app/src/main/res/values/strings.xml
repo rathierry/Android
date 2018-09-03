@@ -1,6 +1,8 @@
 <resources>
     <!-- app name -->
     <string name="app_name">LeZomaDeTana</string>
+    <string name="app_camera_title">Camera</string>
+    <string name="app_camera_error">CameraYour device does not support the camera.</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -8,24 +10,39 @@
     <!-- screen: splash -->
 
     <!-- screen: user-login -->
-    <string name="user_login_text_title">Fidirana</string>
-    <string name="user_login_input_hint_phone">Laharana finday</string>
-    <string name="user_login_input_error_phone">mampidira laharana finday (tarehimarika 10)</string>
-    <string name="user_login_input_hint_password">Teny miafina</string>
-    <string name="user_login_input_error_password">mampidira teny miafina</string>
-    <string name="user_login_input_hint_forgot_password">Teny miafina adino</string>
-    <string name="user_login_btn_submit">E k e n a</string>
-    <string name="user_login_btn_register">Olona vaovao anoratra anarana</string>
+    <string name="user_login_text_title">Sign In</string>
+    <string name="user_login_input_hint_phone">Phone number</string>
+    <string name="user_login_input_error_phone">Enter a phone number (10 characters)</string>
+    <string name="user_login_input_hint_password">Password</string>
+    <string name="user_login_input_error_password">Enter your password</string>
+    <string name="user_login_text_forgot_password">Forgot password</string>
+    <string name="user_login_input_hint_forgot_password">Enter a phone number</string>
+    <string name="user_login_btn_submit">Sign In</string>
+    <string name="user_login_btn_register">No account yet? Create one</string>
 
     <!-- loading -->
-    <string name="app_spinner">Miandry .....</string>
+    <string name="app_spinner">Loading .....</string>
 
     <!-- popup: user forgot password -->
-    <string name="user_login_forgot_pass_text_title">Famerenana</string>
-    <string name="user_login_forgot_pass_btn_ok">EKENA</string>
-    <string name="user_login_forgot_pass_btn_cancel">AJANONA</string>
+    <string name="user_login_forgot_pass_text_title">Reset password</string>
+    <string name="user_login_forgot_pass_btn_ok">OK</string>
+    <string name="user_login_forgot_pass_btn_cancel">CANCEL</string>
 
     <!-- screen: user-register -->
+    <string name="user_register_input_hint_name">Name</string>
+    <string name="user_register_input_hint_firstName">First Name</string>
+    <string name="user_register_input_hint_region">Region</string>
+    <string name="user_register_input_text_region">Select a region</string>
+    <string name="user_register_input_hint_address">Address</string>
+    <string name="user_register_input_hint_re_password">Confirm password</string>
+    <string name="user_register_input_error_avatar">Take your profile avatar</string>
+    <string name="user_register_input_error_name">Enter your name</string>
+    <string name="user_register_input_error_firstName">Enter your first name</string>
+    <string name="user_register_input_error_region">Select one region</string>
+    <string name="user_register_input_error_address">Enter your address</string>
+    <string name="user_register_input_error_diff_password">Confirm your password</string>
+    <string name="user_register_btn_submit">Sign Up</string>
+
     <string name="user_register_spinner_title">Asa atao</string>
     <string name="user_register_input_error_re_password">avereno ampidirina ny teny miafina</string>
     <string name="user_register_input_error_confirm_password">hamarino ny teny miafina</string>

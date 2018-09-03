@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -180,10 +182,10 @@ public class UserRegisterActivity extends BaseActivity {
                     previewCapturedImage();
                 } else if (resultCode == RESULT_CANCELED) {
                     // user cancelled Image capture
-                    ShowShortToast(getApplicationContext(), "User cancelled image capture");
+                    showShortToast(getApplicationContext(), "User cancelled image capture");
                 } else {
                     // failed to capture image
-                    ShowShortToast(getApplicationContext(), "Sorry! Failed to capture image");
+                    showShortToast(getApplicationContext(), "Sorry! Failed to capture image");
 
                     // failed to capture image
                     new AlertDialog.Builder(UserRegisterActivity.this)
@@ -207,10 +209,10 @@ public class UserRegisterActivity extends BaseActivity {
                     _avatarImage.setImageBitmap(_bitmapImage);
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // user cancelled Image capture
-                    ShowShortToast(getApplicationContext(), "User cancelled image capture");
+                    showShortToast(getApplicationContext(), "User cancelled image capture");
                 } else {
                     // failed to capture image
-                    ShowShortToast(getApplicationContext(), "Sorry! Failed to capture image");
+                    showShortToast(getApplicationContext(), "Sorry! Failed to capture image");
 
                     // failed to capture image
                     new AlertDialog.Builder(UserRegisterActivity.this)
@@ -474,7 +476,7 @@ public class UserRegisterActivity extends BaseActivity {
                 userOccupation = parent.getItemAtPosition(position).toString();
 
                 // showing clicked spinner item name and position
-                ShowLongToast(parent.getContext(), "Faritra voasafidy : " + userOccupation + "\n(position n° " + position + ")");
+                showLongToast(parent.getContext(), "Faritra voasafidy : " + userOccupation + "\n(position n° " + position + ")");
             }
         });
     }
@@ -536,15 +538,25 @@ public class UserRegisterActivity extends BaseActivity {
     private boolean validate() {
         boolean valid = true;
 
+        // get avatar's default bitmap
+        Bitmap bitmap = ((BitmapDrawable)_avatarImage.getDrawable()).getBitmap();
+        Drawable myDrawable = getResources().getDrawable(R.drawable.ic_splash);
+        Bitmap defaultAvatar = ((BitmapDrawable) myDrawable).getBitmap();
+
+        // verify avatar
+        if(bitmap.sameAs(defaultAvatar)) {
+            showAlertDialog(getResources().getString(R.string.user_register_btn_submit), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_input_error_avatar));
+            valid = false;
+        }
         // name
-        if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
-            _nameText.setError("Mampidira anarana");
+        else if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
+            _nameText.setError(getResources().getString(R.string.user_register_input_error_name));
             _nameText.requestFocus();
             valid = false;
         }
         // firstName
         else if (firstName.isEmpty() || TextUtils.isEmpty(firstName) || !(firstName.matches(nameRegex))) {
-            _firstNameText.setError("Mampidira fanamin'anarana");
+            _firstNameText.setError(getResources().getString(R.string.user_register_input_error_firstName));
             _firstNameText.requestFocus();
             valid = false;
         }
@@ -555,14 +567,14 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // occupation
-        else if (userOccupation.isEmpty() || TextUtils.isEmpty(userOccupation) || userOccupation.contains("Safidio")) {
-            _occupationSpinner.setError("Misafidiana faritra iray");
+        else if (userOccupation.isEmpty() || TextUtils.isEmpty(userOccupation) || userOccupation.contains("Select")) {
+            _occupationSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
             _occupationSpinner.requestFocus();
             valid = false;
         }
         // address
         else if (address.isEmpty() || TextUtils.isEmpty(address) || !(address.matches(nameRegex))) {
-            _addressText.setError("Mampidira adiresy");
+            _addressText.setError(getResources().getString(R.string.user_register_input_error_address));
             _addressText.requestFocus();
             valid = false;
         }
@@ -574,13 +586,13 @@ public class UserRegisterActivity extends BaseActivity {
         }
         // confirm password
         else if (rePassword.isEmpty() || TextUtils.isEmpty(rePassword)) {
-            _rePasswordText.setError("Avereno ampidirina ny teny miafina");
+            _rePasswordText.setError(getResources().getString(R.string.user_login_input_error_password));
             _rePasswordText.requestFocus();
             valid = false;
         }
         // password different values
         else if (!password.equals(rePassword)) {
-            _rePasswordText.setError("Hamarino ny teny miafina");
+            _rePasswordText.setError(getResources().getString(R.string.user_register_input_error_diff_password));
             _rePasswordText.requestFocus();
             valid = false;
         } else {
@@ -605,7 +617,7 @@ public class UserRegisterActivity extends BaseActivity {
      * Failed register
      */
     private void onRegisterFailed() {
-        ShowLongToast(getBaseContext(), "Register failed");
+        showLongToast(getBaseContext(), "Register failed");
         _btnSignUp.setEnabled(true);
     }
 
@@ -639,10 +651,16 @@ public class UserRegisterActivity extends BaseActivity {
      * Reset inputs text
      */
     private void resetAllInputText() {
+        // avatar
+        Drawable myDrawable = getResources().getDrawable(R.drawable.ic_splash);
+        Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
+        _avatarImage.setImageBitmap(bitmap);
+
+        // input
         _nameText.setText("");
         _firstNameText.setText("");
         _phoneText.setText("");
-        _occupationSpinner.setText("Safidio ny faritra");
+        _occupationSpinner.setText(getResources().getString(R.string.user_register_input_text_region));
         _addressText.setText("");
         _passwordText.setText("");
         _rePasswordText.setText("");

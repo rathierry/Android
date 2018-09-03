@@ -7,9 +7,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.os.Debug;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
@@ -120,11 +120,11 @@ public class BaseActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             SubscriptionManager sManager = (SubscriptionManager) _context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
             List<SubscriptionInfo> subsInfoList = sManager.getActiveSubscriptionInfoList();
-            ShowLongToast(_context, "Current list = " + subsInfoList);
+            showLongToast(_context, "Current list = " + subsInfoList);
             for (SubscriptionInfo subscriptionInfo : subsInfoList) {
                 if (subscriptionInfo != null) {
                     String number = subscriptionInfo.getNumber();
-                    ShowLongToast(_context, "SIM number = " + number);
+                    showLongToast(_context, "SIM number = " + number);
                 }
             }
         } else {
@@ -137,13 +137,13 @@ public class BaseActivity extends AppCompatActivity {
             String IMEI = telephonyManager.getDeviceId();
 
             if (simID != null) {
-                ShowLongToast(this, "SIM card ID: " + simID);
+                showLongToast(this, "SIM card ID: " + simID);
             }
             if (telNumber != null) {
-                ShowLongToast(this, "Phone number: " + telNumber);
+                showLongToast(this, "Phone number: " + telNumber);
             }
             if (IMEI != null) {
-                ShowLongToast(this, "IMEI number: " + IMEI);
+                showLongToast(this, "IMEI number: " + IMEI);
             }
         }
     }
@@ -151,7 +151,7 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * Show long toast
      */
-    protected void ShowLongToast(Context context, String message) {
+    protected void showLongToast(Context context, String message) {
         if (BuildConfig.DEBUG) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
@@ -160,7 +160,7 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * Show short toast
      */
-    protected void ShowShortToast(Context context, String message) {
+    protected void showShortToast(Context context, String message) {
         if (BuildConfig.DEBUG) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
@@ -202,6 +202,23 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     /**
+     * Show alert dialog
+     */
+    protected void showAlertDialog(String title, int icon, String message) {
+        // hide previous alert dialog
+        this.hideAlertDialog();
+        // create
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+        builder.setCancelable(false);
+        builder.setIcon(icon);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton(android.R.string.ok, null);
+        // show
+        _alertDialog = builder.show();
+    }
+
+    /**
      * Hide alert dialog
      */
     protected void hideAlertDialog() {
@@ -223,19 +240,7 @@ public class BaseActivity extends AppCompatActivity {
      * Alerted user when his device does not support camera
      */
     protected void showNotSupportedCameraErrorDialog() {
-
-        this.hideAlertDialog();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setCancelable(false);
-        builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setTitle("Erreur appareil photo");
-        builder.setMessage("Désolé! Votre appareil ne supporte pas l\\'appareil photo.");
-        builder.setPositiveButton(android.R.string.ok, null);
-
-        _alertDialog = builder.show();
-
+        showAlertDialog(getResources().getString(R.string.app_camera_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_camera_error));
     }
 
     // ===========================================================

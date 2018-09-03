@@ -96,7 +96,7 @@
         android:layout_below="@+id/user_login_text_input_layout_password"
         android:layout_marginTop="@dimen/activity_user_login_textView_forgot_password_layout_marginTop"
         android:fontFamily="serif-monospace"
-        android:text="@string/user_login_input_hint_forgot_password"
+        android:text="@string/user_login_text_forgot_password"
         android:textAlignment="textEnd"
         android:textColor="@color/color_black"
         android:textSize="@dimen/activity_user_login_textView_forgot_password_size"

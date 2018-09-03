@@ -326,7 +326,7 @@ public class UserLoginActivity extends BaseActivity {
      * Failed register
      */
     private void onLoginFailed() {
-        ShowLongToast(getBaseContext(), "Login failed");
+        showLongToast(getBaseContext(), "Login failed");
         _btnLogIn.setEnabled(true);
     }
 
