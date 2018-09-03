@@ -17,12 +17,24 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.model.send.UserCheckCredential;
+import com.team.lezomadetana.utils.InfoConfig;
+
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by team on 28/08/2018.
@@ -100,7 +112,7 @@ public class UserLoginActivity extends BaseActivity {
     @OnClick(R.id.user_login_btn_validate)
     void submit() {
 
-        startActivity(new Intent(UserLoginActivity.this, MainActivity.class));
+
 
         // validate form
         if (!validate()) {
@@ -315,11 +327,54 @@ public class UserLoginActivity extends BaseActivity {
      * Success register
      */
     private void onLoginSuccess() {
+        String phone = _phoneText.getText().toString();
+        String password = _passwordText.getText().toString();
+
         _layout.requestFocus();
         resetAllInputText();
         clearAllInputError();
         _btnLogIn.setEnabled(true);
-        hideLoadingView();
+
+
+        UserCheckCredential user = new UserCheckCredential(phone,password);
+        APIInterface api = APIClient.getClient().create(APIInterface.class);
+        String auth = InfoConfig.BasicAuth();
+
+        Call<UserCredentialResponse> call =  api.checkCredential(auth,user);
+
+
+        call.enqueue(new Callback<UserCredentialResponse>() {
+            @Override
+            public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response)
+            {
+                if(response.raw().code()!= 200)
+                {
+                    Toast.makeText(UserLoginActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    if(response.body().getSuccess())
+                    {
+
+                        startActivity(new Intent(UserLoginActivity.this,MainActivity.class));
+                    }
+                    else
+                    {
+                        Toast.makeText(UserLoginActivity.this,"Error on phone number or password",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                hideLoadingView();
+
+
+
+            }
+
+            @Override
+            public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                Toast.makeText(UserLoginActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
+                hideLoadingView();
+            }
+        });
     }
 
     /**

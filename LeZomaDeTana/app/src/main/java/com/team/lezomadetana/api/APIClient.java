@@ -1,6 +1,7 @@
 package com.team.lezomadetana.api;
 
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.utils.InfoConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -56,13 +57,15 @@ public class APIClient {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BaseActivity.URL_API_SERVER)
+                .baseUrl(InfoConfig.ROOT_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
 
         return retrofit;
     }
+
+
 
     // ===========================================================
     // Private Methods

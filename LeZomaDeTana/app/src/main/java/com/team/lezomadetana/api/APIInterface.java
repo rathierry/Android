@@ -1,5 +1,16 @@
 package com.team.lezomadetana.api;
 
+import android.net.wifi.hotspot2.pps.Credential;
+
+import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.model.send.UserCheckCredential;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
+
 /**
  * Created by team on 29/08/2018.
  **/
@@ -64,4 +75,16 @@ public interface APIInterface {
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================
+
+
+
+        @POST("checkCredentials/")
+        Call<UserCredentialResponse> checkCredential(@Header("Authorization")String auth, @Body UserCheckCredential user);
+
+
+        @POST("checkCredentials/")
+        Call<ResponseBody> checkCredentialJSON(@Header("Authorization") String auth, @Body UserCheckCredential user);
+
+
+
 }
