@@ -113,9 +113,15 @@ public class UserLoginActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        _layout.requestFocus();
-        _phoneText.setError(null);
-        _passwordText.setError(null);
+
+        try {
+            _layout.requestFocus();
+            _phoneText.setError(null);
+            _passwordText.setError(null);
+        }
+        catch (Exception e){
+            //Tsy maintsy zao ra thierry fa tsy mety ilay user ana shared pref
+        }
     }
 
     /**
