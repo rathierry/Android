@@ -1,5 +1,6 @@
 package com.team.lezomadetana.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -10,9 +11,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,15 +26,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.aakira.expandablelayout.ExpandableLayoutListener;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.utils.ImageCaptureUtil;
+import com.team.lezomadetana.utils.CameraUtils;
 import com.team.lezomadetana.view.UrlImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +101,6 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     private String rePassword;
 
     private Bitmap _bitmapImage;
-    private Uri _fileUri;
 
     private CompoundButton.OnClickListener listener;
 
@@ -126,6 +133,10 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         passwordOnFocusChange();
         // set image avatar to rounded
         _avatarImage.useRoundedBitmap = true;
+
+        // restoring storage image path from saved instance state
+        // otherwise the path will be null on device rotation
+        restoreFromBundle(savedInstanceState);
     }
 
     /**
@@ -160,7 +171,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         super.onSaveInstanceState(outState);
 
         // save file url in bundle as it will be null on screen orientation changes
-        outState.putParcelable("file_uri", _fileUri);
+        outState.putString(KEY_IMAGE_STORAGE_PATH, imageStoragePath);
     }
 
     // restore activity state
@@ -169,7 +180,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         super.onRestoreInstanceState(savedInstanceState);
 
         // get the file url
-        _fileUri = savedInstanceState.getParcelable("file_uri");
+        imageStoragePath = savedInstanceState.getString(KEY_IMAGE_STORAGE_PATH);
     }
 
     // receiving activity result method will be called after closing the camera
@@ -178,19 +189,22 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case CAMERA_IMAGE_REQUEST_CODE:
+            case CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
                 // Make sure the request was successful (captured the image)
-                if (resultCode == Activity.RESULT_OK) {
-                    // Recycle unused bitmaps
-                    if (_bitmapImage != null) {
-                        _bitmapImage.recycle();
-                    }
+                if (resultCode == RESULT_OK) {
+                    // refreshing the gallery
+                    CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
+
+                    // successfully captured the image
                     // display it in image view
-                    _bitmapImage = ImageCaptureUtil.getCapturedImage(_fileUri);
-                    _avatarImage.setImageBitmap(_bitmapImage);
-                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    previewCapturedImage();
+                } else if (resultCode == RESULT_CANCELED) {
                     // user cancelled Image capture
+                    ShowShortToast(getApplicationContext(), "User cancelled image capture");
                 } else {
+                    // failed to capture image
+                    ShowShortToast(getApplicationContext(), "Sorry! Failed to capture image");
+
                     // failed to capture image
                     new AlertDialog.Builder(UserRegisterActivity.this)
                             .setTitle("Sary")
@@ -202,17 +216,30 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
                 }
                 break;
 
-            case GALLERY_IMAGE_REQUEST_CODE:
+            case CAMERA_GALLERY_IMAGE_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     // Recycle unused bitmaps
                     if (_bitmapImage != null) {
                         _bitmapImage.recycle();
                     }
-                    _bitmapImage = ImageCaptureUtil.getImageFromGallery(this, data);
+                    _bitmapImage = CameraUtils.getImageFromGallery(this, data);
                     // preview image
                     _avatarImage.setImageBitmap(_bitmapImage);
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // user cancelled Image capture
+                    ShowShortToast(getApplicationContext(), "User cancelled image capture");
+                } else {
+                    // failed to capture image
+                    ShowShortToast(getApplicationContext(), "Sorry! Failed to capture image");
+
+                    // failed to capture image
+                    new AlertDialog.Builder(UserRegisterActivity.this)
+                            .setTitle("Sary")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Miala tsiny fa tsy azo ny sary.")
+                            .setPositiveButton(android.R.string.yes, null)
+                            .setCancelable(false)
+                            .show();
                 }
                 break;
 
@@ -226,7 +253,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         try {
             int id = v.getId();
             String name = ((RadioButton) v).getText().toString();
-            Toast.makeText(UserRegisterActivity.this, "Province clicked: " + name + " (id = " + id + ")", Toast.LENGTH_LONG).show();
+            ShowLongToast(UserRegisterActivity.this, "Province clicked: " + name + " (id = " + id + ")");
 
             // create region/ville
             createRegionRadioButton(id, name);
@@ -240,7 +267,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
      */
     @OnClick(R.id.user_register_imageView_logo)
     void getUserAvatar() {
-        new AlertDialog.Builder(UserRegisterActivity.this)
+        new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
                 .setTitle("Sary")
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setMessage("Safidio ny fomba fakana sary")
@@ -312,14 +339,15 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
      * Camera type : camera
      */
     private void imageTypeCamera() {
-        // checking camera availability
-        if (!isDeviceSupportCamera()) {
+        // checking availability of the camera
+        if (!CameraUtils.isDeviceSupportCamera(getApplicationContext())) {
             showNotSupportedCameraErrorDialog();
         } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _fileUri = ImageCaptureUtil.getOutputMediaFileUri();
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, _fileUri);
-            startActivityForResult(intent, CAMERA_IMAGE_REQUEST_CODE);
+            if (CameraUtils.checkPermissions(getApplicationContext())) {
+                captureImage();
+            } else {
+                requestCameraPermission(MEDIA_TYPE_IMAGE);
+            }
         }
     }
 
@@ -331,7 +359,102 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, GALLERY_IMAGE_REQUEST_CODE);
+        startActivityForResult(intent, CAMERA_GALLERY_IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * Capturing Camera Image will launch camera app requested image capture
+     */
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File file = CameraUtils.getOutputMediaFile(MEDIA_TYPE_IMAGE);
+        if (file != null) {
+            imageStoragePath = file.getAbsolutePath();
+        }
+
+        Uri fileUri = CameraUtils.getOutputMediaFileUri(getApplicationContext(), file);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+        // start the image capture Intent
+        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * Requesting permissions using Dexter library
+     */
+    private void requestCameraPermission(final int type) {
+        Dexter.withActivity(this)
+                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            if (type == MEDIA_TYPE_IMAGE) {
+                                // capture picture
+                                captureImage();
+                            } else {
+                                Log.d("CAMERA", "< requestCameraPermission >");
+                            }
+                        } else if (report.isAnyPermissionPermanentlyDenied()) {
+                            showPermissionsAlert();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    /**
+     * Display image from gallery
+     */
+    private void previewCapturedImage() {
+        try {
+            Bitmap bitmap = CameraUtils.optimizeBitmap(BITMAP_SAMPLE_SIZE, imageStoragePath);
+            _avatarImage.setImageBitmap(bitmap);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Restoring store image path from saved instance state
+     */
+    private void restoreFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(KEY_IMAGE_STORAGE_PATH)) {
+                imageStoragePath = savedInstanceState.getString(KEY_IMAGE_STORAGE_PATH);
+                if (!TextUtils.isEmpty(imageStoragePath)) {
+                    if (imageStoragePath.substring(imageStoragePath.lastIndexOf(".")).equals("." + IMAGE_EXTENSION)) {
+                        previewCapturedImage();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Alert dialog to navigate to app settings
+     * to enable necessary permissions
+     */
+    private void showPermissionsAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permissions required")
+                .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
+                .setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        CameraUtils.openSettings(UserRegisterActivity.this);
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
     }
 
     /**
@@ -390,7 +513,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
                 userOccupation = parent.getItemAtPosition(position).toString();
 
                 // showing clicked spinner item name and position
-                //Toast.makeText(parent.getContext(), "Asa atao dia : " + userOccupation + "\n(position n° " + position + ")", Toast.LENGTH_LONG).show();
+                ShowLongToast(parent.getContext(), "Asa atao dia : " + userOccupation + "\n(position n° " + position + ")");
             }
         });
     }
@@ -639,7 +762,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
      * Failed register
      */
     private void onRegisterFailed() {
-        Toast.makeText(getBaseContext(), "Register failed", Toast.LENGTH_LONG).show();
+        ShowLongToast(getBaseContext(), "Register failed");
         _btnSignUp.setEnabled(true);
     }
 

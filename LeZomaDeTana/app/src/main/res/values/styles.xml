@@ -16,12 +16,10 @@
 
     </style>
 
-
+    <!-- screen: MainActivity -->
     <style name="AppTheme.NoBar">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
-
-
     </style>
 
 

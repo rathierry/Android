@@ -17,7 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.team.lezomadetana.R;
 
@@ -327,7 +326,7 @@ public class UserLoginActivity extends BaseActivity {
      * Failed register
      */
     private void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        ShowLongToast(getBaseContext(), "Login failed");
         _btnLogIn.setEnabled(true);
     }
 
