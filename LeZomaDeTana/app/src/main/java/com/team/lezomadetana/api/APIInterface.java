@@ -4,6 +4,7 @@ import android.net.wifi.hotspot2.pps.Credential;
 
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
+import com.team.lezomadetana.model.send.UserRegisterSend;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -84,6 +85,12 @@ public interface APIInterface {
 
         @POST("checkCredentials/")
         Call<ResponseBody> checkCredentialJSON(@Header("Authorization") String auth, @Body UserCheckCredential user);
+
+
+
+
+        @POST("rest/users/")
+        Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
 
 

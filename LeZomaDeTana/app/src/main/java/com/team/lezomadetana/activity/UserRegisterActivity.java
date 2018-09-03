@@ -22,14 +22,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.model.send.UserCheckCredential;
+import com.team.lezomadetana.model.send.UserRegisterSend;
 import com.team.lezomadetana.utils.CameraUtils;
+import com.team.lezomadetana.utils.InfoConfig;
 import com.team.lezomadetana.view.UrlImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -40,6 +49,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by team on 28/08/2018.
@@ -259,13 +272,7 @@ public class UserRegisterActivity extends BaseActivity {
     @OnClick(R.id.user_register_btn_validate)
     void submit() {
         // input values
-        name = _nameText.getText().toString();
-        firstName = _firstNameText.getText().toString();
-        phone = _phoneText.getText().toString();
-        userOccupation = _occupationSpinner.getText().toString();
-        address = _addressText.getText().toString();
-        password = _passwordText.getText().toString();
-        rePassword = _rePasswordText.getText().toString();
+
 
         // validate form
         if (!validate()) {
@@ -538,8 +545,16 @@ public class UserRegisterActivity extends BaseActivity {
     private boolean validate() {
         boolean valid = true;
 
+        name = _nameText.getText().toString();
+        firstName = _firstNameText.getText().toString();
+        phone = _phoneText.getText().toString();
+        userOccupation = _occupationSpinner.getText().toString();
+        address = _addressText.getText().toString();
+        password = _passwordText.getText().toString();
+        rePassword = _rePasswordText.getText().toString();
+
         // get avatar's default bitmap
-        Bitmap bitmap = ((BitmapDrawable)_avatarImage.getDrawable()).getBitmap();
+        /*Bitmap bitmap = ((BitmapDrawable)_avatarImage.getDrawable()).getBitmap();
         Drawable myDrawable = getResources().getDrawable(R.drawable.ic_splash);
         Bitmap defaultAvatar = ((BitmapDrawable) myDrawable).getBitmap();
 
@@ -549,17 +564,17 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // name
-        else if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
+        else*/ if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
             _nameText.setError(getResources().getString(R.string.user_register_input_error_name));
             _nameText.requestFocus();
             valid = false;
         }
         // firstName
-        else if (firstName.isEmpty() || TextUtils.isEmpty(firstName) || !(firstName.matches(nameRegex))) {
+        /*else if (firstName.isEmpty() || TextUtils.isEmpty(firstName) || !(firstName.matches(nameRegex))) {
             _firstNameText.setError(getResources().getString(R.string.user_register_input_error_firstName));
             _firstNameText.requestFocus();
             valid = false;
-        }
+        }*/
         // phone number
         else if (phone.isEmpty() || TextUtils.isEmpty(phone) || !(phone.matches(numberRegex)) || phone.length() != 10) {
             _phoneText.setError(getResources().getString(R.string.user_login_input_error_phone));
@@ -573,11 +588,11 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // address
-        else if (address.isEmpty() || TextUtils.isEmpty(address) || !(address.matches(nameRegex))) {
+        /*else if (address.isEmpty() || TextUtils.isEmpty(address) || !(address.matches(nameRegex))) {
             _addressText.setError(getResources().getString(R.string.user_register_input_error_address));
             _addressText.requestFocus();
             valid = false;
-        }
+        }*/
         // password
         else if (password.isEmpty() || TextUtils.isEmpty(password)) {
             _passwordText.setError(getResources().getString(R.string.user_login_input_error_password));
@@ -606,11 +621,84 @@ public class UserRegisterActivity extends BaseActivity {
      * Success register
      */
     private void onRegisterSuccess() {
+
+
+
         _layout.requestFocus();
         resetAllInputText();
         clearAllInputError();
         _btnSignUp.setEnabled(true);
-        hideLoadingView();
+
+        UserRegisterSend user = new UserRegisterSend(phone,name,password,userOccupation);
+        APIInterface api = APIClient.getClient().create(APIInterface.class);
+        String auth = InfoConfig.BasicAuth();
+        Call<ResponseBody> call =  api.userRegisterJSON(auth,user);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                if(response.code()== 201)
+                {
+                        UserCheckCredential user = new UserCheckCredential(phone,password);
+                        APIInterface api = APIClient.getClient().create(APIInterface.class);
+                        String auth = InfoConfig.BasicAuth();
+
+                        Call<UserCredentialResponse> call2 =  api.checkCredential(auth,user);
+
+
+                        call2.enqueue(new Callback<UserCredentialResponse>() {
+                            @Override
+                            public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response)
+                            {
+                                if(response.raw().code()!= 200)
+                                {
+                                    Toast.makeText(UserRegisterActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    if(response.body().getSuccess())
+                                    {
+
+                                        startActivity(new Intent(UserRegisterActivity.this,MainActivity.class));
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(UserRegisterActivity.this,"Error on phone number or password",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                hideLoadingView();
+
+
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                                Toast.makeText(UserRegisterActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
+                                hideLoadingView();
+                            }
+                        });
+
+
+                }
+                else{
+                    Toast.makeText(UserRegisterActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
+
+                }
+
+
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(UserRegisterActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
+                hideLoadingView();
+            }
+        });
+
     }
 
     /**

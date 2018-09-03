@@ -47,28 +47,28 @@
     <string name="user_register_input_error_re_password">avereno ampidirina ny teny miafina</string>
     <string name="user_register_input_error_confirm_password">hamarino ny teny miafina</string>
     <string-array name="array_regions">
-        <item>Diana</item>
-        <item>Sava</item>
-        <item>Itasy</item>
-        <item>Analamanga</item>
-        <item>Vakinankaratra</item>
-        <item>Bongolava</item>
-        <item>Sofia</item>
-        <item>Boeny</item>
-        <item>Betsiboka</item>
-        <item>Melaky</item>
-        <item>Alaotra-Mangoro</item>
-        <item>Atsinanana</item>
-        <item>Analanjirofo</item>
-        <item>Amoron\'i Mania</item>
-        <item>Haute Matsiatra</item>
-        <item>Vatovavy-Fitovinany</item>
-        <item>Atsimo-Atsinanana</item>
-        <item>Ihorombe</item>
-        <item>Menabe</item>
-        <item>Atsimo-Andrefana</item>
-        <item>Androy</item>
-        <item>Anôsy</item>
+        <item>DIANA</item>
+        <item>SAVA</item>
+        <item>ITASY</item>
+        <item>ANALAMANGA</item>
+        <item>VAKINANKARATRA</item>
+        <item>BONGOLAVA</item>
+        <item>SOFIA</item>
+        <item>BOENY</item>
+        <item>BETSIBOKA</item>
+        <item>MELAKY</item>
+        <item>ALAOTRA-MANGORO</item>
+        <item>ATSINANANA</item>
+        <item>ANALANJIROFO</item>
+        <item>AMORON\'I MANIA</item>
+        <item>HAUTE MATSIATRA</item>
+        <item>VATOVAVY-FITOVINANY</item>
+        <item>ATSIMO-ATSINANANA</item>
+        <item>IHOROMBE</item>
+        <item>MENABE</item>
+        <item>ATSIMO-ANDREFANA</item>
+        <item>ANDROY</item>
+        <item>ANOSY</item>
     </string-array>
 
 
