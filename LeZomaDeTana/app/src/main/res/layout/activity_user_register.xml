@@ -90,103 +90,22 @@
                     android:typeface="monospace" />
             </android.support.design.widget.TextInputLayout>
 
-            <!-- Occupation Text Label -->
+            <!-- Region Text Label -->
             <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                android:id="@+id/user_register_material_design_spinner"
+                android:id="@+id/user_register_material_design_spinner_region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:hint="Asa atao"
-                android:text="Safidio ny asa"
+                android:hint="Faritra"
+                android:text="Safidio ny faritra"
                 android:textColor="@color/color_black"
                 android:textColorHint="@color/color_black"
+                android:textColorHighlight="@color/color_black"
                 android:textSize="20sp"
                 android:typeface="monospace"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:met_floatingLabel="highlight" />
-
-            <!-- Region/Ville Label -->
-            <TextView
-                android:id="@+id/user_register_text_expandable_province"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp"
-                android:drawableRight="@android:drawable/arrow_up_float"
-                android:fontFamily="monospace"
-                android:text="Région, Ville"
-                android:textColor="@color/color_black"
-                android:textSize="18sp" />
-
-            <com.github.aakira.expandablelayout.ExpandableRelativeLayout
-                android:id="@+id/user_register_expandable_layout_province"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/color_white"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                app:ael_duration="400"
-                app:ael_expanded="false"
-                app:ael_interpolator="accelerate"
-                app:ael_orientation="vertical">
-
-                <RadioGroup
-                    android:id="@+id/user_register_radio_group_province"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <!--<RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Antsiranana"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />
-
-                    <RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Mahajanga"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />
-
-                    <RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Toamasina"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />
-
-                    <RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Antananarivo"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />
-
-                    <RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Fianarantsoa"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />
-
-                    <RadioButton
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:text="Toliara"
-                        android:textAllCaps="true"
-                        android:textColor="@color/color_black" />-->
-                </RadioGroup>
-
-            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
             <!-- Address Label -->
             <android.support.design.widget.TextInputLayout
