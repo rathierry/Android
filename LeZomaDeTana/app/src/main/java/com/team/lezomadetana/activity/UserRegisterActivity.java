@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
@@ -249,8 +250,8 @@ public class UserRegisterActivity extends BaseActivity {
     @OnClick(R.id.user_register_imageView_logo)
     void getUserAvatar() {
         new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
-                .setTitle("Sary")
-                .setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("Camera")
+                .setIcon(ContextCompat.getDrawable(UserRegisterActivity.this, R.drawable.ic_photo_camera_black))
                 .setMessage("Safidio ny fomba fakana sary")
                 .setCancelable(true)
                 .setPositiveButton("Tahirin-tsary", new DialogInterface.OnClickListener() {

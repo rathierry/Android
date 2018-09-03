@@ -58,6 +58,18 @@ public class BaseActivity extends AppCompatActivity {
     public static final String IMAGE_EXTENSION = "jpg";
     public static String imageStoragePath;
 
+    // index to identify current nav menu item
+    public static int navItemIndex = 0;
+
+    // different navigation tag
+    public static final String TAG_BUSINESS = "business";
+    public static final String TAG_OFFER = "offer";
+    public static final String TAG_CHAT = "chat";
+    public static final String TAG_SETTING = "setting";
+
+    // default/current navigation tag
+    public static String CURRENT_TAG = TAG_BUSINESS;
+
     // url
     public static String URL_API_SERVER = "http://......................";
 
@@ -241,6 +253,14 @@ public class BaseActivity extends AppCompatActivity {
      */
     protected void showNotSupportedCameraErrorDialog() {
         showAlertDialog(getResources().getString(R.string.app_camera_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_camera_error));
+    }
+
+    /**
+     * Get image in drawable
+     */
+    protected int getImage(String imageName) {
+        int drawableResourceId = this.getResources().getIdentifier(imageName, "drawable", this.getPackageName());
+        return drawableResourceId;
     }
 
     // ===========================================================

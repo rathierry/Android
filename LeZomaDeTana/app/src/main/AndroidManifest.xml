@@ -52,7 +52,13 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoBar" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!-- screen: about us -->
+        <activity
+            android:name=".activity.AboutUsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="About Us"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

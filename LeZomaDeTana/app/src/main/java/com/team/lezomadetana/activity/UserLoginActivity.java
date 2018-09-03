@@ -193,7 +193,7 @@ public class UserLoginActivity extends BaseActivity {
         // set dialog message
         builder
                 .setTitle(R.string.user_login_forgot_pass_text_title)
-                .setIcon(R.drawable.info_black)
+                .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);

@@ -42,10 +42,6 @@
     <string name="user_register_input_error_address">Enter your address</string>
     <string name="user_register_input_error_diff_password">Confirm your password</string>
     <string name="user_register_btn_submit">Sign Up</string>
-
-    <string name="user_register_spinner_title">Asa atao</string>
-    <string name="user_register_input_error_re_password">avereno ampidirina ny teny miafina</string>
-    <string name="user_register_input_error_confirm_password">hamarino ny teny miafina</string>
     <string-array name="array_regions">
         <item>DIANA</item>
         <item>SAVA</item>
@@ -71,19 +67,26 @@
         <item>ANOSY</item>
     </string-array>
 
+    <!-- screen: MainActivity -->
+    <string name="activity_main_menu_business">Business</string>
+    <string name="activity_main_menu_offer">Offer/Require</string>
+    <string name="activity_main_menu_chat">Chat</string>
+    <string name="activity_main_menu_setting">Setting</string>
+    <string name="activity_main_menu_info">Open LZT Official Site</string>
+    <string name="activity_main_menu_about">About us</string>
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>@string/activity_main_menu_business</item>
+        <item>@string/activity_main_menu_offer</item>
+        <item>@string/activity_main_menu_chat</item>
+        <item>@string/activity_main_menu_setting</item>
+    </string-array>
+    <!-- Open/Close drawer navigation -->
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
 
-    <!-- main activity menu -->
-    <string name="user_publish_menu_item">Fifanerasera</string>
-    <string name="user_chat_menu_item">Fifampiresahana</string>
-    <string name="user_currency_menu_item">Tolotra sy tinady</string>
-    <string name="user_parameter_title">Fanovana</string>
-    <string name="user_parameter_menu_item">Fikirana</string>
-
-    <!-- provider info -->
-    <string name="provider_contact">lezomadetana@mail.com</string>
-
-
-    <string name="navigation_drawer_open">Voahaina</string>
-    <string name="navigation_drawer_close">Hidina</string>
+    <!-- screen: AboutUsActivity -->
+    <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
+    <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
 
 </resources>

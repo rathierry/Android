@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_business"
+            android:icon="@drawable/ic_business_black"
+            android:title="@string/activity_main_menu_business" />
+        <item
+            android:id="@+id/nav_offer"
+            android:icon="@drawable/ic_local_offer_black"
+            android:title="@string/activity_main_menu_offer" />
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_chat_black"
+            android:title="@string/activity_main_menu_chat" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings_black"
+            android:title="@string/activity_main_menu_setting" />
+    </group>
+
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/nav_about_us"
+                android:icon="@drawable/ic_info_black"
+                android:title="@string/activity_main_menu_about" />
+        </menu>
+    </item>
+
+</menu>

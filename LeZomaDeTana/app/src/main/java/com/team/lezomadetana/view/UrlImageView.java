@@ -26,7 +26,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.team.lezomadetana.activity.BaseActivity;
 
 /**
- * Created by team on 31/08/2018.
+ * Created by RaThierry on 31/08/2018.
  **/
 
 @SuppressLint("AppCompatCustomView")
