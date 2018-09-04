@@ -4,20 +4,46 @@ package com.team.lezomadetana.model.send;
  * Created by Hery Andoniaina on 03/09/2018.
  */
 
-public class UserCheckCredential
-{
+public class UserCheckCredential {
+
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
+
     private String username;
     private String password;
 
+    // ===========================================================
+    // Constructors
+    // ===========================================================
+
+    public UserCheckCredential() {
+    }
 
     public UserCheckCredential(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
-    public UserCheckCredential() {
-    }
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 
     public String getUsername() {
         return username;
@@ -34,4 +60,12 @@ public class UserCheckCredential
     public void setPassword(String password) {
         this.password = password;
     }
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Inner Classes/Interfaces
+    // ===========================================================
 }

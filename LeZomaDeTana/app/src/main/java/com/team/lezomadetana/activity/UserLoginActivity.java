@@ -4,14 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,21 +17,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
-import com.team.lezomadetana.utils.InfoConfig;
-
-import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,7 +44,6 @@ public class UserLoginActivity extends BaseActivity {
     // ===========================================================
     // Fields
     // ===========================================================
-    private SharedPreferences localPrefs;
 
     //@BindString(R.string.login_error) String loginErrorMessage;
     @BindView(R.id.user_login_relativeLayout)
@@ -81,30 +73,12 @@ public class UserLoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_login);
 
-        localPrefs = this.getPreferences(MODE_PRIVATE);
-
-        String userStr = localPrefs.getString("user","unknown");
-
-        if(userStr.equals("unknown")){
-            setContentView(R.layout.activity_user_login);
-
-            // initialize
-            ButterKnife.bind(this);
-            // getSimCardInfo();
-            phoneNumberTextChangedListener();
-
-            //init playerpref
-
-        }
-        else
-        {
-            startActivity(new Intent(UserLoginActivity.this,MainActivity.class));
-        }
-
-
-
-
+        // initialize
+        ButterKnife.bind(this);
+        // getSimCardInfo();
+        phoneNumberTextChangedListener();
     }
 
     /**
@@ -113,15 +87,9 @@ public class UserLoginActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        try {
-            _layout.requestFocus();
-            _phoneText.setError(null);
-            _passwordText.setError(null);
-        }
-        catch (Exception e){
-            //Tsy maintsy zao ra thierry fa tsy mety ilay user ana shared pref
-        }
+        _layout.requestFocus();
+        _phoneText.setError(null);
+        _passwordText.setError(null);
     }
 
     /**
@@ -138,9 +106,6 @@ public class UserLoginActivity extends BaseActivity {
      */
     @OnClick(R.id.user_login_btn_validate)
     void submit() {
-
-
-
         // validate form
         if (!validate()) {
             onLoginFailed();
@@ -154,19 +119,56 @@ public class UserLoginActivity extends BaseActivity {
         showLoadingView(getResources().getString(R.string.app_spinner));
 
         // save form inputs
-        String email = _phoneText.getText().toString();
+        final String phone = _phoneText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        // user credential
+        UserCheckCredential user = new UserCheckCredential(phone, password);
 
-        // hide spinner
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
+        // set retrofit api
+        APIInterface api = APIClient.getClient().create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // send query
+        Call<UserCredentialResponse> call = api.checkCredential(auth, user);
+
+        // request
+        call.enqueue(new Callback<UserCredentialResponse>() {
+            @Override
+            public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
+                if (response.raw().code() != 200) {
+                    showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                } else {
+                    if (response.body().getSuccess()) {
+                        // save user in cache
+                        saveCurrentUser(UserLoginActivity.this, response.body());
+
+                        // push user phone number
+                        Intent intent = new Intent(UserLoginActivity.this, MainActivity.class);
+                        intent.putExtra("PHONE", phone);
+
                         // on complete call either onLoginSuccess or onLoginFailed
                         onLoginSuccess();
+
+                        // start activity
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
+                    } else {
+                        showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Error on phone number and/or password");
                     }
-                }, LOADING_TIME_OUT);
+                }
+                hideLoadingView();
+            }
+
+            @Override
+            public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                hideLoadingView();
+            }
+        });
     }
 
     /**
@@ -354,56 +356,10 @@ public class UserLoginActivity extends BaseActivity {
      * Success register
      */
     private void onLoginSuccess() {
-        String phone = _phoneText.getText().toString();
-        String password = _passwordText.getText().toString();
-
         _layout.requestFocus();
         resetAllInputText();
         clearAllInputError();
         _btnLogIn.setEnabled(true);
-
-
-        UserCheckCredential user = new UserCheckCredential(phone,password);
-        APIInterface api = APIClient.getClient().create(APIInterface.class);
-        String auth = InfoConfig.BasicAuth();
-
-        Call<UserCredentialResponse> call =  api.checkCredential(auth,user);
-
-
-        call.enqueue(new Callback<UserCredentialResponse>() {
-            @Override
-            public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response)
-            {
-                if(response.raw().code()!= 200)
-                {
-                    Toast.makeText(UserLoginActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    if(response.body().getSuccess())
-                    {
-                        SharedPreferences.Editor edit = localPrefs.edit();
-                        edit.putString("user",response.body().toString());
-                        edit.commit();
-                        startActivity(new Intent(UserLoginActivity.this,MainActivity.class));
-                    }
-                    else
-                    {
-                        Toast.makeText(UserLoginActivity.this,"Error on phone number or password",Toast.LENGTH_SHORT).show();
-                    }
-                }
-                hideLoadingView();
-
-
-
-            }
-
-            @Override
-            public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                Toast.makeText(UserLoginActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
-                hideLoadingView();
-            }
-        });
     }
 
     /**

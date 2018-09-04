@@ -26,6 +26,11 @@
                 android:id="@+id/nav_about_us"
                 android:icon="@drawable/ic_info_black"
                 android:title="@string/activity_main_menu_about" />
+
+            <item
+                android:id="@+id/nav_logOut"
+                android:icon="@drawable/ic_exit_to_app_black"
+                android:title="Sign Out" />
         </menu>
     </item>
 

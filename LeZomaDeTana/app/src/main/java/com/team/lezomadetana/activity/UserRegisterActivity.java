@@ -26,8 +26,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -40,7 +38,6 @@ import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 import com.team.lezomadetana.utils.CameraUtils;
-import com.team.lezomadetana.utils.InfoConfig;
 import com.team.lezomadetana.view.UrlImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -570,7 +567,8 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // name
-        else*/ if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
+        else*/
+        if (name.isEmpty() || TextUtils.isEmpty(name) || !(name.matches(nameRegex))) {
             _nameText.setError(getResources().getString(R.string.user_register_input_error_name));
             _nameText.requestFocus();
             valid = false;
@@ -629,81 +627,67 @@ public class UserRegisterActivity extends BaseActivity {
     private void onRegisterSuccess() {
 
 
-
         _layout.requestFocus();
         resetAllInputText();
         clearAllInputError();
         _btnSignUp.setEnabled(true);
 
-        UserRegisterSend user = new UserRegisterSend(phone,name,password,userOccupation);
+        UserRegisterSend user = new UserRegisterSend(phone, name, password, userOccupation);
         APIInterface api = APIClient.getClient().create(APIInterface.class);
-        String auth = InfoConfig.BasicAuth();
-        Call<ResponseBody> call =  api.userRegisterJSON(auth,user);
+        String auth = BasicAuth();
+        Call<ResponseBody> call = api.userRegisterJSON(auth, user);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-            {
-                if(response.code()== 201)
-                {
-                        UserCheckCredential user = new UserCheckCredential(phone,password);
-                        APIInterface api = APIClient.getClient().create(APIInterface.class);
-                        String auth = InfoConfig.BasicAuth();
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 201) {
+                    UserCheckCredential user = new UserCheckCredential(phone, password);
+                    APIInterface api = APIClient.getClient().create(APIInterface.class);
+                    String auth = BasicAuth();
 
-                        Call<UserCredentialResponse> call2 =  api.checkCredential(auth,user);
+                    Call<UserCredentialResponse> call2 = api.checkCredential(auth, user);
 
 
-                        call2.enqueue(new Callback<UserCredentialResponse>() {
-                            @Override
-                            public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response)
-                            {
-                                if(response.raw().code()!= 200)
-                                {
-                                    Toast.makeText(UserRegisterActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
+                    call2.enqueue(new Callback<UserCredentialResponse>() {
+                        @Override
+                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
+                            if (response.raw().code() != 200) {
+                                Toast.makeText(UserRegisterActivity.this, "You need license for this app, contact your provider", Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (response.body().getSuccess()) {
+                                    SharedPreferences.Editor edit = localPrefs.edit();
+                                    edit.putString("user", response.body().toString());
+                                    edit.commit();
+
+                                    startActivity(new Intent(UserRegisterActivity.this, MainActivity.class));
+                                } else {
+                                    Toast.makeText(UserRegisterActivity.this, "Error on phone number or password", Toast.LENGTH_SHORT).show();
                                 }
-                                else
-                                {
-                                    if(response.body().getSuccess())
-                                    {
-                                        SharedPreferences.Editor edit = localPrefs.edit();
-                                        edit.putString("user",response.body().toString());
-                                        edit.commit();
-
-                                        startActivity(new Intent(UserRegisterActivity.this,MainActivity.class));
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(UserRegisterActivity.this,"Error on phone number or password",Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                hideLoadingView();
-
-
-
                             }
+                            hideLoadingView();
 
-                            @Override
-                            public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                                Toast.makeText(UserRegisterActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
-                                hideLoadingView();
-                            }
-                        });
 
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                            Toast.makeText(UserRegisterActivity.this, "Check your internet connexion", Toast.LENGTH_SHORT).show();
+                            hideLoadingView();
+                        }
+                    });
+
+
+                } else {
+                    Toast.makeText(UserRegisterActivity.this, "You need license for this app, contact your provider", Toast.LENGTH_SHORT).show();
 
                 }
-                else{
-                    Toast.makeText(UserRegisterActivity.this,"You need license for this app, contact your provider",Toast.LENGTH_SHORT).show();
-
-                }
-
-
 
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(UserRegisterActivity.this,"Check your internet connexion",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserRegisterActivity.this, "Check your internet connexion", Toast.LENGTH_SHORT).show();
                 hideLoadingView();
             }
         });

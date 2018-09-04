@@ -4,20 +4,27 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.model.receive.UserCredentialResponse;
 
 import java.util.List;
 
@@ -30,6 +37,10 @@ public class BaseActivity extends AppCompatActivity {
     // ===========================================================
     // Constants
     // ===========================================================
+
+    // pref for user
+    public static final String PREFS_NAME = "PREFS";
+    public static final String PREFS_KEY_USER = "KEY_USER";
 
     // regex
     public String nameRegex = "^[a-zA-Z-\\s\\w]+$";
@@ -71,7 +82,9 @@ public class BaseActivity extends AppCompatActivity {
     public static String CURRENT_TAG = TAG_BUSINESS;
 
     // url
-    public static String URL_API_SERVER = "http://......................";
+    public static String ROOT_URL = "http://mdz-user-api-test.herokuapp.com/";
+    public static String APP_USER_NAME = "app";
+    public static String APP_PASSWORD = "app-password";
 
     // ===========================================================
     // Fields
@@ -123,6 +136,13 @@ public class BaseActivity extends AppCompatActivity {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * Create basic authentication
+     */
+    protected static String BasicAuth() {
+        return "Basic " + Base64.encodeToString((APP_USER_NAME + ":" + APP_PASSWORD).getBytes(), Base64.NO_WRAP);
+    }
 
     /**
      * Getting the Phone Number, IMEI, and SIM Card ID
@@ -261,6 +281,80 @@ public class BaseActivity extends AppCompatActivity {
     protected int getImage(String imageName) {
         int drawableResourceId = this.getResources().getIdentifier(imageName, "drawable", this.getPackageName());
         return drawableResourceId;
+    }
+
+    /**
+     * Save current user
+     */
+    public void saveCurrentUser(Context context, UserCredentialResponse user) {
+        // pref
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        // settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        editor = settings.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        editor.putString(PREFS_KEY_USER, json);
+        editor.commit();
+    }
+
+    /**
+     * Get current user
+     */
+    public UserCredentialResponse getCurrentUser(Context context) {
+        // pref
+        SharedPreferences settings;
+
+        // settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings = context.getSharedPreferences(BaseActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = settings.getString(BaseActivity.PREFS_KEY_USER, "");
+        UserCredentialResponse user = gson.fromJson(json, UserCredentialResponse.class);
+
+        return user;
+    }
+
+    /**
+     * Confirm log out current user
+     */
+    protected void logoutUser() {
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
+                .setTitle(getResources().getString(R.string.app_name))
+                .setMessage(getResources().getString(R.string.app_logout_message))
+                .setIcon(R.drawable.ic_exit_to_app_black)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideLoadingView();
+                                disconnectUser();
+                            }
+                        }, BaseActivity.LOADING_TIME_OUT);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    /**
+     * Disconnect current user
+     */
+    public void disconnectUser() {
+        // pref
+        SharedPreferences preferences = getSharedPreferences(BaseActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.commit();
+
+        startActivity(new Intent(BaseActivity.this, UserLoginActivity.class));
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 
     // ===========================================================

@@ -1,12 +1,30 @@
 package com.team.lezomadetana.model.send;
 
+/**
+ * Created by Hery Andoniaina on 03/09/2018.
+ */
+
 public class UserRegisterSend {
 
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
 
     private String username;
     private String name;
     private String password;
     private String region;
+
+    // ===========================================================
+    // Constructors
+    // ===========================================================
+
+    public UserRegisterSend() {
+    }
 
     public UserRegisterSend(String username, String name, String password, String region) {
         this.username = username;
@@ -15,8 +33,21 @@ public class UserRegisterSend {
         this.region = region;
     }
 
-    public UserRegisterSend() {
-    }
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
+
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 
     public void setUsername(String username) {
         this.username = username;
@@ -49,4 +80,12 @@ public class UserRegisterSend {
     public String getRegion() {
         return region;
     }
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Inner Classes/Interfaces
+    // ===========================================================
 }

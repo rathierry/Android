@@ -41,7 +41,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <!-- screen: login -->
+        <!-- screen: register -->
         <activity
             android:name=".activity.UserRegisterActivity"
             android:configChanges="orientation|screenSize"

@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 
 import com.team.lezomadetana.R;
 
-public class FragmentChat extends Fragment
-{
+public class FragmentChat extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_chat,container,false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 }

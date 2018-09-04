@@ -172,9 +172,9 @@ public class MainActivity extends BaseActivity {
      * name, website (or another info)
      */
     private void loadNavigationHeader() {
-        // TODO: set name and info correct values
-        textViewName.setText("User Name");
-        textViewInfo.setText("user address mail");
+        // set username (phone number) and another info (region) correct values
+        textViewName.setText(getCurrentUser(MainActivity.this).getName());
+        textViewInfo.setText(getCurrentUser(MainActivity.this).getUsername());
 
         // loading background image
         Glide.with(this).load(getImage("nav_menu_header_bg"))
@@ -224,6 +224,10 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                         drawerLayout.closeDrawers();
                         return true;
+                    case R.id.nav_logOut:
+                        drawerLayout.closeDrawers();
+                        logoutUser();
+                        break;
                     default:
                         navItemIndex = 0;
                 }

@@ -1,27 +1,14 @@
 package com.team.lezomadetana.activity;
 
 import android.content.Intent;
-
-import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Toast;
 
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
-import com.team.lezomadetana.model.receive.UserCredentialResponse;
-import com.team.lezomadetana.model.send.UserCheckCredential;
-import com.team.lezomadetana.utils.InfoConfig;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
- * Created by team on 28/08/2018.
+ * Created by RaThierry on 28/08/2018.
  **/
 
 public class SplashActivity extends BaseActivity {
@@ -60,14 +47,18 @@ public class SplashActivity extends BaseActivity {
         );
         setContentView(R.layout.activity_splash);
 
-
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, UserLoginActivity.class));
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                if (getCurrentUser(SplashActivity.this) == null) {
+                    startActivity(new Intent(SplashActivity.this, UserLoginActivity.class));
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+                } else {
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+                }
             }
         }, SPLASH_TIME_OUT);
 

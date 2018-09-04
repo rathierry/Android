@@ -7,23 +7,38 @@ import com.google.gson.annotations.SerializedName;
  * Created by Hery Andoniaina on 03/09/2018.
  */
 
-public class UserCredentialResponse
-{
+public class UserCredentialResponse {
+
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
+
     @SerializedName("username")
     private String username;
+
     @SerializedName("name")
     @Expose
     private String name;
+
     @SerializedName("id")
     @Expose
     private String id;
+
     @SerializedName("success")
     @Expose
     private Boolean success;
+
     @SerializedName("region")
     @Expose
     private String region;
 
+    // ===========================================================
+    // Constructors
+    // ===========================================================
 
     public UserCredentialResponse() {
     }
@@ -34,6 +49,22 @@ public class UserCredentialResponse
         this.success = success;
         this.region = region;
     }
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
+
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 
     public String getUsername() {
         return username;
@@ -75,4 +106,12 @@ public class UserCredentialResponse
     public void setRegion(String region) {
         this.region = region;
     }
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Inner Classes/Interfaces
+    // ===========================================================
 }
