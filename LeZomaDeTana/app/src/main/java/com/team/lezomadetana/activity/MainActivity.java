@@ -1,12 +1,15 @@
 package com.team.lezomadetana.activity;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.adapter.TabsPagerAdapter;
 import com.team.lezomadetana.fragment.FragmentBusiness;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentOffer;
@@ -207,16 +211,16 @@ public class MainActivity extends BaseActivity {
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_BUSINESS;
                         break;
-                    case R.id.nav_offer:
+                    /*case R.id.nav_offer:
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_OFFER;
-                        break;
+                        break;*/
                     case R.id.nav_chat:
-                        navItemIndex = 2;
+                        navItemIndex = 1;
                         CURRENT_TAG = TAG_CHAT;
                         break;
                     case R.id.nav_setting:
-                        navItemIndex = 3;
+                        navItemIndex = 2;
                         CURRENT_TAG = TAG_SETTING;
                         break;
                     case R.id.nav_about_us:
@@ -330,13 +334,13 @@ public class MainActivity extends BaseActivity {
             case 0:
                 FragmentBusiness business = new FragmentBusiness();
                 return business;
-            case 1:
+            /*case 1:
                 FragmentOffer offer = new FragmentOffer();
-                return offer;
-            case 2:
+                return offer;*/
+            case 1:
                 FragmentChat chat = new FragmentChat();
                 return chat;
-            case 3:
+            case 2:
                 FragmentSetting setting = new FragmentSetting();
                 return setting;
             default:

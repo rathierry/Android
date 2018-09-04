@@ -6,10 +6,10 @@
             android:id="@+id/nav_business"
             android:icon="@drawable/ic_business_black"
             android:title="@string/activity_main_menu_business" />
-        <item
+        <!--<item
             android:id="@+id/nav_offer"
             android:icon="@drawable/ic_local_offer_black"
-            android:title="@string/activity_main_menu_offer" />
+            android:title="@string/activity_main_menu_offer" />-->
         <item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_chat_black"
