@@ -1,3 +1,7 @@
+# How to clone a specific branch in git
+# for example
+# git clone -b develop git@github.com:user/myproject.git
+
 # Built application files
 *.apk
 *.ap_

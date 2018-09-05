@@ -67,6 +67,8 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
 
         // init view
         _editTextPost = (EditText) rootView.findViewById(R.id.fragment_search_item_text_view_post);
+        _editTextPost.setKeyListener(null);
+        _editTextPost.setOnClickListener(this);
         _itemSpinner = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_search_item_material_design_spinner);
         _buttonPost = (Button) rootView.findViewById(R.id.fragment_search_item_button_post);
         _buttonPost.setOnClickListener(this);
@@ -89,7 +91,10 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
             }
         });
         _swipeRefreshSearchItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
-        _swipeRefreshSearchItem.setColorSchemeColors(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+        _swipeRefreshSearchItem.setColorSchemeResources(android.R.color.holo_red_light,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_green_light);
         _swipeRefreshSearchItem.setOnRefreshListener(this);
         _listViewSearchItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
 
@@ -106,6 +111,9 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.fragment_search_item_text_view_post:
+                Toast.makeText(getContext(), "Edit text clicked", Toast.LENGTH_SHORT).show();
+                break;
             case R.id.fragment_search_item_button_post:
                 Toast.makeText(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected, Toast.LENGTH_SHORT).show();
                 break;
@@ -144,7 +152,7 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        _itemSpinner.setAdapter(arrayAdapter);
+        //_itemSpinner.setAdapter(arrayAdapter);
 
         // event onClick
         _itemSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
