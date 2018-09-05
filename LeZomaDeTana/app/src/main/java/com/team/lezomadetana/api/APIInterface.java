@@ -2,6 +2,7 @@ package com.team.lezomadetana.api;
 
 import android.net.wifi.hotspot2.pps.Credential;
 
+import com.google.gson.JsonObject;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
@@ -9,6 +10,7 @@ import com.team.lezomadetana.model.send.UserRegisterSend;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
@@ -73,6 +75,11 @@ public interface APIInterface {
 
     @POST("rest/users/")
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
+
+
+
+    @GET("rest/requests")
+    Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
     // ===========================================================
     // Public Methods

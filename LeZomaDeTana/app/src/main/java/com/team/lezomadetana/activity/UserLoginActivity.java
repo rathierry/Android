@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.ExampleUseOfAPI;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 
@@ -79,6 +80,8 @@ public class UserLoginActivity extends BaseActivity {
         ButterKnife.bind(this);
         // getSimCardInfo();
         phoneNumberTextChangedListener();
+        ExampleUseOfAPI.getAllRequest();
+
     }
 
     /**

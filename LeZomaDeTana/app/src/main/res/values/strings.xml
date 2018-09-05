@@ -97,6 +97,14 @@
         <item>ZEZIKA</item>
     </string-array>
 
+    <!-- screen: Request -->
+    <string name="request_user_name">Sended by : </string>
+    <string name="request_user_product_needed">Need</string>
+    <string name="request_user_product_weight">Weight</string>
+    <string name="request_user_product_unit_price">Unit price</string>
+    <string name="request_user_product_answer">Answer</string>
+
+
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
     <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
