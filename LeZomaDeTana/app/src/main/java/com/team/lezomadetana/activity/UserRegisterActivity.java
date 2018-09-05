@@ -284,7 +284,7 @@ public class UserRegisterActivity extends BaseActivity {
         UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
 
         // set retrofit api
-        APIInterface api = APIClient.getClient().create(APIInterface.class);
+        APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -301,7 +301,7 @@ public class UserRegisterActivity extends BaseActivity {
                     UserCheckCredential user = new UserCheckCredential(phone, password);
 
                     // set retrofit api
-                    APIInterface api = APIClient.getClient().create(APIInterface.class);
+                    APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
 
                     // create basic authentication
                     String auth = BasicAuth();
@@ -695,7 +695,7 @@ public class UserRegisterActivity extends BaseActivity {
      */
     private void onRegisterSuccess() {
         _layout.requestFocus();
-        resetAllInputText();
+        //resetAllInputText();
         clearAllInputError();
         _btnSignUp.setEnabled(true);
 

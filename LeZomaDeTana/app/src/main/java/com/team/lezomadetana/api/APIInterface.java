@@ -65,6 +65,15 @@ public interface APIInterface {
     @POST("api/postGame")
     Call<Void> postScore(@Query("idUser") int idUser, @Query("duration") String duration);*/
 
+    @POST("checkCredentials/")
+    Call<UserCredentialResponse> checkCredential(@Header("Authorization") String auth, @Body UserCheckCredential user);
+
+    @POST("checkCredentials/")
+    Call<ResponseBody> checkCredentialJSON(@Header("Authorization") String auth, @Body UserCheckCredential user);
+
+    @POST("rest/users/")
+    Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
+
     // ===========================================================
     // Public Methods
     // ===========================================================
@@ -76,22 +85,4 @@ public interface APIInterface {
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================
-
-
-
-        @POST("checkCredentials/")
-        Call<UserCredentialResponse> checkCredential(@Header("Authorization")String auth, @Body UserCheckCredential user);
-
-
-        @POST("checkCredentials/")
-        Call<ResponseBody> checkCredentialJSON(@Header("Authorization") String auth, @Body UserCheckCredential user);
-
-
-
-
-        @POST("rest/users/")
-        Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
-
-
-
 }

@@ -29,8 +29,9 @@
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
             android:background="@color/color_gray_light"
-            android:gravity="center"
-            android:text="About your offer or your need"
+            android:gravity="center|left"
+            android:hint="About your offer or your need"
+            android:inputType="textMultiLine"
             android:textColor="@color/color_black"
             android:textCursorDrawable="@color/color_black"
             android:textSize="18sp"
@@ -118,10 +119,10 @@
             android:layout_weight="1"
             android:background="@drawable/edit_text_bg_selector"
             android:drawableRight="@drawable/ic_search"
-            android:gravity="center"
-            android:text="search item"
+            android:gravity="center|left"
+            android:hint=" Search item"
             android:textColor="@color/color_black"
-            android:textCursorDrawable="@color/color_black"
+            android:textCursorDrawable="@color/color_red"
             android:typeface="monospace" />
 
     </LinearLayout>

@@ -45,7 +45,7 @@ public class APIClient {
     // Public Methods
     // ===========================================================
 
-    public static Retrofit getClient() {
+    public static Retrofit getClient(String url) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -56,7 +56,7 @@ public class APIClient {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BaseActivity.ROOT_URL)
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

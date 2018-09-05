@@ -126,7 +126,7 @@ public class UserLoginActivity extends BaseActivity {
         UserCheckCredential user = new UserCheckCredential(phone, password);
 
         // set retrofit api
-        APIInterface api = APIClient.getClient().create(APIInterface.class);
+        APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -360,7 +360,7 @@ public class UserLoginActivity extends BaseActivity {
      */
     private void onLoginSuccess() {
         _layout.requestFocus();
-        resetAllInputText();
+        //resetAllInputText();
         clearAllInputError();
         _btnLogIn.setEnabled(true);
     }

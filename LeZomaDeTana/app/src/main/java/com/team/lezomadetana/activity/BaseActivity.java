@@ -82,7 +82,8 @@ public class BaseActivity extends AppCompatActivity {
     public static String CURRENT_TAG = TAG_BUSINESS;
 
     // url
-    public static String ROOT_URL = "http://mdz-user-api-test.herokuapp.com/";
+    public static String ROOT_MDZ_USER_API = "http://mdz-user-api-test.herokuapp.com/";
+    public static String ROOT_MDZ_API = "http://mdz-api-test.herokuapp.com/";
     public static String APP_USER_NAME = "app";
     public static String APP_PASSWORD = "app-password";
 

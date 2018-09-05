@@ -2,6 +2,8 @@ package com.team.lezomadetana.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.team.lezomadetana.R;
@@ -22,7 +25,7 @@ import java.util.List;
  * Created by RaThierry on 04/09/2018.
  **/
 
-public class FragmentSearchItem extends Fragment implements View.OnClickListener {
+public class FragmentSearchItem extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     // ===========================================================
     // Constants
@@ -32,10 +35,13 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
     // Fields
     // ===========================================================
 
+    private EditText _editTextPost;
     private MaterialBetterSpinner _itemSpinner;
     private Button _buttonPost;
     private EditText _editTextSearch;
     private String itemNameSelected;
+    private SwipeRefreshLayout _swipeRefreshSearchItem;
+    private ListView _listViewSearchItem;
 
     // ===========================================================
     // Constructors
@@ -60,6 +66,7 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
 
         // init view
+        _editTextPost = (EditText) rootView.findViewById(R.id.fragment_search_item_text_view_post);
         _itemSpinner = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_search_item_material_design_spinner);
         _buttonPost = (Button) rootView.findViewById(R.id.fragment_search_item_button_post);
         _buttonPost.setOnClickListener(this);
@@ -81,6 +88,10 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
                 return false;
             }
         });
+        _swipeRefreshSearchItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
+        _swipeRefreshSearchItem.setColorSchemeColors(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+        _swipeRefreshSearchItem.setOnRefreshListener(this);
+        _listViewSearchItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
 
         // initialize item data in spinner
         initSpinnerForItem();
@@ -89,13 +100,24 @@ public class FragmentSearchItem extends Fragment implements View.OnClickListener
         return rootView;
     }
 
+    /**
+     * View method
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_search_item_button_post:
-                Toast.makeText(getContext(), "Item selected is " + itemNameSelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected, Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    /**
+     * SwipeRefresh method
+     */
+    @Override
+    public void onRefresh() {
+        Toast.makeText(getContext(), "onRefresh", Toast.LENGTH_SHORT).show();
     }
 
     // ===========================================================
