@@ -89,6 +89,13 @@
     <!-- screen: fragment-business -->
     <string name="fragment_business_tab_layout_search_item">Search item</string>
     <string name="fragment_business_tab_layout_available_item">Available item</string>
+    <string-array name="array_items">
+        <item>VANILLE</item>
+        <item>OVY</item>
+        <item>BALAHAZO</item>
+        <item>VOATABIA</item>
+        <item>ZEZIKA</item>
+    </string-array>
 
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>

@@ -1,6 +1,7 @@
 package com.team.lezomadetana.activity;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,9 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.adapter.TabsPagerAdapter;
 import com.team.lezomadetana.fragment.FragmentBusiness;
@@ -345,6 +348,15 @@ public class MainActivity extends BaseActivity {
                 return setting;
             default:
                 return new FragmentBusiness();
+        }
+    }
+
+    /**
+     * Show long toast
+     */
+    public void showLongToast(Context context, String message) {
+        if (BuildConfig.DEBUG) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
     }
 
