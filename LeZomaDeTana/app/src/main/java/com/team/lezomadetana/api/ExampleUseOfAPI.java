@@ -12,6 +12,7 @@ import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.model.send.RequestSend;
 
 
 import java.lang.reflect.Field;
@@ -102,6 +103,45 @@ public class ExampleUseOfAPI
 
                     }
 
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+    }
+
+
+
+    public static void sendRequest(){
+
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+        //String request = "{\"userId\":\"819837c3-5ca5-4987-ba34-9855288a00f6\",\"product\":\"ovy\",\"unitType\":\"0\",\"price\":\"2\",\"type\" :\"1\",\"templateId\":\"64774d43-e303-4604-bd28-900a9bb0695a\"}";
+
+        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy",Request.UnitType.KG,5f,Request.Type.BUY,null);
+
+        // send query
+        Call<JsonObject> call = api.sendRequest(auth,new Gson().toJson(request));
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
+            {
+                if(response.code() == 201)
+                {
+                    Log.d("aaa",""+response.body());
 
                 }
 

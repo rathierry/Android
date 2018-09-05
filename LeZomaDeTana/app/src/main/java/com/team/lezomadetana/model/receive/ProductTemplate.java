@@ -41,4 +41,9 @@ public class ProductTemplate
     public List<String> getAssetUrls() {
         return assetUrls;
     }
+
+
 }
+
+
+

@@ -4,6 +4,7 @@ import android.net.wifi.hotspot2.pps.Credential;
 
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
@@ -81,9 +82,16 @@ public interface APIInterface {
     @GET("rest/requests")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
+    @POST("rest/requests")
+    Call<JsonObject> sendRequest(@Header("Authorization") String auth,@Body RequestSend request);
+
+    @POST("rest/requests")
+    Call<JsonObject> sendRequest(@Header("Authorization") String auth,@Body String request);
 
     @GET("rest/productTemplates")
     Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
+
+
 
     // ===========================================================
     // Public Methods

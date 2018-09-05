@@ -121,4 +121,7 @@ public class Request
     public Integer getType() {
         return type;
     }
+
+    public enum UnitType{KG,M,L,M2,UNIT}
+    public enum Type{SELL,BUY}
 }
