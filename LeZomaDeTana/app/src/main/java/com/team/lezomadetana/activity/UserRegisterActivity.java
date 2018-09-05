@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -24,7 +23,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -79,7 +77,7 @@ public class UserRegisterActivity extends BaseActivity {
     @BindView(R.id.user_register_input_phone)
     EditText _phoneText;
     @BindView(R.id.user_register_material_design_spinner_region)
-    MaterialBetterSpinner _occupationSpinner;
+    MaterialBetterSpinner _regionSpinner;
     @BindView(R.id.user_regitser_input_address)
     EditText _addressText;
     @BindView(R.id.user_register_input_password)
@@ -93,14 +91,10 @@ public class UserRegisterActivity extends BaseActivity {
     private String name;
     private String firstName;
     private String phone;
-    private String userOccupation;
+    private String region;
     private String address;
     private String password;
     private String rePassword;
-
-    SharedPreferences localPrefs;
-
-
     private Bitmap _bitmapImage;
 
     // ===========================================================
@@ -122,13 +116,13 @@ public class UserRegisterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
-        localPrefs = getPreferences(MODE_PRIVATE);
 
         // initialize
         ButterKnife.bind(this);
         phoneNumberTextChangedListener();
-        initSpinnerOccupation();
+        initSpinnerForRegion();
         passwordOnFocusChange();
+
         // set image avatar to rounded
         _avatarImage.useRoundedBitmap = true;
 
@@ -147,7 +141,7 @@ public class UserRegisterActivity extends BaseActivity {
         _nameText.setError(null);
         _firstNameText.setError(null);
         _phoneText.setError(null);
-        _occupationSpinner.setError(null);
+        _regionSpinner.setError(null);
         _addressText.setError(null);
         _passwordText.setError(null);
         _rePasswordText.setError(null);
@@ -205,9 +199,9 @@ public class UserRegisterActivity extends BaseActivity {
 
                     // failed to capture image
                     new AlertDialog.Builder(UserRegisterActivity.this)
-                            .setTitle("Sary")
+                            .setTitle("Camera")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setMessage("Miala tsiny fa tsy azo ny sary.")
+                            .setMessage("Sorry! Failed to capture image")
                             .setPositiveButton(android.R.string.yes, null)
                             .setCancelable(false)
                             .show();
@@ -232,9 +226,9 @@ public class UserRegisterActivity extends BaseActivity {
 
                     // failed to capture image
                     new AlertDialog.Builder(UserRegisterActivity.this)
-                            .setTitle("Sary")
+                            .setTitle("Camera")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setMessage("Miala tsiny fa tsy azo ny sary.")
+                            .setMessage("Sorry! Failed to capture image")
                             .setPositiveButton(android.R.string.yes, null)
                             .setCancelable(false)
                             .show();
@@ -252,16 +246,16 @@ public class UserRegisterActivity extends BaseActivity {
     @OnClick(R.id.user_register_imageView_logo)
     void getUserAvatar() {
         new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
-                .setTitle("Camera")
+                .setTitle("Avatar")
                 .setIcon(ContextCompat.getDrawable(UserRegisterActivity.this, R.drawable.ic_photo_camera_black))
-                .setMessage("Safidio ny fomba fakana sary")
+                .setMessage("Choose the capture mode")
                 .setCancelable(true)
-                .setPositiveButton("Tahirin-tsary", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeFile();
                     }
                 })
-                .setNegativeButton("Fakan-tsary", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Camera", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeCamera();
                     }
@@ -274,9 +268,6 @@ public class UserRegisterActivity extends BaseActivity {
      */
     @OnClick(R.id.user_register_btn_validate)
     void submit() {
-        // input values
-
-
         // validate form
         if (!validate()) {
             onRegisterFailed();
@@ -289,16 +280,86 @@ public class UserRegisterActivity extends BaseActivity {
         // show spinner
         showLoadingView(getResources().getString(R.string.app_spinner));
 
-        // TODO: Implement your own inscription logic here.
+        // set user values
+        UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
 
-        // hide spinner
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // on complete call either onLoginSuccess or onLoginFailed
-                        onRegisterSuccess();
-                    }
-                }, LOADING_TIME_OUT);
+        // set retrofit api
+        APIInterface api = APIClient.getClient().create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // send query
+        Call<ResponseBody> call = api.userRegisterJSON(auth, user);
+
+        // request
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 201) {
+                    // user credential
+                    UserCheckCredential user = new UserCheckCredential(phone, password);
+
+                    // set retrofit api
+                    APIInterface api = APIClient.getClient().create(APIInterface.class);
+
+                    // create basic authentication
+                    String auth = BasicAuth();
+
+                    // send query
+                    Call<UserCredentialResponse> call2 = api.checkCredential(auth, user);
+
+                    // request
+                    call2.enqueue(new Callback<UserCredentialResponse>() {
+                        @Override
+                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
+                            if (response.raw().code() != 200) {
+                                _btnSignUp.setEnabled(true);
+                                showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                            } else {
+                                if (response.body().getSuccess()) {
+                                    // save user in cache
+                                    saveCurrentUser(UserRegisterActivity.this, response.body());
+
+                                    // push user phone number
+                                    Intent intent = new Intent(UserRegisterActivity.this, MainActivity.class);
+                                    intent.putExtra("PHONE", phone);
+
+                                    // on complete call either onRegisterSuccess or onRegisterFailed
+                                    onRegisterSuccess();
+
+                                    // start activity
+                                    startActivity(intent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
+                                } else {
+                                    _btnSignUp.setEnabled(true);
+                                    showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Error on phone number and/or password");
+                                }
+                            }
+                            hideLoadingView();
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                            _btnSignUp.setEnabled(true);
+                            showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                            hideLoadingView();
+                        }
+                    });
+                } else {
+                    _btnSignUp.setEnabled(true);
+                    showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                _btnSignUp.setEnabled(true);
+                showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                hideLoadingView();
+            }
+        });
     }
 
     // ===========================================================
@@ -374,6 +435,13 @@ public class UserRegisterActivity extends BaseActivity {
                                 captureImage();
                             } else {
                                 Log.d("CAMERA", "< requestCameraPermission >");
+                                new AlertDialog.Builder(UserRegisterActivity.this)
+                                        .setTitle("Camera")
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setMessage("Sorry, request camera permission")
+                                        .setPositiveButton(android.R.string.yes, null)
+                                        .setCancelable(false)
+                                        .show();
                             }
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
                             showPermissionsAlert();
@@ -451,8 +519,8 @@ public class UserRegisterActivity extends BaseActivity {
                 if (charSequence.length() == 10) {
                     View view = UserRegisterActivity.this.getCurrentFocus();
                     if (view != null) {
-                        // take focus on occupation spinner drop down
-                        _occupationSpinner.requestFocus();
+                        // take focus on region spinner drop down
+                        _regionSpinner.requestFocus();
                     }
                 }
             }
@@ -465,9 +533,9 @@ public class UserRegisterActivity extends BaseActivity {
     }
 
     /**
-     * Initialize user occupation'spinner (drop down list)
+     * Initialize user region'spinner (drop down list)
      */
-    private void initSpinnerOccupation() {
+    private void initSpinnerForRegion() {
         // drop down element
         List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
 
@@ -476,17 +544,17 @@ public class UserRegisterActivity extends BaseActivity {
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        _occupationSpinner.setAdapter(arrayAdapter);
+        _regionSpinner.setAdapter(arrayAdapter);
 
         // event onClick
-        _occupationSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _regionSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // item'clicked name
-                userOccupation = parent.getItemAtPosition(position).toString();
+                region = parent.getItemAtPosition(position).toString();
 
                 // showing clicked spinner item name and position
-                showLongToast(parent.getContext(), "Faritra voasafidy : " + userOccupation + "\n(position n° " + position + ")");
+                showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
             }
         });
     }
@@ -548,10 +616,11 @@ public class UserRegisterActivity extends BaseActivity {
     private boolean validate() {
         boolean valid = true;
 
+        // get input values
         name = _nameText.getText().toString();
         firstName = _firstNameText.getText().toString();
         phone = _phoneText.getText().toString();
-        userOccupation = _occupationSpinner.getText().toString();
+        region = _regionSpinner.getText().toString();
         address = _addressText.getText().toString();
         password = _passwordText.getText().toString();
         rePassword = _rePasswordText.getText().toString();
@@ -585,10 +654,10 @@ public class UserRegisterActivity extends BaseActivity {
             _phoneText.requestFocus();
             valid = false;
         }
-        // occupation
-        else if (userOccupation.isEmpty() || TextUtils.isEmpty(userOccupation) || userOccupation.contains("Select")) {
-            _occupationSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
-            _occupationSpinner.requestFocus();
+        // region
+        else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains("Select")) {
+            _regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
+            _regionSpinner.requestFocus();
             valid = false;
         }
         // address
@@ -625,72 +694,10 @@ public class UserRegisterActivity extends BaseActivity {
      * Success register
      */
     private void onRegisterSuccess() {
-
-
         _layout.requestFocus();
         resetAllInputText();
         clearAllInputError();
         _btnSignUp.setEnabled(true);
-
-        UserRegisterSend user = new UserRegisterSend(phone, name, password, userOccupation);
-        APIInterface api = APIClient.getClient().create(APIInterface.class);
-        String auth = BasicAuth();
-        Call<ResponseBody> call = api.userRegisterJSON(auth, user);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 201) {
-                    UserCheckCredential user = new UserCheckCredential(phone, password);
-                    APIInterface api = APIClient.getClient().create(APIInterface.class);
-                    String auth = BasicAuth();
-
-                    Call<UserCredentialResponse> call2 = api.checkCredential(auth, user);
-
-
-                    call2.enqueue(new Callback<UserCredentialResponse>() {
-                        @Override
-                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
-                            if (response.raw().code() != 200) {
-                                Toast.makeText(UserRegisterActivity.this, "You need license for this app, contact your provider", Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (response.body().getSuccess()) {
-                                    SharedPreferences.Editor edit = localPrefs.edit();
-                                    edit.putString("user", response.body().toString());
-                                    edit.commit();
-
-                                    startActivity(new Intent(UserRegisterActivity.this, MainActivity.class));
-                                } else {
-                                    Toast.makeText(UserRegisterActivity.this, "Error on phone number or password", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            hideLoadingView();
-
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                            Toast.makeText(UserRegisterActivity.this, "Check your internet connexion", Toast.LENGTH_SHORT).show();
-                            hideLoadingView();
-                        }
-                    });
-
-
-                } else {
-                    Toast.makeText(UserRegisterActivity.this, "You need license for this app, contact your provider", Toast.LENGTH_SHORT).show();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(UserRegisterActivity.this, "Check your internet connexion", Toast.LENGTH_SHORT).show();
-                hideLoadingView();
-            }
-        });
 
     }
 
@@ -709,7 +716,7 @@ public class UserRegisterActivity extends BaseActivity {
         _nameText.setError(null);
         _firstNameText.setError(null);
         _phoneText.setError(null);
-        _occupationSpinner.setError(null);
+        _regionSpinner.setError(null);
         _addressText.setError(null);
         _passwordText.setError(null);
         _rePasswordText.setError(null);
@@ -722,7 +729,7 @@ public class UserRegisterActivity extends BaseActivity {
         _nameText.clearFocus();
         _firstNameText.clearFocus();
         _phoneText.clearFocus();
-        _occupationSpinner.clearFocus();
+        _regionSpinner.clearFocus();
         _addressText.clearFocus();
         _passwordText.clearFocus();
         _rePasswordText.clearFocus();
@@ -741,7 +748,7 @@ public class UserRegisterActivity extends BaseActivity {
         _nameText.setText("");
         _firstNameText.setText("");
         _phoneText.setText("");
-        _occupationSpinner.setText(getResources().getString(R.string.user_register_input_text_region));
+        _regionSpinner.setText(getResources().getString(R.string.user_register_input_text_region));
         _addressText.setText("");
         _passwordText.setText("");
         _rePasswordText.setText("");

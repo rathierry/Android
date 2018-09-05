@@ -220,6 +220,7 @@ public class BaseActivity extends AppCompatActivity {
         _progressDialog = new ProgressDialog(BaseActivity.this, R.style.AppTheme_Dark_Dialog);
         _progressDialog.setIndeterminate(true);
         _progressDialog.setMessage(message);
+        _progressDialog.setCancelable(false);
         _progressDialog.show();
     }
 

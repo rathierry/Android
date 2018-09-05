@@ -139,6 +139,7 @@ public class UserLoginActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
                 if (response.raw().code() != 200) {
+                    _btnLogIn.setEnabled(true);
                     showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
                 } else {
                     if (response.body().getSuccess()) {
@@ -157,6 +158,7 @@ public class UserLoginActivity extends BaseActivity {
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();
                     } else {
+                        _btnLogIn.setEnabled(true);
                         showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Error on phone number and/or password");
                     }
                 }
@@ -165,6 +167,7 @@ public class UserLoginActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                _btnLogIn.setEnabled(true);
                 showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
                 hideLoadingView();
             }
