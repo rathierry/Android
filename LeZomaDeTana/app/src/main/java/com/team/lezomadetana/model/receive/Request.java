@@ -1,33 +1,20 @@
 package com.team.lezomadetana.model.receive;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.List;
 
 public class Request
 {
-
-    @Expose
     private Boolean active;
-    @Expose
     private List<String> assetUrls;
-    @Expose
     private String userId;
-    @Expose
     private String unitType;
-    @Expose
     private List<String> offers;
-    @Expose
     private Float price;
-    @Expose
     private Integer quantity;
-    @Expose
+
     private String product;
-    @Expose
     private String templateId;
-    @Expose
     private String id;
-    @Expose
     private Integer type;
 
     public Request() {

@@ -80,7 +80,7 @@ public class UserLoginActivity extends BaseActivity {
         ButterKnife.bind(this);
         // getSimCardInfo();
         phoneNumberTextChangedListener();
-        ExampleUseOfAPI.getAllRequest();
+        //ExampleUseOfAPI.getAllProductTemplate();
 
     }
 

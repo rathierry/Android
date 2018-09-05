@@ -81,6 +81,10 @@ public interface APIInterface {
     @GET("rest/requests")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
+
+    @GET("rest/productTemplates")
+    Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
+
     // ===========================================================
     // Public Methods
     // ===========================================================
