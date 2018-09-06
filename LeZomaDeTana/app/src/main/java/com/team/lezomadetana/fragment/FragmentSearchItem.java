@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -130,16 +128,14 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
 
         // list view and adapter
         _listViewSearchItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
+        _requestAdapter = new RequestAdapter(getActivity(), requestList);
+        _listViewSearchItem.setAdapter(_requestAdapter);
         _listViewSearchItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(parent.getContext(),
-                        "Item with id [" + id + "] - Position [" + position + "]",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "item position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
-        _requestAdapter = new RequestAdapter(getActivity(), requestList);
-        _listViewSearchItem.setAdapter(_requestAdapter);
 
         // initialize item data in spinner
         initSpinnerForItem();

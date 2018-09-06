@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class RequestAdapter extends BaseAdapter implements View.OnClickListener {
+public class RequestAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -72,7 +71,7 @@ public class RequestAdapter extends BaseAdapter implements View.OnClickListener 
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
         if (layoutInflater == null)
             layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -85,10 +84,9 @@ public class RequestAdapter extends BaseAdapter implements View.OnClickListener 
         TextView quantity = (TextView) convertView.findViewById(R.id.quantity);
         TextView price = (TextView) convertView.findViewById(R.id.price);
         Button numberView = (Button) convertView.findViewById(R.id.numberView);
-        numberView.setOnClickListener(this);
 
         // getting request data for the row
-        Request r = requestItems.get(position);
+        final Request r = requestItems.get(position);
 
         // set values
         if (r.getAssetUrls().size() == 0) {
@@ -106,16 +104,23 @@ public class RequestAdapter extends BaseAdapter implements View.OnClickListener 
         price.setText("1 " + r.getUnitType() + " = " + r.getPrice().toString() + " Jeton");
         numberView.setText("5 ANSWER(S)");
 
-        return convertView;
-    }
+        // event
+        numberView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(activity, "---------------" +
+                        "\nButton clicked with" +
+                        "\nThumbNail: ---" +
+                        "\nSend by: " + r.getUserId() +
+                        "\nSearch: " + r.getProduct() +
+                        "\nQuantity: " + r.getQuantity() +
+                        "\nUnitType: " + r.getUnitType() +
+                        "\nPrice: " + r.getPrice() +
+                        "\n---------------", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.numberView:
-                Toast.makeText(activity, "button clicked", Toast.LENGTH_SHORT).show();
-                break;
-        }
+        return convertView;
     }
 
     // ===========================================================

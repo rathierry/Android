@@ -126,7 +126,7 @@ public class BaseFragment extends Fragment {
     /**
      * Show long toast
      */
-    protected void showLongToast(Context context, String message) {
+    public void showLongToast(Context context, String message) {
         if (BuildConfig.DEBUG) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
@@ -135,7 +135,7 @@ public class BaseFragment extends Fragment {
     /**
      * Show short toast
      */
-    protected void showShortToast(Context context, String message) {
+    public void showShortToast(Context context, String message) {
         if (BuildConfig.DEBUG) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
