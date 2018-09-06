@@ -3,8 +3,10 @@ package com.team.lezomadetana.fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -133,7 +134,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         _listViewSearchItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "item position = " + position, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), "item position = " + position, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -151,10 +152,12 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_search_item_text_view_post:
-                showShortToast(getContext(), "Edit text clicked");
+                // showShortToast(getContext(), "Edit text clicked");
+                ShowPostItemPopup();
                 break;
             case R.id.fragment_search_item_button_post:
-                showShortToast(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected);
+                // showShortToast(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected);
+                ShowPostItemPopup();
                 break;
         }
     }
@@ -304,6 +307,105 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                 showShortToast(parent.getContext(), "Item selected : " + itemNameSelected + "\n(at position n° " + position + ")");
             }
         });
+    }
+
+    private void ShowPostItemPopup() {
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_item, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.fragment_post_item_editText_quantity);
+        final EditText editTextUnitType = (EditText) mView.findViewById(R.id.fragment_post_item_editText_unity_type);
+        final EditText editTextPrice = (EditText) mView.findViewById(R.id.fragment_post_item_editText_price);
+
+        // set dialog message
+        builder
+                .setTitle("About your offer or your need")
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = spinnerCategory.getText().toString();
+                        String quantity = editTextQuantity.getText().toString();
+                        String unitType = editTextUnitType.getText().toString();
+                        String price = editTextPrice.getText().toString();
+
+                        // category
+                        /*if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains("Choose")) {
+                            spinnerCategory.setError("Select category");
+                            spinnerCategory.requestFocus();
+                            return;
+                        }*/
+                        // quantity
+                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
+                            editTextQuantity.setError("Add item quantity");
+                            editTextQuantity.requestFocus();
+                            return;
+                        }
+                        // unitType
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType)) {
+                            editTextUnitType.setError("Add price unit type");
+                            editTextUnitType.requestFocus();
+                            return;
+                        }
+                        // price
+                        if (price.isEmpty() || TextUtils.isEmpty(price)) {
+                            editTextPrice.setError("Add item price");
+                            editTextPrice.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        // set action after loading time
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideLoadingView();
+                                dialog.dismiss();
+                            }
+                        }, LOADING_TIME_OUT);
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
     }
 
     // ===========================================================

@@ -99,13 +99,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="monospace"
                 android:hint="@string/user_register_input_hint_region"
                 android:text="@string/user_register_input_text_region"
                 android:textColor="@color/color_black"
-                android:textColorHint="@color/color_black"
                 android:textColorHighlight="@color/color_black"
+                android:textColorHint="@color/color_black"
                 android:textSize="20sp"
-                android:typeface="monospace"
                 android:visibility="visible"
                 app:met_floatingLabel="highlight" />
 

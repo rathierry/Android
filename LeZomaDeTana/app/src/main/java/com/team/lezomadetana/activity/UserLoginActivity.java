@@ -199,7 +199,7 @@ public class UserLoginActivity extends BaseActivity {
         // create alert builder and cast view
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
 
-        // set prompts xml to alertdialog builder
+        // set prompts xml to alert dialog builder
         builder.setView(mView);
 
         // edit text

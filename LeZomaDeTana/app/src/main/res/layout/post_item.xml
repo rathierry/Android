@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_register_relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_gray_light"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <ScrollView
+        style="@style/scrollbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <!-- Category Label -->
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/fragment_post_item_design_spinner_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:fontFamily="monospace"
+                android:hint="Category"
+                android:text="Choose one"
+                android:textColor="@color/color_black"
+                android:textColorHighlight="@color/color_black"
+                android:textColorHint="@color/color_black"
+                android:textSize="20sp"
+                android:visibility="visible"
+                app:met_floatingLabel="highlight" />
+
+            <!-- Quantity Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/fragment_post_item_text_input_layout_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/fragment_post_item_editText_quantity"
+                    style="@style/ediTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Quantity"
+                    android:inputType="numberDecimal"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- UnitType Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/fragment_post_item_text_input_layout_unity_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/fragment_post_item_editText_unity_type"
+                    style="@style/ediTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Unit type"
+                    android:inputType="text"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Price Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/fragment_post_item_text_input_layout_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/fragment_post_item_editText_price"
+                    style="@style/ediTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Price"
+                    android:inputType="number"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -24,6 +24,10 @@ public class BaseFragment extends Fragment {
     // Fields
     // ===========================================================
 
+    // time
+    public static int SPLASH_TIME_OUT = 2000;
+    public static int LOADING_TIME_OUT = 3000;
+
     private ProgressDialog _progressDialog;
     private android.support.v7.app.AlertDialog _alertDialog;
 
@@ -55,14 +59,10 @@ public class BaseFragment extends Fragment {
     // Public Methods
     // ===========================================================
 
-    // ===========================================================
-    // Private Methods
-    // ===========================================================
-
     /**
      * Enable spinner
      */
-    protected void showLoadingView(String message) {
+    public void showLoadingView(String message) {
         this.hideLoadingView();
         _progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
         _progressDialog.setIndeterminate(true);
@@ -74,7 +74,7 @@ public class BaseFragment extends Fragment {
     /**
      * Disable spinner
      */
-    protected void hideLoadingView() {
+    public void hideLoadingView() {
         if (_progressDialog != null && _progressDialog.isShowing()) {
             _progressDialog.dismiss();
         }
@@ -84,7 +84,7 @@ public class BaseFragment extends Fragment {
     /**
      * Display Internet Connection Message
      */
-    protected void showNoInternetErrorDialog() {
+    public void showNoInternetErrorDialog() {
         this.hideAlertDialog();
         Context context = getView().getContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -100,7 +100,7 @@ public class BaseFragment extends Fragment {
     /**
      * Hide Internet Connection Message
      */
-    protected void hideAlertDialog() {
+    public void hideAlertDialog() {
         if (_alertDialog != null && _alertDialog.isShowing()) {
             _alertDialog.dismiss();
         }
@@ -110,7 +110,7 @@ public class BaseFragment extends Fragment {
     /**
      * Show alert dialog
      */
-    protected void showAlertDialog(String title, int icon, String message) {
+    public void showAlertDialog(String title, int icon, String message) {
         // hide previous alert dialog
         this.hideAlertDialog();
         // create
@@ -140,6 +140,10 @@ public class BaseFragment extends Fragment {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
 
     // ===========================================================
     // Inner Classes/Interfaces
