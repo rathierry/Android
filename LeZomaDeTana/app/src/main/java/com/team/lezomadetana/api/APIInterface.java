@@ -8,13 +8,18 @@ import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
+import java.util.Map;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by team on 29/08/2018.
@@ -80,6 +85,10 @@ public interface APIInterface {
     // search item: list request
     @GET("rest/requests/")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
+
+
+    @GET("rest/requests/search/advancedSearch")
+    Call<JsonObject> searchRequest(@Header("Authorization") String auth, @QueryMap Map<String,String> map);
 
     @POST("rest/requests/")
     Call<Void> sendRequest(@Header("Authorization") String auth,@Body RequestSend req);

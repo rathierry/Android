@@ -18,6 +18,7 @@ import com.team.lezomadetana.model.send.RequestSend;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,52 @@ public class ExampleUseOfAPI
 
         // send query
         Call<JsonObject> call = api.getAllRequest(auth);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
+            {
+                if(response.code() == 200)
+                {
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+                    List<Request> requests = null;
+
+                    if(filter.size()>0){
+                        requests = new ArrayList<Request>();
+                        for(int i=0;i<filter.size();i++){
+                            Request request = new Gson().fromJson(filter.get(i),Request.class);
+                            requests.add(request);
+
+                        }
+                        Log.d("REQUESTS",""+requests);
+
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public static void getSearchRequest(){
+
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        map.put("product","ovy");
+        // send query
+        Call<JsonObject> call = api.searchRequest(auth,map);
 
         // request
         call.enqueue(new Callback<JsonObject>() {
@@ -160,6 +207,10 @@ public class ExampleUseOfAPI
 
 
     }
+
+
+
+
 
 
         public static String BasicAuth() {

@@ -110,5 +110,6 @@
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
     <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
+    <string name="activity_main_menu_offer">Biling</string>
 
 </resources>

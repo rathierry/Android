@@ -12,7 +12,7 @@
             android:title="@string/activity_main_menu_offer" />-->
         <item
             android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_chat_black"
+            android:icon="@drawable/ic_local_offer_black"
             android:title="@string/activity_main_menu_chat" />
         <item
             android:id="@+id/nav_setting"

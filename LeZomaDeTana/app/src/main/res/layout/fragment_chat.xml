@@ -1,7 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light">
+    android:orientation="vertical"
+    android:background="@android:color/holo_red_light">
 
-</RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25"
+        android:orientation="horizontal"
+        android:id="@+id/madacoin_item"
+        android:padding="5dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            app:srcCompat="@drawable/ic_bitcoin_logo"
+
+            />
+        <TextView
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:text="Test"
+            android:textSize="50dp"
+            android:id="@+id/madcoin_text"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/m_vola_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="0.25"
+        app:srcCompat="@drawable/ic_mvola"
+        android:padding="5dp"/>
+
+    <ImageView
+        android:id="@+id/orange_money_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="0.25"
+        app:srcCompat="@drawable/ic_orange_money"
+        android:padding="5dp"/>
+
+    <ImageView
+        android:id="@+id/airtel_money_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="0.25"
+        app:srcCompat="@drawable/ic_airtelmoney"
+        android:padding="5dp"/>
+
+
+
+</LinearLayout>
