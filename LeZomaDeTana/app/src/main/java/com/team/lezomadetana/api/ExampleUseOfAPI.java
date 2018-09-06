@@ -127,17 +127,20 @@ public class ExampleUseOfAPI
 
         // create basic authentication
         String auth = BasicAuth();
-        //String request = "{\"userId\":\"819837c3-5ca5-4987-ba34-9855288a00f6\",\"product\":\"ovy\",\"unitType\":\"0\",\"price\":\"2\",\"type\" :\"1\",\"templateId\":\"64774d43-e303-4604-bd28-900a9bb0695a\"}";
+        JsonObject req = new JsonObject();
+        req.addProperty("userId","a");
+        Gson json = new Gson();
 
-        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy",Request.UnitType.KG,5f,Request.Type.BUY,null);
+        //String req = "";
+        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy","1",5f,"1","64774d43-e303-4604-bd28-900a9bb0695a");
 
         // send query
-        Call<JsonObject> call = api.sendRequest(auth,new Gson().toJson(request));
+        Call<Void> call = api.sendRequest(auth,request);
 
         // request
-        call.enqueue(new Callback<JsonObject>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
+            public void onResponse(Call<Void> call, Response<Void> response)
             {
                 if(response.code() == 201)
                 {
@@ -148,7 +151,7 @@ public class ExampleUseOfAPI
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
 
             }
         });

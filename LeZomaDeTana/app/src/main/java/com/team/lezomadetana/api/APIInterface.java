@@ -13,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 /**
@@ -77,14 +78,13 @@ public interface APIInterface {
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
     // search item: list request
-    @GET("rest/requests")
+    @GET("rest/requests/")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
-    @POST("rest/requests")
-    Call<JsonObject> sendRequest(@Header("Authorization") String auth,@Body RequestSend request);
+    @POST("rest/requests/")
+    Call<Void> sendRequest(@Header("Authorization") String auth,@Body RequestSend req);
 
-    @POST("rest/requests")
-    Call<JsonObject> sendRequest(@Header("Authorization") String auth,@Body String request);
+
 
     @GET("rest/productTemplates")
     Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
