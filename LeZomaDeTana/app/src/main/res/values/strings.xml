@@ -4,6 +4,8 @@
     <string name="app_camera_title">Camera</string>
     <string name="app_camera_error">CameraYour device does not support the camera.</string>
     <string name="app_logout_message">Are you sure you want to sign out?</string>
+    <string name="app_internet_error_title">Internet connection Error</string>
+    <string name="app_internet_error_message">Please connect your device to the Internet.</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>

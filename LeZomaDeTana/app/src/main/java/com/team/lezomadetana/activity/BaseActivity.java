@@ -134,16 +134,16 @@ public class BaseActivity extends AppCompatActivity {
     // Public Methods
     // ===========================================================
 
-    // ===========================================================
-    // Private Methods
-    // ===========================================================
-
     /**
      * Create basic authentication
      */
-    protected static String BasicAuth() {
+    public static String BasicAuth() {
         return "Basic " + Base64.encodeToString((APP_USER_NAME + ":" + APP_PASSWORD).getBytes(), Base64.NO_WRAP);
     }
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
 
     /**
      * Getting the Phone Number, IMEI, and SIM Card ID

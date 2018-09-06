@@ -6,6 +6,13 @@
     <color name="colorPrimaryDarker">#CC1D1D</color>
     <color name="colorAccent">#FFFFFF</color>
 
+    <!-- List item -->
+    <color name="list_divider">#d9d9d9</color>
+    <color name="list_row_start_color">#ffffff</color>
+    <color name="list_row_end_color">#ffffff</color>
+    <color name="list_row_hover_start_color">#ebeef0</color>
+    <color name="list_row_hover_end_color">#ebeef0</color>
+
     <!-- Another -->
     <color name="color_bg_intro_1">#0385a3</color>
     <color name="color_bg_intro_2">#03a373</color>

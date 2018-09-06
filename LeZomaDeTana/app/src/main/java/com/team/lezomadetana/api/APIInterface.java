@@ -68,17 +68,15 @@ public interface APIInterface {
     @POST("api/postGame")
     Call<Void> postScore(@Query("idUser") int idUser, @Query("duration") String duration);*/
 
+    // user: login
     @POST("checkCredentials/")
     Call<UserCredentialResponse> checkCredential(@Header("Authorization") String auth, @Body UserCheckCredential user);
 
-    @POST("checkCredentials/")
-    Call<ResponseBody> checkCredentialJSON(@Header("Authorization") String auth, @Body UserCheckCredential user);
-
+    // user: register
     @POST("rest/users/")
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
-
-
+    // search item: list request
     @GET("rest/requests")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
