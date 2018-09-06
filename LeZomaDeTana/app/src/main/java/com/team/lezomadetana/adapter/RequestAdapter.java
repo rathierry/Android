@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.model.receive.Request;
@@ -22,7 +25,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class RequestAdapter extends BaseAdapter {
+public class RequestAdapter extends BaseAdapter implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -81,7 +84,8 @@ public class RequestAdapter extends BaseAdapter {
         TextView template = (TextView) convertView.findViewById(R.id.template);
         TextView quantity = (TextView) convertView.findViewById(R.id.quantity);
         TextView price = (TextView) convertView.findViewById(R.id.price);
-        TextView numberView = (TextView) convertView.findViewById(R.id.numberView);
+        Button numberView = (Button) convertView.findViewById(R.id.numberView);
+        numberView.setOnClickListener(this);
 
         // getting request data for the row
         Request r = requestItems.get(position);
@@ -97,12 +101,21 @@ public class RequestAdapter extends BaseAdapter {
             }
         }
         person.setText("Send by " + r.getUserId());
-        template.setText("Search " + r.getTemplateId());
+        template.setText("Search \"" + r.getProduct() + "\"");
         quantity.setText("Quantity: " + r.getQuantity().toString() + "T");
-        price.setText("1 " + r.getUnitType() + " = " + r.getPrice().toString());
+        price.setText("1 " + r.getUnitType() + " = " + r.getPrice().toString() + " Jeton");
         numberView.setText("5 ANSWER(S)");
 
         return convertView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.numberView:
+                Toast.makeText(activity, "button clicked", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     // ===========================================================

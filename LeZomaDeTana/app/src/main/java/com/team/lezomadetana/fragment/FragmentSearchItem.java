@@ -222,11 +222,12 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             Request req = new Request();
                             // set values
                             req.setUserId(request.getUserId());
-                            if (TextUtils.isEmpty(request.getTemplateId()) || TextUtils.equals(request.getTemplateId(), "null")) {
+                            /*if (TextUtils.isEmpty(request.getTemplateId()) || TextUtils.equals(request.getTemplateId(), "null")) {
                                 req.setTemplateId("NULL");
                             } else {
                                 req.setTemplateId(request.getTemplateId());
-                            }
+                            }*/
+                            req.setProduct(request.getProduct());
                             req.setQuantity(request.getQuantity());
                             req.setUnitType(request.getUnitType());
                             req.setPrice(request.getPrice());

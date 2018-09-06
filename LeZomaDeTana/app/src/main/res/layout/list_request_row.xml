@@ -51,7 +51,7 @@
         android:layout_toRightOf="@+id/thumbnail"
         android:fontFamily="monospace"
         android:textColor="@color/color_black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="normal"
         android:typeface="monospace" />
 
@@ -65,20 +65,23 @@
         android:layout_toRightOf="@+id/thumbnail"
         android:fontFamily="monospace"
         android:textColor="@color/color_black"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="normal"
         android:typeface="monospace" />
 
     <!-- Number view -->
-    <TextView
+    <Button
         android:id="@+id/numberView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:background="@color/md_blue_100"
         android:fontFamily="monospace"
+        android:text="Answer"
+        android:textAllCaps="true"
         android:textColor="@color/color_black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:typeface="monospace" />
 
