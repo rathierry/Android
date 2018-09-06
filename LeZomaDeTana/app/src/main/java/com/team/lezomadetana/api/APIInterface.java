@@ -99,6 +99,10 @@ public interface APIInterface {
     Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
 
 
+    @GET("/rest/userWallets")
+    Call<JsonObject> getAllWallet(@Header("Authorization") String auth);
+
+
 
     // ===========================================================
     // Public Methods
