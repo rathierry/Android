@@ -183,7 +183,7 @@ public class ExampleUseOfAPI
         Gson json = new Gson();
 
         //String req = "";
-        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy","1",5f,"1","64774d43-e303-4604-bd28-900a9bb0695a");
+        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy", Request.UnitType.UNIT,5f,Request.Type.BUY,"64774d43-e303-4604-bd28-900a9bb0695a");
 
         // send query
         Call<Void> call = api.sendRequest(auth,request);

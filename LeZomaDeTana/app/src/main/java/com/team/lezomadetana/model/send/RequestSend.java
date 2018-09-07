@@ -7,12 +7,12 @@ public class RequestSend {
     private String userId;
     private String product;
 
-    private String unitType;
+    private Request.UnitType unitType;
     private Float price;
-    private String type;
+    private Request.Type type;
     private String templateId;
 
-    public RequestSend(String userId, String product, String unitType, Float price, String type, String templateId) {
+    public RequestSend(String userId, String product, Request.UnitType unitType, Float price, Request.Type type, String templateId) {
         this.userId = userId;
         this.product = product;
         this.unitType = unitType;
@@ -29,7 +29,7 @@ public class RequestSend {
         return product;
     }
 
-    public String getUnitType() {
+    public Request.UnitType getUnitType() {
         return unitType;
     }
 
@@ -37,7 +37,7 @@ public class RequestSend {
         return price;
     }
 
-    public String getType() {
+    public Request.Type getType() {
         return type;
     }
 

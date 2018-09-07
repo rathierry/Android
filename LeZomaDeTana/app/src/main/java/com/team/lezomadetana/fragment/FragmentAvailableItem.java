@@ -83,10 +83,10 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_available_item, container, false);
 
         // init view
-       /* _editTextPost = (EditText) rootView.findViewById(R.id.fragment_available_item_text_view_post);
+        _editTextPost = (EditText) rootView.findViewById(R.id.fragment_available_item_text_view_post);
         _editTextPost.setKeyListener(null);
         _editTextPost.setOnClickListener(this);
         _itemSpinner = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_available_item_material_design_spinner);
@@ -141,7 +141,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         });
 
         // initialize item data in spinner
-        initSpinnerForItem();*/
+        initSpinnerForItem();
 
         // return current view
         return rootView;
