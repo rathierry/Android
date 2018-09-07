@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -58,6 +60,9 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     // Fields
     // ===========================================================
 
+    private LinearLayout _postLayout;
+    private LinearLayout _searchLayout;
+    private LinearLayout _listLayout;
     private EditText _editTextPost;
     private MaterialBetterSpinner _itemSpinner;
     private Button _buttonPost;
@@ -68,10 +73,11 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     private ListView _listViewAvailableItem;
     private RequestAdapter _requestAdapter;
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
+   
 
     private String itemIdSelected;
     private String itemUnitTypeSelected;
-    private SwipeRefreshLayout _swipeRefreshSearchItem;
+
 
     // ===========================================================
     // Constructors
@@ -178,6 +184,80 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                 break;
         }
 
+    }
+    /**
+     * Load all category list
+     */
+    private void fetchAllCategory() {
+        // set retrofit api
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // send query
+        Call<JsonObject> call = api.getAllProductTemplate(auth);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
+                    // sort using result(s)
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
+
+                    // class model to mapping gson
+                    List<ProductTemplate> productTemplates = null;
+
+                    // count data
+                    if (filter.size() > 0) {
+                        // new class model to set all values
+                        productTemplates = new ArrayList<ProductTemplate>();
+
+                        // boucle
+                        for (int i = 0; i < filter.size(); i++) {
+                            ProductTemplate productTemplate = new Gson().fromJson(filter.get(i), ProductTemplate.class);
+                            productTemplates.add(productTemplate);
+                        }
+
+                        // init spinner
+                        _categoryList = productTemplates;
+
+                        // verif in LOG
+                        Log.d("REQUESTS", "" + productTemplates);
+
+                        // enable layout
+                        _postLayout.setVisibility(View.VISIBLE);
+                        _searchLayout.setVisibility(View.VISIBLE);
+                        _listLayout.setVisibility(View.VISIBLE);
+                        _swipeRefreshSearchItem.setVisibility(View.VISIBLE);
+
+                        // hide spinner
+                        hideLoadingView();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                // stopping swipe refresh
+                _swipeRefreshAvailableItem.setRefreshing(false);
+                hideLoadingView();
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(R.drawable.ic_wifi_black)
+                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                showLoadingView(getResources().getString(R.string.app_spinner));
+                                fetchAllCategory();
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 
     // ===========================================================
@@ -534,4 +614,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
+
+
+
 }
