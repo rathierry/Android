@@ -527,7 +527,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
                         //
-                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), "ovy", unitType, Float.parseFloat(price), "1", itemIdSelected);
+                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), "ovy", Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.BUY, itemIdSelected);
 
                         // send query
                         Call<Void> call = api.sendRequest(auth, request);
