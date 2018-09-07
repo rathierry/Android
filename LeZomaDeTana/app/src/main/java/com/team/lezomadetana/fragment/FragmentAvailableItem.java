@@ -230,7 +230,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                         _postLayout.setVisibility(View.VISIBLE);
                         _searchLayout.setVisibility(View.VISIBLE);
                         _listLayout.setVisibility(View.VISIBLE);
-                        _swipeRefreshSearchItem.setVisibility(View.VISIBLE);
+                        _swipeRefreshAvailableItem.setVisibility(View.VISIBLE);
 
                         // hide spinner
                         hideLoadingView();
@@ -580,7 +580,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 // stopping swipe refresh
-                                _swipeRefreshSearchItem.setRefreshing(false);
+                                _swipeRefreshAvailableItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_wifi_black)
