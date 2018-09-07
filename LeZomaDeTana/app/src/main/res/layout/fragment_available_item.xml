@@ -1,17 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/fragment_available_item_layout_post"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:text="Design Available Stock Item Screen"
-        android:textSize="20dp"
-        android:textColor="@color/color_black"/>
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
-</RelativeLayout>
+        <com.team.lezomadetana.view.UrlImageView
+            android:id="@+id/fragmentavailable_item_circle_image_user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <EditText
+            android:id="@+id/fragment_available_item_text_view_post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:background="@color/color_gray_light"
+            android:gravity="center|left"
+            android:hint="About your offer or your need"
+            android:inputType="none"
+            android:textColor="@color/color_black"
+            android:textCursorDrawable="@color/color_black"
+            android:textSize="18sp"
+            android:typeface="monospace" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="start|center"
+            android:text="Category"
+            android:textColor="@color/color_black"
+            android:typeface="monospace" />
+
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/fragment_available_item_material_design_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="Item Name"
+            android:text="Select one"
+            android:textColor="@color/color_black"
+            android:textColorHighlight="@color/color_black"
+            android:textColorHint="@color/color_black"
+            android:textSize="20sp"
+            android:typeface="monospace"
+            android:visibility="visible"
+            app:met_floatingLabel="highlight" />
+
+        <Button
+            android:id="@+id/fragment_available_item_button_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:fontFamily="serif-monospace"
+            android:text="Post"
+            android:textAllCaps="true"
+            android:textColor="@color/color_white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/color_grey_blue" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_blue_100"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="start|center"
+            android:text="List of available research items"
+            android:textColor="@color/color_white"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+
+        <EditText
+            android:id="@+id/fragment_available_item_text_view_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_bg_selector"
+            android:drawableRight="@drawable/ic_search"
+            android:gravity="center|left"
+            android:hint=" Search item"
+            android:textColor="@color/color_black"
+            android:textCursorDrawable="@color/color_red"
+            android:typeface="monospace" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/color_grey_blue" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_available_item_swipe_refresh_layout_post"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/fragment_available_item_nested_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/fragment_available_item_layout_content_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/fragment_available_item_list_view_item"
+                    style="@style/scrollbarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@drawable/item_list_view_divider"
+                    android:dividerHeight="1dip"
+                    android:listSelector="@android:color/transparent"
+                    android:nestedScrollingEnabled="true"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

@@ -26,6 +26,7 @@ import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -357,6 +358,11 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(BaseActivity.this, UserLoginActivity.class));
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
+    }
+
+
+    public static String[] getNames(Class<? extends Enum<?>> e) {
+        return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
     }
 
     // ===========================================================

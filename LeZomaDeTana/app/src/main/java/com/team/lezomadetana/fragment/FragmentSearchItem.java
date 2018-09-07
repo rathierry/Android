@@ -228,6 +228,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
+
                             // new class model to set all values
                             Request req = new Request();
                             // set values

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.api.ExampleUseOfAPI;
+import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 
@@ -80,6 +82,8 @@ public class UserLoginActivity extends BaseActivity {
         ButterKnife.bind(this);
         // getSimCardInfo();
         phoneNumberTextChangedListener();
+
+
         //ExampleUseOfAPI.getSearchRequest();
 
     }

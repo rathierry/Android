@@ -24,7 +24,7 @@ public class Request {
     private ArrayList<String> assetUrls;
     @Expose
     private String userId;
-    private String unitType;
+    private UnitType unitType;
     @Expose
     private ArrayList<String> offers;
     @Expose
@@ -34,7 +34,7 @@ public class Request {
     private String product;
     private String templateId;
     private String id;
-    private Integer type;
+    private Type type;
 
     // ===========================================================
     // Constructors
@@ -43,7 +43,7 @@ public class Request {
     public Request() {
     }
 
-    public Request(Boolean active, ArrayList<String> assetUrls, String userId, String unitType, ArrayList<String> offers, Float price, Integer quantity, String product, String templateId, Integer type) {
+    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<String> offers, Float price, Integer quantity, String product, String templateId, Type type) {
         this.active = active;
         this.assetUrls = assetUrls;
         this.userId = userId;
@@ -84,7 +84,7 @@ public class Request {
         this.userId = userId;
     }
 
-    public void setUnitType(String unitType) {
+    public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
     }
 
@@ -112,7 +112,7 @@ public class Request {
         this.id = id;
     }
 
-    public void setType(Integer type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -128,7 +128,7 @@ public class Request {
         return userId;
     }
 
-    public String getUnitType() {
+    public UnitType getUnitType() {
         return unitType;
     }
 
@@ -156,7 +156,7 @@ public class Request {
         return id;
     }
 
-    public Integer getType() {
+    public Type getType() {
         return type;
     }
 

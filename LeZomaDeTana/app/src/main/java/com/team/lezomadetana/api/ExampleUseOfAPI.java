@@ -214,6 +214,30 @@ public class ExampleUseOfAPI
 
 
 
+    public void ExplicationEnum()
+    {
+        //variable du type enum UnitType
+        Request.UnitType unitType;
+
+        //affecter une valeur à la variable
+        unitType = Request.UnitType.KG;
+
+        //si on veut avoir toutes les valeurs possible de UnitType dans un tableu de string
+        // ito ilay ho affichena amin ilay select
+        String [] unityTypeValues = BaseActivity.getNames(Request.UnitType.class);
+
+        //affecter un enum par un string dans sa valeur possible
+        unitType = Request.UnitType.valueOf("KG"); // mitovy amin oe unitType = UnitType.KG;
+
+        //affecter un enum par un entier correspondant à l'index dans sa valeur pssble
+        unitType = Request.UnitType.values()[0]; // mitovy amin oe unitType = UnitType.KG satria ilay KG=0;
+
+
+
+
+
+    }
+
 
 
 
