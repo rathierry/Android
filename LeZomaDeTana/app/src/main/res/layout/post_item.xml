@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/user_register_relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/color_gray_light"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true">
@@ -12,12 +12,12 @@
     <ScrollView
         style="@style/scrollbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="24dp"
             android:paddingRight="24dp">
@@ -99,5 +99,7 @@
             </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
+
     </ScrollView>
+    
 </RelativeLayout>

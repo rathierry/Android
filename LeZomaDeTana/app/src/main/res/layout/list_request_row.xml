@@ -76,14 +76,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@color/md_blue_100"
+        android:background="@color/md_blue_A400"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:fontFamily="monospace"
         android:text="Answer"
         android:textAllCaps="true"
-        android:textColor="@color/color_black"
-        android:textSize="14sp"
+        android:textColor="@color/color_white"
+        android:textSize="12sp"
         android:textStyle="bold"
         android:typeface="monospace" />
 

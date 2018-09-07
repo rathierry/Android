@@ -102,7 +102,7 @@ public class RequestAdapter extends BaseAdapter {
         template.setText("Search \"" + r.getProduct() + "\"");
         quantity.setText("Quantity: " + r.getQuantity().toString() + "T");
         price.setText("1 " + r.getUnitType() + " = " + r.getPrice().toString() + " Jeton");
-        numberView.setText("5 ANSWER(S)");
+        numberView.setText(r.getPrice().toString() + " ANSWER");
 
         // event
         numberView.setOnClickListener(new View.OnClickListener() {

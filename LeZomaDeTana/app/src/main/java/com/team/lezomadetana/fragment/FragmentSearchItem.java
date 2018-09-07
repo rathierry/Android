@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -51,7 +52,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     // Fields
     // ===========================================================
 
-    private EditText _editTextPost;
+    private TextView _editTextPost;
     private MaterialBetterSpinner _itemSpinner;
     private Button _buttonPost;
     private EditText _editTextSearch;
@@ -84,7 +85,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
 
         // init view
-        _editTextPost = (EditText) rootView.findViewById(R.id.fragment_search_item_text_view_post);
+        _editTextPost = (TextView) rootView.findViewById(R.id.fragment_search_item_text_view_post);
         _editTextPost.setKeyListener(null);
         _editTextPost.setOnClickListener(this);
         _itemSpinner = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_search_item_material_design_spinner);
@@ -221,15 +222,19 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             Request req = new Request();
                             // set values
                             req.setUserId(request.getUserId());
-                            /*if (TextUtils.isEmpty(request.getTemplateId()) || TextUtils.equals(request.getTemplateId(), "null")) {
-                                req.setTemplateId("NULL");
-                            } else {
-                                req.setTemplateId(request.getTemplateId());
-                            }*/
-                            req.setProduct(request.getProduct());
-                            req.setQuantity(request.getQuantity());
+
+                            // verify server's response
+                            String _userId = (TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getUserId());
+                            String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct());
+                            String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getQuantity()));
+                            String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
+
+                            // set values
+                            req.setUserId(_userId);
+                            req.setProduct(_productName);
+                            req.setQuantity(Integer.valueOf(_quantity));
                             req.setUnitType(request.getUnitType());
-                            req.setPrice(request.getPrice());
+                            req.setPrice(Float.valueOf(_price));
 
                             // assetUrls is json array
                             JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
@@ -238,6 +243,14 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                                 assetUrl.add(String.valueOf(assetArray.get(j)));
                             }
                             req.setAssetUrls(assetUrl);
+
+                            // offer is json array
+                            JsonArray offerArrray = filter.get(i).getAsJsonObject().get("offers").getAsJsonArray();
+                            ArrayList<String> offerName = new ArrayList<String>();
+                            for (int j = 0; j < offerArrray.size(); j++) {
+                                offerName.add(String.valueOf(offerArrray.get(j)));
+                            }
+                            req.setAssetUrls(offerName);
 
                             // adding request to requests array
                             requestList.add(req);
