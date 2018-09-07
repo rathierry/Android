@@ -33,7 +33,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/activity_user_login_imageView_layout_marginTop"
         android:gravity="center_horizontal|center_vertical"
-        android:src="@drawable/ic_splash" />
+        android:src="@drawable/ic_user_black" />
 
     <!-- Phone Number Label -->
     <android.support.design.widget.TextInputLayout

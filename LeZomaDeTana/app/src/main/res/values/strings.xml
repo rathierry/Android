@@ -1,11 +1,11 @@
 <resources>
     <!-- app name -->
-    <string name="app_name">LeZomaDeTana</string>
-    <string name="app_camera_title">Camera</string>
-    <string name="app_camera_error">CameraYour device does not support the camera.</string>
-    <string name="app_logout_message">Are you sure you want to sign out?</string>
-    <string name="app_internet_error_title">Internet connection Error</string>
-    <string name="app_internet_error_message">Please connect your device to the Internet.</string>
+    <string name="app_name">LZTana</string>
+    <string name="app_camera_title">Fakan-tsary</string>
+    <string name="app_camera_error">Tsy ahitana fakan-tsary ny findainao.</string>
+    <string name="app_logout_message">Azonao antoka ve fa iala tokoa ianao?</string>
+    <string name="app_internet_error_title">Aterineto</string>
+    <string name="app_internet_error_message">Ampifandraiso amin\'ny aterineto ny findainao.</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -13,38 +13,54 @@
     <!-- screen: splash -->
 
     <!-- screen: user-login -->
-    <string name="user_login_text_title">Sign In</string>
-    <string name="user_login_input_hint_phone">Phone number</string>
-    <string name="user_login_input_error_phone">Enter a phone number (10 characters)</string>
-    <string name="user_login_input_hint_password">Password</string>
-    <string name="user_login_input_error_password">Enter your password</string>
-    <string name="user_login_text_forgot_password">Forgot password</string>
-    <string name="user_login_input_hint_forgot_password">Enter a phone number</string>
-    <string name="user_login_btn_submit">Sign In</string>
-    <string name="user_login_btn_register">No account yet? Create one</string>
+    <string name="user_login_input_hint_phone">Laharana finday</string>
+    <string name="user_login_input_error_phone">Mampidira laharana finday (tarehimarika 10)</string>
+    <string name="user_login_input_hint_password">Teny miafina</string>
+    <string name="user_login_input_error_password">Ampidiro ny teny miafina</string>
+    <string name="user_login_text_forgot_password">Teny miafina dino</string>
+    <string name="user_login_input_hint_forgot_password">Mampidira laharana finday</string>
+    <string name="user_login_btn_submit">E K E N A</string>
+    <string name="user_login_error_title">Fidirana</string>
+    <string name="user_login_error_message">Hamarino ny laharana finday sy/na ny teny miafina.</string>
+    <string name="user_login_error_request">Misy olana ny fifandraisana.</string>
+    <string name="user_login_btn_register">Olona vaovao hanoratra anarana</string>
 
     <!-- loading -->
-    <string name="app_spinner">Loading .....</string>
+    <string name="app_spinner">Miandry .....</string>
 
     <!-- popup: user forgot password -->
-    <string name="user_login_forgot_pass_text_title">Reset password</string>
-    <string name="user_login_forgot_pass_btn_ok">OK</string>
-    <string name="user_login_forgot_pass_btn_cancel">CANCEL</string>
+    <string name="user_login_forgot_pass_text_title">Famerenana teny miafina</string>
+    <string name="user_login_forgot_pass_btn_ok">ENY</string>
+    <string name="user_login_forgot_pass_btn_cancel">TSIA</string>
 
     <!-- screen: user-register -->
-    <string name="user_register_input_hint_name">Name</string>
-    <string name="user_register_input_hint_firstName">First Name</string>
-    <string name="user_register_input_hint_region">Region</string>
-    <string name="user_register_input_text_region">Select a region</string>
-    <string name="user_register_input_hint_address">Address</string>
-    <string name="user_register_input_hint_re_password">Confirm password</string>
-    <string name="user_register_input_error_avatar">Take your profile avatar</string>
-    <string name="user_register_input_error_name">Enter your name</string>
-    <string name="user_register_input_error_firstName">Enter your first name</string>
-    <string name="user_register_input_error_region">Select one region</string>
-    <string name="user_register_input_error_address">Enter your address</string>
-    <string name="user_register_input_error_diff_password">Confirm your password</string>
-    <string name="user_register_btn_submit">Sign Up</string>
+    <string name="user_register_input_hint_name">Anarana</string>
+    <string name="user_register_input_hint_firstName">Fanampiny</string>
+    <string name="user_register_input_hint_region">Faritra</string>
+    <string name="user_register_input_text_region">Misafidy faritra</string>
+    <string name="user_register_input_hint_address">Adiresy</string>
+    <string name="user_register_input_hint_re_password">Amarino ny teny miafina</string>
+    <string name="user_register_input_error_avatar">Alaivo ny sarinao</string>
+    <string name="user_register_input_error_name">Mampidira anarana</string>
+    <string name="user_register_input_error_firstName">Mampidira fanampin\'anarana</string>
+    <string name="user_register_input_error_region">Misafidiana faritra iray</string>
+    <string name="user_register_input_error_address">Mampidira adiresy</string>
+    <string name="user_register_input_error_diff_password">Tsy mitovy ny teny miafina nampidirina</string>
+    <string name="user_register_btn_submit">E K E N A</string>
+    <string name="user_register_error_title">Olona vaovao</string>
+    <string name="user_register_error_message">Hamarino ny laharana finday sy/na ny teny miafina.</string>
+    <string name="user_register_error_licence">Tsy manana fahazoan-dàlana hanoratra anarana vaovao ianao!;</string>
+    <string name="user_register_error_request">Misy olana ny fifandraisana.</string>
+    <string name="user_register_camera_title">Sary</string>
+    <string name="user_register_camera_message">Safidio ny fomba fakana sary</string>
+    <string name="user_register_camera_app">Fakan-tsary</string>
+    <string name="user_register_camera_galery">Tahirin-tsary</string>
+    <string name="user_register_camera_error_failed">Miala tsiny fa tsy azo ilay sary.</string>
+    <string name="user_register_camera_error_canceled">Najanona ny fakana sary.</string>
+    <string name="user_register_camera_error_permission">Tsy ampy fahazoan-dàlana ny fakana sary.</string>
+    <string name="user_register_camera_error_to_permission">Omeo fahazoan-dàlana vitsivitsy ny fitovana fakan-tsary mba hiasa tsara.</string>
+    <string name="user_register_camera_btn_ok">Mandehana any amin\'ny fikirana</string>
+    <string name="user_register_camera_btn_cancel">Aoka ihany</string>
     <string-array name="array_regions">
         <item>DIANA</item>
         <item>SAVA</item>

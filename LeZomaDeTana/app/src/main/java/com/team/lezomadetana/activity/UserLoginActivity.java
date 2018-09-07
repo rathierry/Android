@@ -147,7 +147,7 @@ public class UserLoginActivity extends BaseActivity {
             public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
                 if (response.raw().code() != 200) {
                     _btnLogIn.setEnabled(true);
-                    showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                    showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_login_error_message));
                 } else {
                     if (response.body().getSuccess()) {
                         // save user in cache
@@ -166,7 +166,7 @@ public class UserLoginActivity extends BaseActivity {
                         finish();
                     } else {
                         _btnLogIn.setEnabled(true);
-                        showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Error on phone number and/or password");
+                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_login_error_request));
                     }
                 }
                 hideLoadingView();
@@ -175,7 +175,7 @@ public class UserLoginActivity extends BaseActivity {
             @Override
             public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
                 _btnLogIn.setEnabled(true);
-                showAlertDialog("Sign In", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
                 hideLoadingView();
             }
         });

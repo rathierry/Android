@@ -12,7 +12,7 @@
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp"
-        android:src="@drawable/ic_splash" />
+        android:src="@drawable/ic_new_black" />
 
     <!-- Person -->
     <TextView

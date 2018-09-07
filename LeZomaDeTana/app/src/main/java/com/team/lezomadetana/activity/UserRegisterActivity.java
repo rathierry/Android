@@ -16,7 +16,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -192,19 +191,10 @@ public class UserRegisterActivity extends BaseActivity {
                     previewCapturedImage();
                 } else if (resultCode == RESULT_CANCELED) {
                     // user cancelled Image capture
-                    showShortToast(getApplicationContext(), "User cancelled image capture");
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
                 } else {
                     // failed to capture image
-                    showShortToast(getApplicationContext(), "Sorry! Failed to capture image");
-
-                    // failed to capture image
-                    new AlertDialog.Builder(UserRegisterActivity.this)
-                            .setTitle("Camera")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setMessage("Sorry! Failed to capture image")
-                            .setPositiveButton(android.R.string.yes, null)
-                            .setCancelable(false)
-                            .show();
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
                 }
                 break;
 
@@ -219,19 +209,10 @@ public class UserRegisterActivity extends BaseActivity {
                     _avatarImage.setImageBitmap(_bitmapImage);
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // user cancelled Image capture
-                    showShortToast(getApplicationContext(), "User cancelled image capture");
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
                 } else {
                     // failed to capture image
-                    showShortToast(getApplicationContext(), "Sorry! Failed to capture image");
-
-                    // failed to capture image
-                    new AlertDialog.Builder(UserRegisterActivity.this)
-                            .setTitle("Camera")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setMessage("Sorry! Failed to capture image")
-                            .setPositiveButton(android.R.string.yes, null)
-                            .setCancelable(false)
-                            .show();
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
                 }
                 break;
 
@@ -246,16 +227,16 @@ public class UserRegisterActivity extends BaseActivity {
     @OnClick(R.id.user_register_imageView_logo)
     void getUserAvatar() {
         new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
-                .setTitle("Avatar")
+                .setTitle(getResources().getString(R.string.user_register_camera_title))
                 .setIcon(ContextCompat.getDrawable(UserRegisterActivity.this, R.drawable.ic_photo_camera_black))
-                .setMessage("Choose the capture mode")
+                .setMessage(getResources().getString(R.string.user_register_camera_message))
                 .setCancelable(true)
-                .setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.user_register_camera_app), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeFile();
                     }
                 })
-                .setNegativeButton("Camera", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.user_register_camera_galery), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeCamera();
                     }
@@ -315,7 +296,7 @@ public class UserRegisterActivity extends BaseActivity {
                         public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
                             if (response.raw().code() != 200) {
                                 _btnSignUp.setEnabled(true);
-                                showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_licence));
                             } else {
                                 if (response.body().getSuccess()) {
                                     // save user in cache
@@ -334,7 +315,7 @@ public class UserRegisterActivity extends BaseActivity {
                                     finish();
                                 } else {
                                     _btnSignUp.setEnabled(true);
-                                    showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Error on phone number and/or password");
+                                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_request));
                                 }
                             }
                             hideLoadingView();
@@ -343,20 +324,20 @@ public class UserRegisterActivity extends BaseActivity {
                         @Override
                         public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
                             _btnSignUp.setEnabled(true);
-                            showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                            showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
                             hideLoadingView();
                         }
                     });
                 } else {
                     _btnSignUp.setEnabled(true);
-                    showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 _btnSignUp.setEnabled(true);
-                showAlertDialog("Sign Up", android.R.drawable.ic_dialog_alert, "Check your internet connexion");
+                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
                 hideLoadingView();
             }
         });
@@ -402,6 +383,19 @@ public class UserRegisterActivity extends BaseActivity {
     }
 
     /**
+     * Capturing Camera error/failed
+     */
+    private void showCameraAlertDialog(String message) {
+        new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
+                .setTitle(getResources().getString(R.string.user_register_camera_title))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, null)
+                .setCancelable(false)
+                .show();
+    }
+
+    /**
      * Capturing Camera Image will launch camera app requested image capture
      */
     private void captureImage() {
@@ -434,11 +428,11 @@ public class UserRegisterActivity extends BaseActivity {
                                 // capture picture
                                 captureImage();
                             } else {
-                                Log.d("CAMERA", "< requestCameraPermission >");
-                                new AlertDialog.Builder(UserRegisterActivity.this)
-                                        .setTitle("Camera")
+                                // alert
+                                new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
+                                        .setTitle(getResources().getString(R.string.user_register_camera_title))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setMessage("Sorry, request camera permission")
+                                        .setMessage(getResources().getString(R.string.user_register_camera_error_permission))
                                         .setPositiveButton(android.R.string.yes, null)
                                         .setCancelable(false)
                                         .show();
@@ -488,19 +482,19 @@ public class UserRegisterActivity extends BaseActivity {
      * to enable necessary permissions
      */
     private void showPermissionsAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Permissions required")
-                .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
-                .setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        CameraUtils.openSettings(UserRegisterActivity.this);
-                    }
-                })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+        new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
+            .setTitle(getResources().getString(R.string.user_register_camera_title))
+            .setMessage(getResources().getString(R.string.user_register_camera_error_to_permission))
+            .setPositiveButton(getResources().getString(R.string.user_register_camera_btn_ok), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    CameraUtils.openSettings(UserRegisterActivity.this);
+                }
+            })
+            .setNegativeButton(getResources().getString(R.string.user_register_camera_btn_cancel), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                }).show();
+                }
+            }).show();
     }
 
     /**
@@ -655,7 +649,7 @@ public class UserRegisterActivity extends BaseActivity {
             valid = false;
         }
         // region
-        else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains("Select")) {
+        else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains(getResources().getString(R.string.user_register_input_text_region))) {
             _regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
             _regionSpinner.requestFocus();
             valid = false;
@@ -740,7 +734,7 @@ public class UserRegisterActivity extends BaseActivity {
      */
     private void resetAllInputText() {
         // avatar
-        Drawable myDrawable = getResources().getDrawable(R.drawable.ic_splash);
+        Drawable myDrawable = getResources().getDrawable(R.drawable.ic_user_black);
         Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
         _avatarImage.setImageBitmap(bitmap);
 
