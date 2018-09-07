@@ -29,6 +29,7 @@ import retrofit2.Response;
 
 public class ExampleUseOfAPI
 {
+    // FETCH
     public static void getAllRequest(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
@@ -71,6 +72,8 @@ public class ExampleUseOfAPI
             }
         });
     }
+
+    // SEARCH
 
     public static void getSearchRequest(){
 
@@ -119,6 +122,7 @@ public class ExampleUseOfAPI
     }
 
 
+    // TEMPLATE
     public static void getAllProductTemplate(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
@@ -167,7 +171,7 @@ public class ExampleUseOfAPI
     }
 
 
-
+    // POST item
     public static void sendRequest(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);

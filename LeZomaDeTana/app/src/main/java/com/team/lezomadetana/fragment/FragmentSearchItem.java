@@ -16,8 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -52,6 +54,9 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     // Fields
     // ===========================================================
 
+    private LinearLayout _postLayout;
+    private LinearLayout _searchLayout;
+    private LinearLayout _listLayout;
     private TextView _editTextPost;
     private MaterialBetterSpinner _itemSpinner;
     private Button _buttonPost;
@@ -85,6 +90,9 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
 
         // init view
+        _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_post);
+        _searchLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_search);
+        _listLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_list);
         _editTextPost = (TextView) rootView.findViewById(R.id.fragment_search_item_text_view_post);
         _editTextPost.setKeyListener(null);
         _editTextPost.setOnClickListener(this);
@@ -245,12 +253,19 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             req.setAssetUrls(assetUrl);
 
                             // offer is json array
-                            JsonArray offerArrray = filter.get(i).getAsJsonObject().get("offers").getAsJsonArray();
+                            JsonArray offerArray = filter.get(i).getAsJsonObject().get("offers").getAsJsonArray();
                             ArrayList<String> offerName = new ArrayList<String>();
-                            for (int j = 0; j < offerArrray.size(); j++) {
-                                offerName.add(String.valueOf(offerArrray.get(j)));
+                            for (int j = 0; j < offerArray.size(); j++) {
+                                offerName.add(String.valueOf(offerArray.get(j)));
                             }
                             req.setAssetUrls(offerName);
+
+                            // offer
+                            /*if (request.getOffers().size() == 0) {
+                                req.setOffers(null);
+                            } else {
+                                req.setOffers(request.getOffers());
+                            }*/
 
                             // adding request to requests array
                             requestList.add(req);
@@ -263,6 +278,13 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
 
                     // stopping swipe refresh
                     _swipeRefreshSearchItem.setRefreshing(false);
+
+                    // enable layout
+                    _postLayout.setVisibility(View.VISIBLE);
+                    _searchLayout.setVisibility(View.VISIBLE);
+                    _listLayout.setVisibility(View.VISIBLE);
+
+                    // hide spinner
                     hideLoadingView();
                 }
             }

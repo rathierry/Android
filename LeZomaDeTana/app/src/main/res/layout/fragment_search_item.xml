@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <com.team.lezomadetana.view.UrlImageView
             android:id="@+id/fragment_search_item_circle_image_user"
@@ -38,9 +38,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/fragment_search_item_layout_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:weightSum="3">
 
         <TextView
@@ -91,10 +93,12 @@
         android:background="@color/color_grey_blue" />
 
     <LinearLayout
+        android:id="@+id/fragment_search_item_layout_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/md_blue_A400"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:weightSum="2">
 
         <TextView
