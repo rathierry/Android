@@ -34,7 +34,7 @@ public class Request {
     private String product;
     private String templateId;
     private String id;
-    private Type type;
+    private Integer type;
 
     // ===========================================================
     // Constructors
@@ -43,7 +43,7 @@ public class Request {
     public Request() {
     }
 
-    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<String> offers, Float price, Integer quantity, String product, String templateId, Type type) {
+    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<String> offers, Float price, Integer quantity, String product, String templateId,Integer type) {
         this.active = active;
         this.assetUrls = assetUrls;
         this.userId = userId;
@@ -112,7 +112,7 @@ public class Request {
         this.id = id;
     }
 
-    public void setType(Type type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -156,7 +156,7 @@ public class Request {
         return id;
     }
 
-    public Type getType() {
+    public Integer getType() {
         return type;
     }
 

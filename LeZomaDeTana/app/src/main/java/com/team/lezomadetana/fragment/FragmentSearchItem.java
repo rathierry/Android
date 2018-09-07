@@ -66,6 +66,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     private EditText _editTextSearch;
     private String itemNameSelected;
     private String itemIdSelected;
+    private String itemUnitTypeSelected;
     private SwipeRefreshLayout _swipeRefreshSearchItem;
     private List<Request> requestList = new ArrayList<Request>();
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
@@ -229,49 +230,54 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
 
-                            // new class model to set all values
-                            Request req = new Request();
-                            // set values
-                            req.setUserId(request.getUserId());
+                            if(request.getType() == 1){
+                                // new class model to set all values
+                                Request req = new Request();
+                                // set values
+                                req.setUserId(request.getUserId());
 
-                            // verify server's response
-                            String _userId = (TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getUserId());
-                            String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct());
-                            String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getQuantity()));
-                            String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
+                                // verify server's response
+                                String _userId = (TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getUserId());
+                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct());
+                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getQuantity()));
+                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
 
-                            // set values
-                            req.setUserId(_userId);
-                            req.setProduct(_productName);
-                            req.setQuantity(Integer.valueOf(_quantity));
-                            req.setUnitType(request.getUnitType());
-                            req.setPrice(Float.valueOf(_price));
+                                // set values
+                                req.setUserId(_userId);
+                                req.setProduct(_productName);
+                                req.setQuantity(Integer.valueOf(_quantity));
+                                req.setUnitType(request.getUnitType());
+                                req.setPrice(Float.valueOf(_price));
 
-                            // assetUrls is json array
-                            JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
-                            ArrayList<String> assetUrl = new ArrayList<String>();
-                            for (int j = 0; j < assetArray.size(); j++) {
-                                assetUrl.add(String.valueOf(assetArray.get(j)));
-                            }
-                            req.setAssetUrls(assetUrl);
+                                // assetUrls is json array
+                                JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
+                                ArrayList<String> assetUrl = new ArrayList<String>();
+                                for (int j = 0; j < assetArray.size(); j++) {
+                                    assetUrl.add(String.valueOf(assetArray.get(j)));
+                                }
+                                req.setAssetUrls(assetUrl);
 
-                            // offer is json array
-                            JsonArray offerArray = filter.get(i).getAsJsonObject().get("offers").getAsJsonArray();
-                            ArrayList<String> offerName = new ArrayList<String>();
-                            for (int j = 0; j < offerArray.size(); j++) {
-                                offerName.add(String.valueOf(offerArray.get(j)));
-                            }
-                            req.setAssetUrls(offerName);
+                                // offer is json array
+                                JsonArray offerArray = filter.get(i).getAsJsonObject().get("offers").getAsJsonArray();
+                                ArrayList<String> offerName = new ArrayList<String>();
+                                for (int j = 0; j < offerArray.size(); j++) {
+                                    offerName.add(String.valueOf(offerArray.get(j)));
+                                }
+                                req.setAssetUrls(offerName);
 
-                            // offer
+                                // offer
                             /*if (request.getOffers().size() == 0) {
                                 req.setOffers(null);
                             } else {
                                 req.setOffers(request.getOffers());
                             }*/
 
-                            // adding request to requests array
-                            requestList.add(req);
+                                // adding request to requests array
+                                requestList.add(req);
+
+                            }
+
+
                         }
 
                         // notifying list adapter about data changes
@@ -428,9 +434,10 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
 
         // init view
         final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
+        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_unit_type);
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.fragment_post_item_editText_quantity);
-        final EditText editTextUnitType = (EditText) mView.findViewById(R.id.fragment_post_item_editText_unity_type);
         final EditText editTextPrice = (EditText) mView.findViewById(R.id.fragment_post_item_editText_price);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.fragment_post_item_editText_product);
 
         // drop down element
         List<String> itemsName = new ArrayList<>();
@@ -462,6 +469,33 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
             }
         });
 
+
+
+        // drop down unit element
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerUnitType.setAdapter(arrayAdapter2);
+
+        // event onClick
+        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+
+
+
+                // showing clicked spinner item name and position
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+            }
+        });
+
         // set dialog message
         builder
                 .setTitle("About your offer or your need")
@@ -486,9 +520,15 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                         // values
                         String category = spinnerCategory.getText().toString();
                         String quantity = editTextQuantity.getText().toString();
-                        String unitType = editTextUnitType.getText().toString();
+                        String unitType = spinnerUnitType.getText().toString();
                         String price = editTextPrice.getText().toString();
-
+                        String product = editTextProduct.getText().toString();
+                        // product
+                        if (product.isEmpty() || TextUtils.isEmpty(product)) {
+                            editTextProduct.setError("Add item product");
+                            editTextProduct.requestFocus();
+                            return;
+                        }
                         // category
                         if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains("Choose")) {
                             spinnerCategory.setError("Select category");
@@ -502,9 +542,9 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             return;
                         }
                         // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType)) {
-                            editTextUnitType.setError("Add price unit type");
-                            editTextUnitType.requestFocus();
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains("Choose")) {
+                            spinnerUnitType.setError("Select category");
+                            spinnerUnitType.requestFocus();
                             return;
                         }
                         // price
@@ -527,7 +567,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
                         //
-                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), "ovy", Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.BUY, itemIdSelected);
+                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.BUY, itemIdSelected);
 
                         // send query
                         Call<Void> call = api.sendRequest(auth, request);
