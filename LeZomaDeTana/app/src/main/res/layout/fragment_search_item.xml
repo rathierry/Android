@@ -132,7 +132,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_search_item_swipe_refresh_layout_post"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="invisible">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/fragment_search_item_nested_scroll_view"

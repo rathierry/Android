@@ -93,8 +93,7 @@ public interface APIInterface {
     @POST("rest/requests/")
     Call<Void> sendRequest(@Header("Authorization") String auth,@Body RequestSend req);
 
-
-
+    // fetch all template (item category)
     @GET("rest/productTemplates")
     Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
 
