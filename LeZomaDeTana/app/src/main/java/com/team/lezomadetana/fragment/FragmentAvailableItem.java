@@ -103,6 +103,9 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         View rootView = inflater.inflate(R.layout.fragment_available_item, container, false);
 
         // init view
+        _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_available_item_layout_post);
+        _searchLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_search);
+        _listLayout = (LinearLayout) rootView.findViewById(R.id.fragment_availble_item_layout_list);
         _editTextPost = (EditText) rootView.findViewById(R.id.fragment_available_item_text_view_post);
         _editTextPost.setKeyListener(null);
         _editTextPost.setOnClickListener(this);
@@ -349,7 +352,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
 
                     // stopping swipe refresh
                     _swipeRefreshAvailableItem.setRefreshing(false);
-                    hideLoadingView();
+                    fetchAllCategory();
                 }
             }
 
