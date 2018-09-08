@@ -12,13 +12,27 @@ public class RequestSend {
     private Request.Type type;
     private String templateId;
 
-    public RequestSend(String userId, String product, Request.UnitType unitType, Float price, Request.Type type, String templateId) {
+    public RequestSend() {
+    }
+
+    public RequestSend(String userId, String product, Request.UnitType unitType, Float price, Request.Type type, String templateId, Boolean active) {
         this.userId = userId;
         this.product = product;
         this.unitType = unitType;
         this.price = price;
         this.type = type;
         this.templateId = templateId;
+        this.active = active;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    private Boolean active;
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getUserId() {

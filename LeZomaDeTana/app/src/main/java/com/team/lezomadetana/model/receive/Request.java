@@ -26,7 +26,7 @@ public class Request {
     private String userId;
     private UnitType unitType;
     @Expose
-    private ArrayList<String> offers;
+    private ArrayList<Offer> offers;
     @Expose
     private Float price;
     private Integer quantity;
@@ -43,7 +43,7 @@ public class Request {
     public Request() {
     }
 
-    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<String> offers, Float price, Integer quantity, String product, String templateId,Integer type) {
+    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<Offer> offers, Float price, Integer quantity, String product, String templateId,Integer type) {
         this.active = active;
         this.assetUrls = assetUrls;
         this.userId = userId;
@@ -88,7 +88,7 @@ public class Request {
         this.unitType = unitType;
     }
 
-    public void setOffers(ArrayList<String> offers) {
+    public void setOffers(ArrayList<Offer> offers) {
         this.offers = offers;
     }
 
@@ -132,7 +132,7 @@ public class Request {
         return unitType;
     }
 
-    public ArrayList<String> getOffers() {
+    public ArrayList<Offer> getOffers() {
         return offers;
     }
 
