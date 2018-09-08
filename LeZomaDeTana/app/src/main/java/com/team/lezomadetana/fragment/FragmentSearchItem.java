@@ -2,7 +2,6 @@ package com.team.lezomadetana.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -10,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -95,7 +93,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
 
-        // init view
+        /*// init view
         _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_post);
         _searchLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_search);
         _listLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_list);
@@ -151,10 +149,20 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Toast.makeText(getContext(), "item position = " + position, Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         // return current view
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+        // do your stuff here
+        showShortToast(getContext(), "Fragment: MITADY ENTANA\nload all data");
     }
 
     /**
@@ -162,7 +170,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        /*switch (v.getId()) {
             case R.id.fragment_search_item_text_view_post:
                 // showShortToast(getContext(), "Edit text clicked");
                 ShowPostItemPopup();
@@ -171,7 +179,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                 // showShortToast(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected);
                 ShowPostItemPopup();
                 break;
-        }
+        }*/
     }
 
     /**
@@ -230,7 +238,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
 
-                            if(request.getType() == 1){
+                            if (request.getType() == 1) {
                                 // new class model to set all values
                                 Request req = new Request();
                                 // set values
@@ -392,33 +400,6 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     }
 
     /**
-     * Initialize item'spinner (drop down list)
-     */
-    /*private void initSpinnerForItem(List list) {
-        // drop down element
-        List<String> items = Arrays.asList(getResources().getStringArray(R.array.array_items));
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, items);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        //_itemSpinner.setAdapter(arrayAdapter);
-
-        // event onClick
-        _itemSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemNameSelected = parent.getItemAtPosition(position).toString();
-
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemNameSelected + "\n(at position n° " + position + ")");
-            }
-        });
-    }*/
-
-    /**
      * Display popup post new item
      */
     private void ShowPostItemPopup() {
@@ -470,7 +451,6 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         });
 
 
-
         // drop down unit element
         String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
 
@@ -488,7 +468,6 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // item'clicked name
                 itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
-
 
 
                 // showing clicked spinner item name and position

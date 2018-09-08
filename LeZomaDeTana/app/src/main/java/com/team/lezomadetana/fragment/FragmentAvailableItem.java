@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -60,6 +60,8 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     // Fields
     // ===========================================================
 
+    private View rootView;
+
     private LinearLayout _postLayout;
     private LinearLayout _searchLayout;
     private LinearLayout _listLayout;
@@ -73,7 +75,6 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     private ListView _listViewAvailableItem;
     private RequestAdapter _requestAdapter;
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
-   
 
     private String itemIdSelected;
     private String itemUnitTypeSelected;
@@ -100,7 +101,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_available_item, container, false);
+        rootView = inflater.inflate(R.layout.fragment_available_item, container, false);
 
         // init view
         _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_available_item_layout_post);
@@ -138,16 +139,6 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
         _swipeRefreshAvailableItem.setOnRefreshListener(this);
-        // showing Swipe Refresh animation on activity create
-        // as animation won't start on onCreate, post runnable is used
-        _swipeRefreshAvailableItem.post(new Runnable() {
-                                         @Override
-                                         public void run() {
-                                             // fetch all requests
-                                             fetchAllRequests();
-                                         }
-                                     }
-        );
 
         // list view and adapter
         _listViewAvailableItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
@@ -168,6 +159,34 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && rootView != null) {
+            onResume();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+        // do your stuff here
+        // showing Swipe Refresh animation on activity create
+        // as animation won't start on onCreate, post runnable is used
+        _swipeRefreshAvailableItem.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                // fetch all requests
+                                                fetchAllRequests();
+                                            }
+                                        }
+        );
+        showShortToast(getContext(), "Fragment: MITADY ENTANA\nload all data");
+    }
+
+    @Override
     public void onRefresh() {
         showShortToast(getContext(), "onRefresh");
         fetchAllRequests();
@@ -178,7 +197,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_available_item_text_view_post:
-                 showShortToast(getContext(), "Edit text clicked");
+                showShortToast(getContext(), "Edit text clicked");
                 ShowPostItemPopup();
                 break;
             case R.id.fragment_available_item_button_post:
@@ -188,6 +207,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         }
 
     }
+
     /**
      * Load all category list
      */
@@ -314,7 +334,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                            if(request.getType() == 0){
+                            if (request.getType() == 0) {
                                 // new class model to set all values
                                 Request req = new Request();
                                 // set values
@@ -461,7 +481,6 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         });
 
 
-
         // drop down unit element
         String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
 
@@ -479,7 +498,6 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // item'clicked name
                 itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
-
 
 
                 // showing clicked spinner item name and position
@@ -617,7 +635,6 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
-
 
 
 }

@@ -105,8 +105,8 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- screen: fragment-business -->
-    <string name="fragment_business_tab_layout_search_item">Search item</string>
-    <string name="fragment_business_tab_layout_available_item">Available item</string>
+    <string name="fragment_business_tab_layout_search_item">MITADY ENTANA</string>
+    <string name="fragment_business_tab_layout_available_item">MIVAROTRA ENTANA</string>
     <string-array name="array_items">
         <item>VANILLE</item>
         <item>OVY</item>
@@ -127,5 +127,8 @@
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
     <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
     <string name="activity_main_menu_offer">Biling</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

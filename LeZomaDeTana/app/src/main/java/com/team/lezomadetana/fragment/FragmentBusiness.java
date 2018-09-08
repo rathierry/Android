@@ -1,8 +1,11 @@
 package com.team.lezomadetana.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +25,10 @@ public class FragmentBusiness extends Fragment {
     // Fields
     // ===========================================================
 
+    private FragmentActivity myContext;
     private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private TabsPagerAdapter viewPagerAdapter;
 
     // ===========================================================
     // Constructors
@@ -46,19 +52,34 @@ public class FragmentBusiness extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_business, container, false);
 
-        // setting ViewPager for each Tabs
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        // set Tabs inside Toolbar
+        // init view
         tabLayout = (TabLayout) view.findViewById(R.id.result_tabs);
+        viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        viewPagerAdapter = new TabsPagerAdapter(myContext.getSupportFragmentManager());
+
+        // set tab
+        viewPagerAdapter.addFragment(new FragmentSearchItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
+        viewPagerAdapter.addFragment(new FragmentAvailableItem(), getResources().getString(R.string.fragment_business_tab_layout_available_item));
+
+        // set adapter
+        viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        // equal all tab rows widt
+        // equal all tab rows width
         EqualWidthTabRows();
 
         // return current view
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity a;
+        if (context instanceof Activity) {
+            a = (Activity) context;
+            myContext = (FragmentActivity) a;
+        }
     }
 
     // ===========================================================
@@ -72,17 +93,6 @@ public class FragmentBusiness extends Fragment {
     // ===========================================================
     // Private Methods
     // ===========================================================
-
-    // set view pager
-    private void setupViewPager(ViewPager viewPager) {
-        /**
-         * Add Fragments to Tabs
-         */
-        TabsPagerAdapter adapter = new TabsPagerAdapter(getChildFragmentManager());
-        adapter.addFragment(new FragmentSearchItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
-        adapter.addFragment(new FragmentAvailableItem(), getResources().getString(R.string.fragment_business_tab_layout_available_item));
-        viewPager.setAdapter(adapter);
-    }
 
     /**
      * To allow equal width for each tab, while (TabLayout.MODE_SCROLLABLE)
