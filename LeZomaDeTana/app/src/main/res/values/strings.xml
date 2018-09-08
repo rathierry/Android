@@ -87,7 +87,7 @@
     </string-array>
 
     <!-- screen: MainActivity -->
-    <string name="activity_main_menu_business">Business</string>
+    <string name="activity_main_menu_business">Business</string><!-- not add a text -->
     <!--<string name="activity_main_menu_offer">Offer/Require</string>-->
     <string name="activity_main_menu_chat">Chat</string>
     <string name="activity_main_menu_setting">Setting</string>
@@ -95,7 +95,7 @@
     <string name="activity_main_menu_about">About us</string>
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
-        <item>@string/activity_main_menu_business</item>
+        <item></item>
         <!--<item>@string/activity_main_menu_offer</item>-->
         <item>@string/activity_main_menu_chat</item>
         <item>@string/activity_main_menu_setting</item>

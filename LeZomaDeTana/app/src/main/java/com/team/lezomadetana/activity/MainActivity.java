@@ -135,22 +135,40 @@ public class MainActivity extends BaseActivity {
         // inflate the menu; this adds items to the action bar if it is present.
         // show menu only when home fragment is selected
         if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3) {
-            getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.menu_main_activity, menu);
         }
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
+        MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
+        MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
+        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3) {
+            itemMenuSearch.setEnabled(false);
+            itemMenuSearch.setVisible(false);
+            itemMenuPayment.setEnabled(false);
+            itemMenuPayment.setVisible(false);
+            itemMenuInfo.setEnabled(false);
+            itemMenuInfo.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
 
-        // no inspection SimplifiableIfStatement
-        if (id == R.id.action_information) {
-            showLongToast(MainActivity.this, getResources().getString(R.string.activity_main_menu_info));
-            return true;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                showLongToast(MainActivity.this, "item SEARCH");
+                return true;
+            case R.id.action_payment:
+                showLongToast(MainActivity.this, "item PAYMENT");
+                return true;
+            case R.id.action_information:
+                showLongToast(MainActivity.this, getResources().getString(R.string.activity_main_menu_info));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -204,7 +222,7 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 // check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
-                    // replacing the main content with ContentFragment Which is our Inbox View;
+                    // replacing the menu_main_activity content with ContentFragment Which is our Inbox View;
                     case R.id.nav_business:
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_BUSINESS;
@@ -295,7 +313,7 @@ public class MainActivity extends BaseActivity {
         Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
-                // update the main content by replacing fragments
+                // update the menu_main_activity content by replacing fragments
                 Fragment fragment = getDefaultFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);

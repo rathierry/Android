@@ -8,10 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +32,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.RequestAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
@@ -60,6 +65,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     // Fields
     // ===========================================================
 
+    private MainActivity mainActivity;
     private View rootView;
 
     private LinearLayout _postLayout;
@@ -96,12 +102,15 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_available_item, container, false);
+
+        // init menu_main_activity activity
+        mainActivity = (MainActivity) getActivity();
 
         // init view
         _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_available_item_layout_post);
@@ -159,6 +168,37 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
+        MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
+        MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
+
+        itemMenuSearch.setEnabled(true);
+        itemMenuSearch.setVisible(true);
+        itemMenuPayment.setEnabled(true);
+        itemMenuPayment.setVisible(true);
+        itemMenuInfo.setEnabled(false);
+        itemMenuInfo.setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                showLongToast(getActivity(), "2) FIKAROHANA");
+                break;
+            case R.id.action_payment:
+                showLongToast(getActivity(), "2) RESA-BOLA");
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && rootView != null) {
@@ -183,7 +223,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                                             }
                                         }
         );
-        showShortToast(getContext(), "Fragment: MITADY ENTANA\nload all data");
+        showShortToast(getContext(), "Fragment: MIVAROTRA ENTANA\nload all data");
     }
 
     @Override

@@ -1,13 +1,11 @@
 package com.team.lezomadetana.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -15,7 +13,7 @@ import android.widget.LinearLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.adapter.TabsPagerAdapter;
 
-public class FragmentBusiness extends Fragment {
+public class FragmentBusiness extends BaseFragment {
 
     // ===========================================================
     // Constants
@@ -25,7 +23,6 @@ public class FragmentBusiness extends Fragment {
     // Fields
     // ===========================================================
 
-    private FragmentActivity myContext;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private TabsPagerAdapter viewPagerAdapter;
@@ -45,7 +42,6 @@ public class FragmentBusiness extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
@@ -55,7 +51,7 @@ public class FragmentBusiness extends Fragment {
         // init view
         tabLayout = (TabLayout) view.findViewById(R.id.result_tabs);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        viewPagerAdapter = new TabsPagerAdapter(myContext.getSupportFragmentManager());
+        viewPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
 
         // set tab
         viewPagerAdapter.addFragment(new FragmentSearchItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
@@ -70,16 +66,6 @@ public class FragmentBusiness extends Fragment {
 
         // return current view
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Activity a;
-        if (context instanceof Activity) {
-            a = (Activity) context;
-            myContext = (FragmentActivity) a;
-        }
     }
 
     // ===========================================================

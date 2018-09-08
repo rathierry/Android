@@ -9,6 +9,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.RequestAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
@@ -55,6 +59,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     // Fields
     // ===========================================================
 
+    private MainActivity mainActivity;
     private LinearLayout _postLayout;
     private LinearLayout _searchLayout;
     private LinearLayout _listLayout;
@@ -86,12 +91,14 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
+
+        mainActivity = (MainActivity) getActivity();
 
         /*// init view
         _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_post);
@@ -155,7 +162,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         return rootView;
     }
 
-    @Override
+    /*@Override
     public void onResume() {
         super.onResume();
         if (!getUserVisibleHint()) {
@@ -163,6 +170,37 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         }
         // do your stuff here
         showShortToast(getContext(), "Fragment: MITADY ENTANA\nload all data");
+    }*/
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
+        MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
+        MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
+
+        itemMenuSearch.setEnabled(true);
+        itemMenuSearch.setVisible(true);
+        itemMenuPayment.setEnabled(true);
+        itemMenuPayment.setVisible(true);
+        itemMenuInfo.setEnabled(false);
+        itemMenuInfo.setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                showLongToast(getActivity(), "1) FIKAROHANA");
+                break;
+            case R.id.action_payment:
+                showLongToast(getActivity(), "1) RESA-BOLA");
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
