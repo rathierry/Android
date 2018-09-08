@@ -24,6 +24,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 
 /**
@@ -82,6 +83,9 @@ public interface APIInterface {
     // user: login
     @POST("checkCredentials/")
     Call<UserCredentialResponse> checkCredential(@Header("Authorization") String auth, @Body UserCheckCredential user);
+
+    @GET("/rest/users/{userId}")
+    Call<JsonObject> getUserById(@Header("Authorization") String auth,@Path(value = "userId",encoded = true) String userId);
 
     // user: register
     @POST("rest/users/")

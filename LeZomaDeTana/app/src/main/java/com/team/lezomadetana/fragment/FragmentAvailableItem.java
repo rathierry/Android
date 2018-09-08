@@ -34,6 +34,7 @@ import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.RequestAdapter;
+import com.team.lezomadetana.adapter.RequestAvailableAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.receive.Offer;
@@ -81,11 +82,13 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
     private SwipeRefreshLayout _swipeRefreshAvailableItem;
     private List<Request> requestList = new ArrayList<Request>();
     private ListView _listViewAvailableItem;
-    private RequestAdapter _requestAdapter;
+    private RequestAvailableAdapter _requestAdapter;
+    //private RequestAdapter _requestAdapter;
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
 
     private String itemIdSelected;
     private String itemUnitTypeSelected;
+
 
 
     // ===========================================================
@@ -153,7 +156,8 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
 
         // list view and adapter
         _listViewAvailableItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
-        _requestAdapter = new RequestAdapter(getActivity(), requestList);
+        _requestAdapter = new RequestAvailableAdapter(getActivity(), requestList,this);
+        //_requestAdapter = new RequestAdapter(getActivity(), requestList);
         _listViewAvailableItem.setAdapter(_requestAdapter);
         _listViewAvailableItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -400,7 +404,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
                                 req.setAssetUrls(assetUrl);
 
                                 // adding request to requests array
-                                requestList.add(req);
+                                requestList.add(request);
 
                             }
 
@@ -678,7 +682,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         dialog.show();
     }
 
-    private void ShowPostOffertPopup(final String requestId) {
+    public void ShowPostOffertPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
@@ -692,7 +696,7 @@ public class FragmentAvailableItem extends BaseFragment implements View.OnClickL
         // init view
 
         final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
-        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
 
         // drop down unit element
         String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);

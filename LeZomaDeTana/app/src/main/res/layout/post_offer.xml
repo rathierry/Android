@@ -33,7 +33,7 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/fragment_post_item_editText_quantity"
+                    android:id="@+id/dialog_offer_quantity_text"
                     style="@style/ediTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
