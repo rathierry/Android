@@ -78,7 +78,7 @@ public class RequestAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = layoutInflater.inflate(R.layout.list_request_row, null);
 
-        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
+        /*ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
         TextView person = (TextView) convertView.findViewById(R.id.person);
         TextView template = (TextView) convertView.findViewById(R.id.template);
         TextView quantity = (TextView) convertView.findViewById(R.id.quantity);
@@ -118,7 +118,7 @@ public class RequestAdapter extends BaseAdapter {
                         "\nPrice: " + r.getPrice() +
                         "\n---------------", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         return convertView;
     }

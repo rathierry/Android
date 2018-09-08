@@ -3,12 +3,16 @@ package com.team.lezomadetana.api;
 import android.net.wifi.hotspot2.pps.Credential;
 
 import com.google.gson.JsonObject;
+import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
+import org.json.JSONObject;
+
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;

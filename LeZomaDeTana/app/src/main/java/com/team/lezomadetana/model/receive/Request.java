@@ -35,6 +35,11 @@ public class Request {
     private String templateId;
     private String id;
     private Integer type;
+    private String picture;
+
+    private boolean isImportant;
+    private boolean isRead;
+    private int color = -1;
 
     // ===========================================================
     // Constructors
@@ -116,6 +121,23 @@ public class Request {
         this.type = type;
     }
 
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setImportant(boolean important) {
+        isImportant = important;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+
     public Boolean getActive() {
         return active;
     }
@@ -159,6 +181,23 @@ public class Request {
     public Integer getType() {
         return type;
     }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public boolean isImportant() {
+        return isImportant;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
 
     public enum UnitType {KG, M, L, M2, UNIT}
 

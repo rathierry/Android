@@ -1,16 +1,24 @@
 package com.team.lezomadetana.fragment;
 
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +26,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
-import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.adapter.RequestAdapter;
+import com.team.lezomadetana.adapter.MessagesAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.receive.ProductTemplate;
@@ -49,7 +54,7 @@ import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
  * Created by RaThierry on 04/09/2018.
  **/
 
-public class FragmentSearchItem extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class FragmentSearchItem extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.MessageAdapterListener {
 
     // ===========================================================
     // Constants
@@ -59,22 +64,18 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     // Fields
     // ===========================================================
 
-    private MainActivity mainActivity;
-    private LinearLayout _postLayout;
-    private LinearLayout _searchLayout;
-    private LinearLayout _listLayout;
-    private TextView _editTextPost;
-    private MaterialBetterSpinner _itemSpinner;
-    private Button _buttonPost;
-    private EditText _editTextSearch;
     private String itemNameSelected;
     private String itemIdSelected;
     private String itemUnitTypeSelected;
-    private SwipeRefreshLayout _swipeRefreshSearchItem;
-    private List<Request> requestList = new ArrayList<Request>();
+
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
-    private ListView _listViewSearchItem;
-    private RequestAdapter _requestAdapter;
+
+    private List<Request> messages = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private MessagesAdapter mAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ActionModeCallback actionModeCallback;
+    private ActionMode actionMode;
 
     // ===========================================================
     // Constructors
@@ -98,7 +99,37 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search_item, container, false);
 
-        mainActivity = (MainActivity) getActivity();
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_search_item_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_search_item_recycler_view);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        mAdapter = new MessagesAdapter(getContext(), messages, this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(mAdapter);
+
+        actionModeCallback = new ActionModeCallback();
+
+        // show loader and fetch messages
+        swipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getInbox();
+                    }
+                }
+        );
 
         /*// init view
         _postLayout = (LinearLayout) rootView.findViewById(R.id.fragment_search_item_layout_post);
@@ -162,16 +193,6 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         return rootView;
     }
 
-    /*@Override
-    public void onResume() {
-        super.onResume();
-        if (!getUserVisibleHint()) {
-            return;
-        }
-        // do your stuff here
-        showShortToast(getContext(), "Fragment: MITADY ENTANA\nload all data");
-    }*/
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -204,29 +225,57 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     }
 
     /**
-     * View method
-     */
-    @Override
-    public void onClick(View v) {
-        /*switch (v.getId()) {
-            case R.id.fragment_search_item_text_view_post:
-                // showShortToast(getContext(), "Edit text clicked");
-                ShowPostItemPopup();
-                break;
-            case R.id.fragment_search_item_button_post:
-                // showShortToast(getContext(), "Your post: \n" + _editTextPost.getText().toString() + "\nItem selected is " + itemNameSelected);
-                ShowPostItemPopup();
-                break;
-        }*/
-    }
-
-    /**
      * This method is called when swipe refresh is pulled down
      */
     @Override
     public void onRefresh() {
         showShortToast(getContext(), "onRefresh");
-        fetchAllRequests();
+        //fetchAllRequests();
+        // swipe refresh is performed, fetch the messages again
+        getInbox();
+    }
+
+    @Override
+    public void onIconClicked(int position) {
+        if (actionMode == null) {
+            actionMode = getActivity().startActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    @Override
+    public void onIconImportantClicked(int position) {
+        // Star icon is clicked,
+        // mark the message as important
+        Request message = messages.get(position);
+        message.setImportant(!message.isImportant());
+        messages.set(position, message);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onMessageRowClicked(int position) {
+        // verify whether action mode is enabled or not
+        // if enabled, change the row state to activated
+        if (mAdapter.getSelectedItemCount() > 0) {
+            enableActionMode(position);
+        } else {
+            // read the message which removes bold from the row
+            Request message = messages.get(position);
+            message.setRead(true);
+            messages.set(position, message);
+            mAdapter.notifyDataSetChanged();
+
+            Toast.makeText(getContext(),
+                    "Read: " + message.getProduct() + "\n" + message.getQuantity() + "T\n" + message.getUserId(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRowLongClicked(int position) {
+        // long press is performed, enable action mode
+        enableActionMode(position);
     }
 
     // ===========================================================
@@ -244,7 +293,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
     /**
      * Fetch all requests
      */
-    private void fetchAllRequests() {
+    /*private void fetchAllRequests() {
         // showing refresh animation before making http call
         _swipeRefreshSearchItem.setRefreshing(true);
 
@@ -312,11 +361,11 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                                 req.setAssetUrls(offerName);
 
                                 // offer
-                            /*if (request.getOffers().size() == 0) {
-                                req.setOffers(null);
-                            } else {
-                                req.setOffers(request.getOffers());
-                            }*/
+                                if (request.getOffers().size() == 0) {
+                                    req.setOffers(null);
+                                } else {
+                                    req.setOffers(request.getOffers());
+                                }
 
                                 // adding request to requests array
                                 requestList.add(req);
@@ -360,6 +409,120 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                         .show();
             }
         });
+    }*/
+
+    /**
+     * Fetches mail messages by making HTTP request
+     * url: https://api.androidhive.info/json/inbox.json
+     */
+    private void getInbox() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        // show spinner
+        showLoadingView(getResources().getString(R.string.app_spinner));
+
+        // set retrofit api
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // send query
+        Call<JsonObject> call = api.getAllRequest(auth);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
+                    // clear the inbox
+                    messages.clear();
+
+                    // sort using result(s)
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                    // count data
+                    if (filter.size() > 0) {
+
+                        // the loop was performed to add colors to each message
+                        for (int i = 0; i < filter.size(); i++) {
+                            // class model to mapping gson
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                            // if request type == 1 (BUY)
+                            if (request.getType() == 1) {
+                                // new class model to set all values
+                                Request req = new Request();
+
+                                request.setColor(getRandomMaterialColor("400"));
+                                messages.add(request);
+
+                                mAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        }
+                    }
+                    // next step : load all category list
+                    // TODO: fetchAllCategory();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                // stopping swipe refresh
+                swipeRefreshLayout.setRefreshing(false);
+                hideLoadingView();
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(R.drawable.ic_wifi_black)
+                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                showLoadingView(getResources().getString(R.string.app_spinner));
+                                hideLoadingView();
+                                getInbox();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
+    /**
+     * chooses a random color from array xml
+     */
+    private int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
+    }
+
+    private void enableActionMode(int position) {
+        if (actionMode == null) {
+            actionMode = getActivity().startActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+    }
+
+    private void toggleSelection(int position) {
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
     }
 
     /**
@@ -404,10 +567,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                         Log.d("REQUESTS", "" + productTemplates);
 
                         // enable layout
-                        _postLayout.setVisibility(View.VISIBLE);
-                        _searchLayout.setVisibility(View.VISIBLE);
-                        _listLayout.setVisibility(View.VISIBLE);
-                        _swipeRefreshSearchItem.setVisibility(View.VISIBLE);
+                        swipeRefreshLayout.setVisibility(View.VISIBLE);
 
                         // hide spinner
                         hideLoadingView();
@@ -418,7 +578,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 // stopping swipe refresh
-                _swipeRefreshSearchItem.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
                 hideLoadingView();
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(R.drawable.ic_wifi_black)
@@ -598,7 +758,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                                     hideLoadingView();
 
                                     // clear list request
-                                    requestList.clear();
+                                    messages.clear();
 
                                     // refresh list
                                     onRefresh();
@@ -609,7 +769,7 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 // stopping swipe refresh
-                                _swipeRefreshSearchItem.setRefreshing(false);
+                                swipeRefreshLayout.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_wifi_black)
@@ -642,6 +802,61 @@ public class FragmentSearchItem extends BaseFragment implements View.OnClickList
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+
+            // disable swipe refresh if action mode is enabled
+            swipeRefreshLayout.setEnabled(false);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_information:
+                    // delete all the selected messages
+                    deleteMessages();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelections();
+            swipeRefreshLayout.setEnabled(true);
+            actionMode = null;
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.resetAnimationIndex();
+                    // mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    // deleting the messages from recycler view
+    private void deleteMessages() {
+        mAdapter.resetAnimationIndex();
+        List<Integer> selectedItemPositions =
+                mAdapter.getSelectedItems();
+        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+            mAdapter.removeData(selectedItemPositions.get(i));
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     // ===========================================================

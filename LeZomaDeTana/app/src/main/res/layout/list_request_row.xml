@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_row_selector"
     android:padding="8dp">
 
-    <!-- Thumbnail Image -->
+    &lt;!&ndash; Thumbnail Image &ndash;&gt;
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="80dp"
@@ -14,7 +16,7 @@
         android:layout_marginRight="8dp"
         android:src="@drawable/ic_new_black" />
 
-    <!-- Person -->
+    &lt;!&ndash; Person &ndash;&gt;
     <TextView
         android:id="@+id/person"
         android:layout_width="wrap_content"
@@ -27,7 +29,7 @@
         android:textStyle="bold"
         android:typeface="monospace" />
 
-    <!-- Template -->
+    &lt;!&ndash; Template &ndash;&gt;
     <TextView
         android:id="@+id/template"
         android:layout_width="match_parent"
@@ -41,7 +43,7 @@
         android:textStyle="normal"
         android:typeface="monospace" />
 
-    <!-- Quantity -->
+    &lt;!&ndash; Quantity &ndash;&gt;
     <TextView
         android:id="@+id/quantity"
         android:layout_width="fill_parent"
@@ -55,7 +57,7 @@
         android:textStyle="normal"
         android:typeface="monospace" />
 
-    <!-- Price -->
+    &lt;!&ndash; Price &ndash;&gt;
     <TextView
         android:id="@+id/price"
         android:layout_width="fill_parent"
@@ -69,7 +71,7 @@
         android:textStyle="normal"
         android:typeface="monospace" />
 
-    <!-- Number view -->
+    &lt;!&ndash; Number view &ndash;&gt;
     <Button
         android:id="@+id/numberView"
         android:layout_width="wrap_content"
@@ -86,5 +88,104 @@
         android:textSize="12sp"
         android:textStyle="bold"
         android:typeface="monospace" />
+
+</RelativeLayout>-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_list_row"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingRight="?listPreferredItemPaddingRight"
+    android:paddingTop="16dp">
+
+    <LinearLayout
+        android:id="@+id/message_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingLeft="72dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="#111111"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="#7a7a7a"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/icon_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/icon_front"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/icon_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/icon_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="#4285f4"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/icon_star"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:tint="@color/icon_tint_normal" />
 
 </RelativeLayout>
