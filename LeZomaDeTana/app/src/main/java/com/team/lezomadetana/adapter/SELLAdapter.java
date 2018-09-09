@@ -111,7 +111,7 @@ public class SELLAdapter extends BaseAdapter {
         String date = df.format(Calendar.getInstance().getTime());
 
         // displaying text view data
-        from.setText(Html.fromHtml("Mitady <b>" + req.getProduct() + "</b>"));
+        from.setText(Html.fromHtml("Manana <b>" + req.getProduct() + "</b>"));
         subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + req.getQuantity() + "</b>" + req.getUnitType().name()));
         message.setText("nalefan\'i " + req.getUserId());
         timestamp.setText(date);

@@ -64,11 +64,12 @@ public class FragmentBuyItem extends BaseFragment implements
     private String itemNameSelected;
     private String itemIdSelected;
     private String itemUnitTypeSelected;
-    private SwipeRefreshLayout _swipeRefreshSearchItem;
+    private SwipeRefreshLayout swipeRefreshItem;
     private List<Request> requestList = new ArrayList<Request>();
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
-    private ListView _listViewSearchItem;
-    private BUYAdapter _BUYAdapter;
+    private ListView listViewItem;
+    private BUYAdapter buyAdapter;
+    private boolean isRefresh = false;
 
     // ===========================================================
     // Constructors
@@ -105,13 +106,13 @@ public class FragmentBuyItem extends BaseFragment implements
         });
 
         // refresh
-        _swipeRefreshSearchItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
-        _swipeRefreshSearchItem.setColorSchemeResources(android.R.color.holo_red_light,
+        swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
+        swipeRefreshItem.setColorSchemeResources(android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
-        _swipeRefreshSearchItem.setOnRefreshListener(this);
-        _swipeRefreshSearchItem.post(new Runnable() {
+        swipeRefreshItem.setOnRefreshListener(this);
+        swipeRefreshItem.post(new Runnable() {
                                          @Override
                                          public void run() {
                                              fetchAllRequests();
@@ -120,9 +121,9 @@ public class FragmentBuyItem extends BaseFragment implements
         );
 
         // list view and adapter
-        _listViewSearchItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
-        _BUYAdapter = new BUYAdapter(getActivity(), requestList, this);
-        _listViewSearchItem.setAdapter(_BUYAdapter);
+        listViewItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
+        buyAdapter = new BUYAdapter(getActivity(), requestList, this);
+        listViewItem.setAdapter(buyAdapter);
 
         // return current view
         return rootView;
@@ -166,7 +167,7 @@ public class FragmentBuyItem extends BaseFragment implements
 
     @Override
     public void onRefresh() {
-        showShortToast(getContext(), "onRefresh");
+        isRefresh = true;
         fetchAllRequests();
     }
 
@@ -204,7 +205,7 @@ public class FragmentBuyItem extends BaseFragment implements
         Request request = requestList.get(position);
         request.setRead(true);
         requestList.set(position, request);
-        _BUYAdapter.notifyDataSetChanged();
+        buyAdapter.notifyDataSetChanged();
 
         Toast.makeText(getContext(), "Read: " + request.getUserId(), Toast.LENGTH_SHORT).show();
     }
@@ -226,7 +227,13 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // showing refresh animation before making http call
-        _swipeRefreshSearchItem.setRefreshing(true);
+        swipeRefreshItem.setRefreshing(true);
+
+        if (isRefresh) {
+            hideLoadingView();
+        } else {
+            showLoadingView(getResources().getString(R.string.app_spinner));
+        }
 
         // show spinner
         showLoadingView(getResources().getString(R.string.app_spinner));
@@ -301,11 +308,11 @@ public class FragmentBuyItem extends BaseFragment implements
 
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        _BUYAdapter.notifyDataSetChanged();
+                        buyAdapter.notifyDataSetChanged();
                     }
 
                     // stopping swipe refresh
-                    _swipeRefreshSearchItem.setRefreshing(false);
+                    swipeRefreshItem.setRefreshing(false);
                     fetchAllCategory();
                 }
             }
@@ -313,7 +320,7 @@ public class FragmentBuyItem extends BaseFragment implements
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 // stopping swipe refresh
-                _swipeRefreshSearchItem.setRefreshing(false);
+                swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(R.drawable.ic_wifi_black)
@@ -573,7 +580,7 @@ public class FragmentBuyItem extends BaseFragment implements
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 // stopping swipe refresh
-                                _swipeRefreshSearchItem.setRefreshing(false);
+                                swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_wifi_black)

@@ -1,6 +1,8 @@
 package com.team.lezomadetana.fragment;
 
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -21,13 +23,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
-import com.team.lezomadetana.adapter.BUYAdapter;
 import com.team.lezomadetana.adapter.SELLAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
@@ -50,7 +52,8 @@ import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
  * Created by RaThierry on 04/09/2018.
  **/
 
-public class FragmentSellItem extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class FragmentSellItem extends BaseFragment implements
+        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SELLAdapter.RequestAdapterListener {
 
     // ===========================================================
     // Constants
@@ -62,14 +65,14 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
 
     private View rootView;
     private String itemNameSelected;
-    private SwipeRefreshLayout swipeRefreshStockItem;
-    private List<Request> requestList = new ArrayList<Request>();
-    private ListView listViewStockItem;
-    private SELLAdapter sellAdapter;
-    private List<ProductTemplate> categorylist = new ArrayList<ProductTemplate>();
     private String itemIdSelected;
     private String itemUnitTypeSelected;
-
+    private SwipeRefreshLayout swipeRefreshItem;
+    private List<Request> requestList = new ArrayList<Request>();
+    private ListView listViewItem;
+    private SELLAdapter sellAdapter;
+    private List<ProductTemplate> categorylist = new ArrayList<ProductTemplate>();
+    private boolean isRefresh = false;
 
     // ===========================================================
     // Constructors
@@ -107,25 +110,18 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
         });
 
         // refresh
-        swipeRefreshStockItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
-        swipeRefreshStockItem.setColorSchemeResources(android.R.color.holo_red_light,
+        swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
+        swipeRefreshItem.setColorSchemeResources(android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
-        swipeRefreshStockItem.setOnRefreshListener(this);
+        swipeRefreshItem.setOnRefreshListener(this);
 
         // list view and adapter
-        listViewStockItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
+        listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
 
-        sellAdapter = new SELLAdapter(getActivity(), requestList);
-        listViewStockItem.setAdapter(sellAdapter);
-
-        listViewStockItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Toast.makeText(getContext(), "item position = " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
+        sellAdapter = new SELLAdapter(getActivity(), requestList, this);
+        listViewItem.setAdapter(sellAdapter);
 
         // return current view
         return rootView;
@@ -179,7 +175,7 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
         // do your stuff here
         // showing Swipe Refresh animation on activity create
         // as animation won't start on onCreate, post runnable is used
-        swipeRefreshStockItem.post(new Runnable() {
+        swipeRefreshItem.post(new Runnable() {
                                        @Override
                                        public void run() {
                                            // fetch all requests
@@ -192,9 +188,8 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onRefresh() {
-        showShortToast(getContext(), "onRefresh");
+        isRefresh = true;
         fetchAllRequests();
-
     }
 
     @Override
@@ -203,6 +198,27 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
             /*case ...:
                 break;*/
         }
+    }
+
+    @Override
+    public void onIconClicked(int position) {
+        // TODO
+    }
+
+    @Override
+    public void onIconImportantClicked(int position) {
+        // TODO
+    }
+
+    @Override
+    public void onMessageRowClicked(int position) {
+        // read the "message" which removes bold from the row
+        Request request = requestList.get(position);
+        request.setRead(true);
+        requestList.set(position, request);
+        sellAdapter.notifyDataSetChanged();
+
+        Toast.makeText(getContext(), "Read: " + request.getUserId(), Toast.LENGTH_SHORT).show();
     }
 
     // ===========================================================
@@ -222,10 +238,13 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
      */
     private void fetchAllRequests() {
         // showing refresh animation before making http call
-        swipeRefreshStockItem.setRefreshing(true);
+        swipeRefreshItem.setRefreshing(true);
 
-        // show spinner
-        showLoadingView(getResources().getString(R.string.app_spinner));
+        if (isRefresh) {
+            hideLoadingView();
+        } else {
+            showLoadingView(getResources().getString(R.string.app_spinner));
+        }
 
         // set retrofit api
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
@@ -285,7 +304,7 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
                     }
 
                     // stopping swipe refresh
-                    swipeRefreshStockItem.setRefreshing(false);
+                    swipeRefreshItem.setRefreshing(false);
                     fetchAllCategory();
                 }
             }
@@ -293,7 +312,7 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 // stopping swipe refresh
-                swipeRefreshStockItem.setRefreshing(false);
+                swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(R.drawable.ic_wifi_black)
@@ -386,6 +405,9 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
         });
     }
 
+    /**
+     * Display post item popup
+     */
     private void ShowPostItemPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
@@ -555,7 +577,7 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 // stopping swipe refresh
-                                swipeRefreshStockItem.setRefreshing(false);
+                                swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_wifi_black)
@@ -590,6 +612,9 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
         dialog.show();
     }
 
+    /**
+     * .......
+     */
     private void ShowPostOffertPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
@@ -709,7 +734,7 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
                                 // stopping swipe refresh
-                                swipeRefreshStockItem.setRefreshing(false);
+                                swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_wifi_black)
@@ -742,6 +767,22 @@ public class FragmentSellItem extends BaseFragment implements View.OnClickListen
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
+    }
+
+    /**
+     * chooses a random color from array.xml
+     */
+    private int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
     }
 
     // ===========================================================
