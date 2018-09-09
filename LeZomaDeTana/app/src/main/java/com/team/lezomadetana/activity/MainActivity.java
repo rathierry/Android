@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.FragmentBusiness;
+import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
@@ -348,7 +348,7 @@ public class MainActivity extends BaseActivity {
     private Fragment getDefaultFragment() {
         switch (navItemIndex) {
             case 0:
-                FragmentBusiness business = new FragmentBusiness();
+                FragmentHome business = new FragmentHome();
                 return business;
             /*case 1:
                 FragmentOffer offer = new FragmentOffer();
@@ -360,7 +360,7 @@ public class MainActivity extends BaseActivity {
                 FragmentSetting setting = new FragmentSetting();
                 return setting;
             default:
-                return new FragmentBusiness();
+                return new FragmentHome();
         }
     }
 

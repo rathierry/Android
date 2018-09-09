@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -13,7 +11,7 @@ import android.widget.LinearLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.adapter.TabsPagerAdapter;
 
-public class FragmentBusiness extends BaseFragment {
+public class FragmentHome extends BaseFragment {
 
     // ===========================================================
     // Constants
@@ -23,6 +21,7 @@ public class FragmentBusiness extends BaseFragment {
     // Fields
     // ===========================================================
 
+    private View rootView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private TabsPagerAdapter viewPagerAdapter;
@@ -42,20 +41,21 @@ public class FragmentBusiness extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_business, container, false);
+        rootView = inflater.inflate(R.layout.fragment_business, container, false);
 
         // init view
-        tabLayout = (TabLayout) view.findViewById(R.id.result_tabs);
-        viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        viewPagerAdapter = new TabsPagerAdapter(getActivity().getSupportFragmentManager());
+        tabLayout = (TabLayout) rootView.findViewById(R.id.result_tabs);
+        viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        viewPagerAdapter = new TabsPagerAdapter(getChildFragmentManager());
 
         // set tab
-        viewPagerAdapter.addFragment(new FragmentSearchItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
-        viewPagerAdapter.addFragment(new FragmentAvailableItem(), getResources().getString(R.string.fragment_business_tab_layout_available_item));
+        viewPagerAdapter.addFragment(new FragmentBuyItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
+        viewPagerAdapter.addFragment(new FragmentSellItem(), getResources().getString(R.string.fragment_business_tab_layout_available_item));
 
         // set adapter
         viewPager.setAdapter(viewPagerAdapter);
@@ -65,7 +65,15 @@ public class FragmentBusiness extends BaseFragment {
         EqualWidthTabRows();
 
         // return current view
-        return view;
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
     }
 
     // ===========================================================
