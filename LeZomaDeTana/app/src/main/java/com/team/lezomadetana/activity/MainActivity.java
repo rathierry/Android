@@ -1,5 +1,6 @@
 package com.team.lezomadetana.activity;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +24,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.FragmentHome;
+import com.team.lezomadetana.fragment.FragmentBuyItem;
 import com.team.lezomadetana.fragment.FragmentChat;
+import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -137,6 +140,7 @@ public class MainActivity extends BaseActivity {
         if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3) {
             getMenuInflater().inflate(R.menu.menu_main_activity, menu);
         }
+
         return true;
     }
 

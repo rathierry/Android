@@ -603,7 +603,7 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     /**
-     * .......
+     * Popup to write new sell answer
      */
     public void showPostOfferPopup(final String requestId) {
         // get prompts xml view
@@ -692,7 +692,7 @@ public class FragmentSellItem extends BaseFragment implements
                         //
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
-                        //
+                        showShortToast(baseActivity, "requestId : " + requestId);
                         OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
 
                         // send query

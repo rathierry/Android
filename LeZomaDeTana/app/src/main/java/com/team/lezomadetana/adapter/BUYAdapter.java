@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,6 +24,7 @@ import com.team.lezomadetana.utils.CircleTransform;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,7 +32,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class BUYAdapter extends BaseAdapter {
+public class BUYAdapter extends BaseAdapter implements Filterable {
 
     // ===========================================================
     // Constants
@@ -41,21 +44,23 @@ public class BUYAdapter extends BaseAdapter {
 
     private Activity activity;
     private LayoutInflater layoutInflater;
-    private List<Request> requestItems;
+    private List<Request> requestList;
+    private List<Request> requestListFiltered;
     private BUYAdapter.RequestAdapterListener listener;
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    public BUYAdapter(Activity activity, List<Request> requestItems) {
+    public BUYAdapter(Activity activity, List<Request> requestList) {
         this.activity = activity;
-        this.requestItems = requestItems;
+        this.requestList = requestList;
     }
 
-    public BUYAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener) {
+    public BUYAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener) {
         this.activity = activity;
-        this.requestItems = requestItems;
+        this.requestList = requestList;
+        this.requestListFiltered = requestList;
         this.listener = listener;
     }
 
@@ -69,12 +74,12 @@ public class BUYAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return requestItems.size();
+        return requestList.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return requestItems.get(location);
+        return requestList.get(location);
     }
 
     @Override
@@ -104,7 +109,7 @@ public class BUYAdapter extends BaseAdapter {
         RelativeLayout iconContainer = (RelativeLayout) convertView.findViewById(R.id.icon_container);
 
         // getting request data for the row
-        final Request req = requestItems.get(position);
+        final Request req = requestList.get(position);
 
         // get current date
         DateFormat df = new SimpleDateFormat("MMM dd");
@@ -150,6 +155,40 @@ public class BUYAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public Filter getFilter() {
+        // TODO : to be continued
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    requestListFiltered = requestList;
+                } else {
+                    List<Request> filteredList = new ArrayList<>();
+                    for (Request row : requestList) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.getProduct().toLowerCase().contains(charString.toLowerCase()) || row.getQuantity().toString().contains(charSequence)) {
+                            filteredList.add(row);
+                        }
+                    }
+                    requestListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = requestListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                requestListFiltered = (ArrayList<Request>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
     // ===========================================================
     // Methods for Interfaces
     // ===========================================================
@@ -160,6 +199,8 @@ public class BUYAdapter extends BaseAdapter {
         void onButtonAnswerClicked(int position);
 
         void onMessageRowClicked(int position);
+
+        void onRequestSelected(Request request);
     }
 
     // ===========================================================
@@ -189,7 +230,8 @@ public class BUYAdapter extends BaseAdapter {
     private void applyProfilePicture(ImageView imgProfile, TextView iconText, String url) {
         // verif
         if (!TextUtils.isEmpty(url)) {
-            Glide.with(activity).load(url)
+            Glide.with(activity)
+                    .load(url)
                     .thumbnail(0.5f)
                     .crossFade()
                     .transform(new CircleTransform(activity))
@@ -224,6 +266,7 @@ public class BUYAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 listener.onMessageRowClicked(position);
+                listener.onRequestSelected(requestListFiltered.get(position));
             }
         });
     }

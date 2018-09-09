@@ -150,7 +150,7 @@ public class FragmentBuyItem extends BaseFragment implements
         switch (item.getItemId()) {
             case R.id.action_search:
                 showLongToast(getActivity(), "1) FIKAROHANA");
-                break;
+                return true;
             case R.id.action_payment:
                 showLongToast(getActivity(), "1) RESA-BOLA");
                 break;
@@ -205,8 +205,15 @@ public class FragmentBuyItem extends BaseFragment implements
         request.setRead(true);
         requestList.set(position, request);
         buyAdapter.notifyDataSetChanged();
-        // // //
-        showShortToast(getContext(), "Detail: " + request.getUserId());
+        // showShortToast(getContext(), "Detail: " + request.getUserId());
+    }
+
+    @Override
+    public void onRequestSelected(Request request) {
+        showShortToast(getContext(),
+                "Seleted: " + request.getProduct() +
+                        "\n" + request.getQuantity() + "" + request.getUnitType().name() +
+                        "\nfrom " + request.getUserId());
     }
 
     // ===========================================================
