@@ -21,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -113,11 +112,11 @@ public class FragmentBuyItem extends BaseFragment implements
                 android.R.color.holo_green_light);
         swipeRefreshItem.setOnRefreshListener(this);
         swipeRefreshItem.post(new Runnable() {
-                                         @Override
-                                         public void run() {
-                                             fetchAllRequests();
-                                         }
-                                     }
+                                  @Override
+                                  public void run() {
+                                      fetchAllRequests();
+                                  }
+                              }
         );
 
         // list view and adapter
@@ -185,8 +184,8 @@ public class FragmentBuyItem extends BaseFragment implements
         if (!getUserVisibleHint()) {
             return;
         }
+        isRefresh = false;
         fetchAllRequests();
-        showShortToast(getContext(), "onResume: MITADY ENTANA");
     }
 
     @Override
@@ -195,7 +194,7 @@ public class FragmentBuyItem extends BaseFragment implements
     }
 
     @Override
-    public void onIconImportantClicked(int position) {
+    public void onButtonAnswerClicked(int position) {
         // TODO
     }
 
@@ -206,8 +205,8 @@ public class FragmentBuyItem extends BaseFragment implements
         request.setRead(true);
         requestList.set(position, request);
         buyAdapter.notifyDataSetChanged();
-
-        Toast.makeText(getContext(), "Read: " + request.getUserId(), Toast.LENGTH_SHORT).show();
+        // // //
+        showShortToast(getContext(), "Detail: " + request.getUserId());
     }
 
     // ===========================================================
@@ -227,16 +226,13 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // showing refresh animation before making http call
-        swipeRefreshItem.setRefreshing(true);
-
         if (isRefresh) {
+            swipeRefreshItem.setRefreshing(true);
             hideLoadingView();
         } else {
+            swipeRefreshItem.setRefreshing(false);
             showLoadingView(getResources().getString(R.string.app_spinner));
         }
-
-        // show spinner
-        showLoadingView(getResources().getString(R.string.app_spinner));
 
         // set retrofit api
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
@@ -292,7 +288,7 @@ public class FragmentBuyItem extends BaseFragment implements
                                 req.setAssetUrls(assetUrl);
 
                                 // offer
-                                if (request.getOffers().size() == 0) {
+                                if (request.getOffers() == null) {
                                     req.setOffers(null);
                                 } else {
                                     req.setOffers(request.getOffers());
@@ -414,7 +410,7 @@ public class FragmentBuyItem extends BaseFragment implements
     private void ShowPostItemPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_item, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_item, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -555,7 +551,7 @@ public class FragmentBuyItem extends BaseFragment implements
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
                         //
-                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.SELL, itemIdSelected, true);
+                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.BUY, itemIdSelected, true);
 
                         // send query
                         Call<Void> call = api.sendRequest(auth, request);

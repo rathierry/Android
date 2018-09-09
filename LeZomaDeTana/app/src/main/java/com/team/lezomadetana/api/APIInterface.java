@@ -1,28 +1,19 @@
 package com.team.lezomadetana.api;
 
-import android.net.wifi.hotspot2.pps.Credential;
-
 import com.google.gson.JsonObject;
-import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
-import org.json.JSONObject;
-
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
@@ -84,35 +75,37 @@ public interface APIInterface {
     @POST("checkCredentials/")
     Call<UserCredentialResponse> checkCredential(@Header("Authorization") String auth, @Body UserCheckCredential user);
 
+    // user: profile
     @GET("/rest/users/{userId}")
-    Call<JsonObject> getUserById(@Header("Authorization") String auth,@Path(value = "userId",encoded = true) String userId);
+    Call<JsonObject> getUserById(@Header("Authorization") String auth, @Path(value = "userId", encoded = true) String userId);
 
     // user: register
     @POST("rest/users/")
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
-    // search item: list request
+    // list request
     @GET("rest/requests/")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
-
+    // search advanced
     @GET("rest/requests/search/advancedSearch")
-    Call<JsonObject> searchRequest(@Header("Authorization") String auth, @QueryMap Map<String,String> map);
+    Call<JsonObject> searchRequest(@Header("Authorization") String auth, @QueryMap Map<String, String> map);
 
+    // new post
     @POST("rest/requests/")
-    Call<Void> sendRequest(@Header("Authorization") String auth,@Body RequestSend req);
+    Call<Void> sendRequest(@Header("Authorization") String auth, @Body RequestSend req);
 
-    // fetch all template (item category)
+    // list template (category)
     @GET("rest/productTemplates")
     Call<JsonObject> getAllProductTemplate(@Header("Authorization") String auth);
 
+    // list offer
     @POST("rest/offers")
     Call<Void> sendOffer(@Header("Authorization") String auth, @Body OfferSend offer);
 
-
+    // user: ???
     @GET("/rest/userWallets")
     Call<JsonObject> getAllWallet(@Header("Authorization") String auth);
-
 
 
     // ===========================================================

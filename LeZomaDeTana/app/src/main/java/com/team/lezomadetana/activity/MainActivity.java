@@ -161,14 +161,14 @@ public class MainActivity extends BaseActivity {
         // handle item selection
         switch (item.getItemId()) {
             case R.id.action_search:
-                showLongToast(MainActivity.this, "item SEARCH");
-                return true;
+                //showLongToast(MainActivity.this, "item SEARCH");
+                break;
             case R.id.action_payment:
-                showLongToast(MainActivity.this, "item PAYMENT");
-                return true;
+                //showLongToast(MainActivity.this, "item PAYMENT");
+                break;
             case R.id.action_information:
                 showLongToast(MainActivity.this, getResources().getString(R.string.activity_main_menu_info));
-                return true;
+                break;
         }
 
         return super.onOptionsItemSelected(item);

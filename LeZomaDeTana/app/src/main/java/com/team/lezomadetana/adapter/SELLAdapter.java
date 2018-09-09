@@ -2,13 +2,13 @@ package com.team.lezomadetana.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,7 +29,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class SELLAdapter extends BaseAdapter {
+public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -88,17 +88,17 @@ public class SELLAdapter extends BaseAdapter {
             layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null)
-            convertView = layoutInflater.inflate(R.layout.list_request_row, null);
+            convertView = layoutInflater.inflate(R.layout.layout_request_row, null);
 
         TextView from = (TextView) convertView.findViewById(R.id.from);
         TextView subject = (TextView) convertView.findViewById(R.id.txt_primary);
         TextView message = (TextView) convertView.findViewById(R.id.txt_secondary);
 
         TextView iconText = (TextView) convertView.findViewById(R.id.icon_text);
-        TextView timestamp = (TextView) convertView.findViewById(R.id.timestamp);
+        Button btnSum = (Button) convertView.findViewById(R.id.sum_answer);
 
         RelativeLayout iconFront = (RelativeLayout) convertView.findViewById(R.id.icon_front);
-        ImageView iconImp = (ImageView) convertView.findViewById(R.id.icon_star);
+        Button btnAnswer = (Button) convertView.findViewById(R.id.answer_item);
         ImageView imgProfile = (ImageView) convertView.findViewById(R.id.icon_profile);
         LinearLayout messageContainer = (LinearLayout) convertView.findViewById(R.id.message_container);
         RelativeLayout iconContainer = (RelativeLayout) convertView.findViewById(R.id.icon_container);
@@ -114,14 +114,18 @@ public class SELLAdapter extends BaseAdapter {
         from.setText(Html.fromHtml("Manana <b>" + req.getProduct() + "</b>"));
         subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + req.getQuantity() + "</b>" + req.getUnitType().name()));
         message.setText("nalefan\'i " + req.getUserId());
-        timestamp.setText(date);
 
         // displaying the first letter of From in icon text
         iconText.setText(req.getProduct().substring(0, 1));
 
-        // important icon
-        iconImp.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_star_border_black));
-        iconImp.setColorFilter(ContextCompat.getColor(activity, R.color.icon_tint_selected));
+        // sum answer btn
+        if (req.getOffers() != null) {
+            btnSum.setText(String.valueOf(req.getOffers().size()));
+            btnSum.setOnClickListener(this);
+        }
+
+        // answer btn
+        btnAnswer.setOnClickListener(this);
 
         // change the font style depending on message read status
         applyReadStatus(from, subject, req);
@@ -134,6 +138,16 @@ public class SELLAdapter extends BaseAdapter {
         applyClickEvents(iconContainer, convertView, messageContainer, position);
 
         return convertView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.answer_item:
+                break;
+            case R.id.sum_answer:
+                break;
+        }
     }
 
     // ===========================================================

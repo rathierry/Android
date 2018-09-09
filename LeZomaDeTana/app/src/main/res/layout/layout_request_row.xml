@@ -93,7 +93,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bg_list_row"
     android:clickable="true"
     android:focusable="true"
@@ -105,11 +105,11 @@
 
     <LinearLayout
         android:id="@+id/message_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
         android:orientation="vertical"
-        android:paddingLeft="72dp"
+        android:paddingLeft="50dp"
         android:paddingRight="16dp">
 
         <TextView
@@ -168,7 +168,7 @@
 
     </RelativeLayout>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -176,14 +176,33 @@
         android:layout_alignParentTop="true"
         android:textColor="#4285f4"
         android:textSize="12dp"
+        android:textStyle="bold"
+        android:visibility="invisible" />-->
+
+    <Button
+        android:id="@+id/sum_answer"
+        android:layout_width="60dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/md_orange_500"
+        android:text="0"
+        android:textAllCaps="true"
+        android:textColor="@color/color_white"
+        android:textSize="12dp"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/icon_star"
-        android:layout_width="25dp"
+    <Button
+        android:id="@+id/answer_item"
+        android:layout_width="60dp"
         android:layout_height="25dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:tint="@color/icon_tint_normal" />
+        android:background="@color/md_green_500"
+        android:text="Hamaly"
+        android:textAllCaps="true"
+        android:textColor="@color/color_white"
+        android:textSize="12dp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

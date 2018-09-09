@@ -23,7 +23,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -172,18 +171,8 @@ public class FragmentSellItem extends BaseFragment implements
         if (!getUserVisibleHint()) {
             return;
         }
-        // do your stuff here
-        // showing Swipe Refresh animation on activity create
-        // as animation won't start on onCreate, post runnable is used
-        swipeRefreshItem.post(new Runnable() {
-                                       @Override
-                                       public void run() {
-                                           // fetch all requests
-                                           fetchAllRequests();
-                                       }
-                                   }
-        );
-        showShortToast(getContext(), "onResume: MIVAROTRA ENTANA");
+        isRefresh = false;
+        fetchAllRequests();
     }
 
     @Override
@@ -217,8 +206,8 @@ public class FragmentSellItem extends BaseFragment implements
         request.setRead(true);
         requestList.set(position, request);
         sellAdapter.notifyDataSetChanged();
-
-        Toast.makeText(getContext(), "Read: " + request.getUserId(), Toast.LENGTH_SHORT).show();
+        // // //
+        showShortToast(getContext(), "Read: " + request.getUserId());
     }
 
     // ===========================================================
@@ -238,11 +227,11 @@ public class FragmentSellItem extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // showing refresh animation before making http call
-        swipeRefreshItem.setRefreshing(true);
-
         if (isRefresh) {
+            swipeRefreshItem.setRefreshing(true);
             hideLoadingView();
         } else {
+            swipeRefreshItem.setRefreshing(false);
             showLoadingView(getResources().getString(R.string.app_spinner));
         }
 
@@ -411,7 +400,7 @@ public class FragmentSellItem extends BaseFragment implements
     private void ShowPostItemPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_item, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_item, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -618,7 +607,7 @@ public class FragmentSellItem extends BaseFragment implements
     private void ShowPostOffertPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
