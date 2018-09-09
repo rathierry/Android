@@ -184,7 +184,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <include layout="@layout/content_fragment_available_item" />
+    <include layout="@layout/content_fragment_sell_item" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_available_item_fab"

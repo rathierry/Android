@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/fragment_search_item">
+    tools:showIn="@layout/fragment_list_buy_item">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_available_item_swipe_refresh_layout_post"

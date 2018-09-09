@@ -29,7 +29,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class BUYAdapter extends BaseAdapter implements View.OnClickListener {
+public class BUYAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -121,11 +121,21 @@ public class BUYAdapter extends BaseAdapter implements View.OnClickListener {
         // sum answer btn
         if (req.getOffers() != null) {
             btnSum.setText(String.valueOf(req.getOffers().size()));
-            btnSum.setOnClickListener(this);
+            btnSum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO to be continued
+                }
+            });
         }
 
         // answer btn
-        btnAnswer.setOnClickListener(this);
+        btnAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO to be continued
+            }
+        });
 
         // change the font style depending on message read status
         applyReadStatus(from, subject, req);
@@ -138,16 +148,6 @@ public class BUYAdapter extends BaseAdapter implements View.OnClickListener {
         applyClickEvents(iconContainer, convertView, messageContainer, position);
 
         return convertView;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.answer_item:
-                break;
-            case R.id.sum_answer:
-                break;
-        }
     }
 
     // ===========================================================

@@ -9,7 +9,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <include layout="@layout/content_fragment_search_item" />
+    <include layout="@layout/content_fragment_buy_item" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_search_item_fab"

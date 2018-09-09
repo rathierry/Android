@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -70,7 +71,7 @@ public class FragmentSellItem extends BaseFragment implements
     private List<Request> requestList = new ArrayList<Request>();
     private ListView listViewItem;
     private SELLAdapter sellAdapter;
-    private List<ProductTemplate> categorylist = new ArrayList<ProductTemplate>();
+    private List<ProductTemplate> listCategory = new ArrayList<ProductTemplate>();
     private boolean isRefresh = false;
 
     // ===========================================================
@@ -96,7 +97,7 @@ public class FragmentSellItem extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_available_item, container, false);
+                inflater.inflate(R.layout.fragment_list_sell_item, container, false);
 
         // floating btn to add new item
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_available_item_fab);
@@ -104,7 +105,7 @@ public class FragmentSellItem extends BaseFragment implements
             @Override
             public void onClick(View view) {
                 // open post popup
-                ShowPostItemPopup();
+                showPostItemPopup();
             }
         });
 
@@ -119,7 +120,7 @@ public class FragmentSellItem extends BaseFragment implements
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
 
-        sellAdapter = new SELLAdapter(getActivity(), requestList, this);
+        sellAdapter = new SELLAdapter(getActivity(), requestList, this, this);
         listViewItem.setAdapter(sellAdapter);
 
         // return current view
@@ -362,7 +363,7 @@ public class FragmentSellItem extends BaseFragment implements
                         }
 
                         // init spinner
-                        categorylist = productTemplates;
+                        listCategory = productTemplates;
 
                         // verif in LOG
                         Log.d("REQUESTS", "" + productTemplates);
@@ -397,7 +398,7 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * Display post item popup
      */
-    private void ShowPostItemPopup() {
+    private void showPostItemPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_item, null);
@@ -418,9 +419,9 @@ public class FragmentSellItem extends BaseFragment implements
         // drop down element
         List<String> itemsName = new ArrayList<>();
         final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < categorylist.size(); i++) {
-            itemsName.add(categorylist.get(i).getName());
-            itemsId.add(categorylist.get(i).getId());
+        for (int i = 0; i < listCategory.size(); i++) {
+            itemsName.add(listCategory.get(i).getName());
+            itemsId.add(listCategory.get(i).getId());
         }
 
         // set adapter for spinner
@@ -604,7 +605,7 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * .......
      */
-    private void ShowPostOffertPopup(final String requestId) {
+    public void showPostOfferPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
@@ -616,13 +617,11 @@ public class FragmentSellItem extends BaseFragment implements
         builder.setView(mView);
 
         // init view
-
         final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
-        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
 
         // drop down unit element
         String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
-
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
@@ -638,9 +637,8 @@ public class FragmentSellItem extends BaseFragment implements
                 // item'clicked name
                 itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
 
-
                 // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position);
             }
         });
 
@@ -666,10 +664,8 @@ public class FragmentSellItem extends BaseFragment implements
                     @Override
                     public void onClick(View v) {
                         // values
-
                         String quantity = editTextQuantity.getText().toString();
                         String unitType = spinnerUnitType.getText().toString();
-
 
                         // quantity
                         if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
@@ -683,7 +679,6 @@ public class FragmentSellItem extends BaseFragment implements
                             spinnerUnitType.requestFocus();
                             return;
                         }
-
 
                         // show spinner
                         showLoadingView(getResources().getString(R.string.app_spinner));
@@ -709,15 +704,27 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.code() == 201) {
                                     dialog.dismiss();
-                                    hideLoadingView();
-
-                                    // clear list request
                                     requestList.clear();
+                                    hideLoadingView();
 
                                     // refresh list
                                     onRefresh();
+                                } else {
+                                    dialog.dismiss();
+                                    hideLoadingView();
+                                    // // //
+                                    new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                            .setIcon(android.R.drawable.ic_dialog_alert)
+                                            .setTitle("Internal Server Error")
+                                            .setMessage(Html.fromHtml("<b>RequestId is required</b>"))
+                                            .setCancelable(false)
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
                                 }
-
                             }
 
                             @Override

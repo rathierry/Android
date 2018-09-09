@@ -360,7 +360,6 @@ public class BaseActivity extends AppCompatActivity {
         finish();
     }
 
-
     public static String[] getNames(Class<? extends Enum<?>> e) {
         return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
     }

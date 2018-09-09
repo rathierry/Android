@@ -93,14 +93,14 @@ public class FragmentBuyItem extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_search_item, container, false);
+                inflater.inflate(R.layout.fragment_list_buy_item, container, false);
 
         // floating btn to add new item
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_search_item_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowPostItemPopup();
+                showPostItemPopup();
             }
         });
 
@@ -407,7 +407,7 @@ public class FragmentBuyItem extends BaseFragment implements
     /**
      * Display popup post new item
      */
-    private void ShowPostItemPopup() {
+    private void showPostItemPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_item, null);

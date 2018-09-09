@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.fragment.FragmentSellItem;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
+public class SELLAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -43,6 +44,7 @@ public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
     private LayoutInflater layoutInflater;
     private List<Request> requestItems;
     private SELLAdapter.RequestAdapterListener listener;
+    private FragmentSellItem fragmentSellItem;
 
     // ===========================================================
     // Constructors
@@ -57,6 +59,13 @@ public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
         this.activity = activity;
         this.requestItems = requestItems;
         this.listener = listener;
+    }
+
+    public SELLAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener, FragmentSellItem fragmentSellItem) {
+        this.activity = activity;
+        this.requestItems = requestItems;
+        this.listener = listener;
+        this.fragmentSellItem = fragmentSellItem;
     }
 
     // ===========================================================
@@ -119,13 +128,30 @@ public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
         iconText.setText(req.getProduct().substring(0, 1));
 
         // sum answer btn
-        if (req.getOffers() != null) {
+        if (req.getOffers() == null) {
+            btnSum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO to be continued
+                }
+            });
+        } else {
             btnSum.setText(String.valueOf(req.getOffers().size()));
-            btnSum.setOnClickListener(this);
+            btnSum.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO to be continued
+                }
+            });
         }
 
         // answer btn
-        btnAnswer.setOnClickListener(this);
+        btnAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentSellItem.showPostOfferPopup(req.getId());
+            }
+        });
 
         // change the font style depending on message read status
         applyReadStatus(from, subject, req);
@@ -138,16 +164,6 @@ public class SELLAdapter extends BaseAdapter implements View.OnClickListener {
         applyClickEvents(iconContainer, convertView, messageContainer, position);
 
         return convertView;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.answer_item:
-                break;
-            case R.id.sum_answer:
-                break;
-        }
     }
 
     // ===========================================================
