@@ -716,7 +716,16 @@ public class FragmentBuyItem extends BaseFragment implements
                         Map<String,String> map = new HashMap<>();
                         map.put("type","BUY");
                         if(category!="other"){
-                            map.put("templateId",itemIdSelected);
+                            String id="";
+
+                            for(int i = 0;i<_categoryList.size();i++){
+                                if(_categoryList.get(i).equals(category)){
+                                    id = _categoryList.get(i).getId();
+                                    break;
+                                }
+                            }
+
+                            map.put("templateId",id);
                         }
 
                         if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
