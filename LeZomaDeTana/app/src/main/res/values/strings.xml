@@ -92,6 +92,7 @@
     <string name="activity_main_menu_business">Raharaham-barotra</string><!-- not add a text -->
     <!--<string name="activity_main_menu_offer">Offer/Require</string>-->
     <string name="activity_main_menu_chat">Firesahana</string>
+    <string name="activity_main_menu_offer">Tolotra</string>
     <string name="activity_main_menu_setting">Fikirana</string>
     <string name="activity_main_menu_info">Open LZT Official Site</string>
     <string name="activity_main_menu_about">Ny momba anay</string>
@@ -99,7 +100,7 @@
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item></item>
-        <!--<item>@string/activity_main_menu_offer</item>-->
+        <item>@string/activity_main_menu_offer</item>
         <item>@string/activity_main_menu_chat</item>
         <item>@string/activity_main_menu_setting</item>
     </string-array>
@@ -135,7 +136,6 @@
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
     <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
-    <string name="activity_main_menu_offer">Biling</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

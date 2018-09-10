@@ -2,6 +2,7 @@ package com.team.lezomadetana.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -141,7 +142,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
             btnSum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO to be continued
+                    fragmentBuyItem.ChangeThisFragment();
                 }
             });
         }
@@ -213,6 +214,8 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         void onMessageRowClicked(int position);
 
         void onRequestSelected(Request request);
+
+        void replaceFragment(Fragment fragment);
     }
 
     // ===========================================================

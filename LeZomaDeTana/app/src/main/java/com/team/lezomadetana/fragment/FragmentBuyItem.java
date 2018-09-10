@@ -5,6 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -113,13 +116,6 @@ public class FragmentBuyItem extends BaseFragment implements
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
         swipeRefreshItem.setOnRefreshListener(this);
-        swipeRefreshItem.post(new Runnable() {
-                                  @Override
-                                  public void run() {
-                                      fetchAllRequests();
-                                  }
-                              }
-        );
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
@@ -173,14 +169,6 @@ public class FragmentBuyItem extends BaseFragment implements
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && rootView != null) {
-            onResume();
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (!getUserVisibleHint()) {
@@ -216,6 +204,15 @@ public class FragmentBuyItem extends BaseFragment implements
                 "Seleted: " + request.getProduct() +
                         "\n" + request.getQuantity() + "" + request.getUnitType().name() +
                         "\nfrom " + request.getUserId());
+    }
+
+    @Override
+    public void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
+        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.commit();
     }
 
     // ===========================================================
@@ -803,6 +800,10 @@ public class FragmentBuyItem extends BaseFragment implements
             colors.recycle();
         }
         return returnColor;
+    }
+
+    public void ChangeThisFragment() {
+        replaceFragment(new FragmentListOffer());
     }
 
     // ===========================================================

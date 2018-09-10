@@ -1,6 +1,5 @@
 package com.team.lezomadetana.activity;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +22,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.FragmentBuyItem;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
+import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -231,16 +229,16 @@ public class MainActivity extends BaseActivity {
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_BUSINESS;
                         break;
-                    /*case R.id.nav_offer:
+                    case R.id.nav_offer:
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_OFFER;
-                        break;*/
+                        break;
                     case R.id.nav_chat:
-                        navItemIndex = 1;
+                        navItemIndex = 2;
                         CURRENT_TAG = TAG_CHAT;
                         break;
                     case R.id.nav_setting:
-                        navItemIndex = 2;
+                        navItemIndex = 3;
                         CURRENT_TAG = TAG_SETTING;
                         break;
                     case R.id.nav_about_us:
@@ -296,7 +294,7 @@ public class MainActivity extends BaseActivity {
      * Returns respected fragment that user
      * selected from navigation menu
      */
-    private void loadDefaultFragment() {
+    public void loadDefaultFragment() {
         // selecting appropriate nav menu item
         selectNavMenu();
 
@@ -339,12 +337,12 @@ public class MainActivity extends BaseActivity {
     }
 
     // select navigation's menu
-    private void selectNavMenu() {
+    public void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
 
     // set toolBar title
-    private void setToolbarTitle() {
+    public void setToolbarTitle() {
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
 
@@ -354,13 +352,13 @@ public class MainActivity extends BaseActivity {
             case 0:
                 FragmentHome business = new FragmentHome();
                 return business;
-            /*case 1:
-                FragmentOffer offer = new FragmentOffer();
-                return offer;*/
             case 1:
+                FragmentListOffer offer = new FragmentListOffer();
+                return offer;
+            case 2:
                 FragmentChat chat = new FragmentChat();
                 return chat;
-            case 2:
+            case 3:
                 FragmentSetting setting = new FragmentSetting();
                 return setting;
             default:

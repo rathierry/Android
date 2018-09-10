@@ -25,4 +25,5 @@
     <dimen name="activity_user_login_btn_submit_layout_marginTop">35dp</dimen>
     <dimen name="activity_user_login_btn_submit_text_size">18sp</dimen>
     <dimen name="activity_user_login_btn_footer_text_size">16sp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

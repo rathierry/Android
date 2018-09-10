@@ -115,13 +115,6 @@ public class FragmentSellItem extends BaseFragment implements
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
         swipeRefreshItem.setOnRefreshListener(this);
-        swipeRefreshItem.post(new Runnable() {
-                                  @Override
-                                  public void run() {
-                                      fetchAllRequests();
-                                  }
-                              }
-        );
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
