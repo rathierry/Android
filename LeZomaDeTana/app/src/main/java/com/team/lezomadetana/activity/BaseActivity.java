@@ -328,7 +328,7 @@ public class BaseActivity extends AppCompatActivity {
                 .setMessage(getResources().getString(R.string.app_logout_message))
                 .setIcon(R.drawable.ic_exit_to_app_black)
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.user_login_forgot_pass_btn_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         showLoadingView(getResources().getString(R.string.app_spinner));
@@ -341,7 +341,7 @@ public class BaseActivity extends AppCompatActivity {
                         }, BaseActivity.LOADING_TIME_OUT);
                     }
                 })
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(getResources().getString(R.string.user_login_forgot_pass_btn_cancel), null)
                 .show();
     }
 

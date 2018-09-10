@@ -54,8 +54,8 @@ public class FragmentHome extends BaseFragment {
         viewPagerAdapter = new TabsPagerAdapter(getChildFragmentManager());
 
         // set tab
-        viewPagerAdapter.addFragment(new FragmentBuyItem(), getResources().getString(R.string.fragment_business_tab_layout_search_item));
-        viewPagerAdapter.addFragment(new FragmentSellItem(), getResources().getString(R.string.fragment_business_tab_layout_available_item));
+        viewPagerAdapter.addFragment(new FragmentBuyItem(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
+        viewPagerAdapter.addFragment(new FragmentSellItem(), getResources().getString(R.string.fragment_buy_tab_layout_available_item));
 
         // set adapter
         viewPager.setAdapter(viewPagerAdapter);

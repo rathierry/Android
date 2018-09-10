@@ -33,6 +33,7 @@ public class AboutUsActivity extends BaseActivity {
         setContentView(R.layout.activity_about_us);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.activity_main_menu_about));
     }
 
     @Override

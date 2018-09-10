@@ -6,6 +6,8 @@
     <string name="app_logout_message">Azonao antoka ve fa iala tokoa ianao?</string>
     <string name="app_internet_error_title">Aterineto</string>
     <string name="app_internet_error_message">Ampifandraiso amin\'ny aterineto ny findainao.</string>
+    <string name="app_server_error_title">Olan\'i angona mpizara</string>
+    <string name="app_server_error_message">Miala tsiny fa tsy misy valiny ny *RequestId*</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -87,12 +89,13 @@
     </string-array>
 
     <!-- screen: MainActivity -->
-    <string name="activity_main_menu_business">Business</string><!-- not add a text -->
+    <string name="activity_main_menu_business">Raharaham-barotra</string><!-- not add a text -->
     <!--<string name="activity_main_menu_offer">Offer/Require</string>-->
-    <string name="activity_main_menu_chat">Chat</string>
-    <string name="activity_main_menu_setting">Setting</string>
+    <string name="activity_main_menu_chat">Firesahana</string>
+    <string name="activity_main_menu_setting">Fikirana</string>
     <string name="activity_main_menu_info">Open LZT Official Site</string>
-    <string name="activity_main_menu_about">About us</string>
+    <string name="activity_main_menu_about">Ny momba anay</string>
+    <string name="activity_main_menu_sign_out">Hiala</string>
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item></item>
@@ -104,16 +107,22 @@
     <string name="openDrawer">open_drawer</string>
     <string name="closeDrawer">close_drawer</string>
 
-    <!-- screen: fragment-business -->
-    <string name="fragment_business_tab_layout_search_item">MITADY ENTANA</string>
-    <string name="fragment_business_tab_layout_available_item">MIVAROTRA ENTANA</string>
-    <string-array name="array_items">
-        <item>VANILLE</item>
-        <item>OVY</item>
-        <item>BALAHAZO</item>
-        <item>VOATABIA</item>
-        <item>ZEZIKA</item>
-    </string-array>
+    <!-- screen: fragment-business buy -->
+    <string name="fragment_buy_tab_layout_search_item">MITADY ENTANA</string>
+    <string name="fragment_buy_tab_layout_available_item">MIVAROTRA ENTANA</string>
+    <string name="fragment_buy_post_request_title">Momba ilay entana</string>
+    <string name="fragment_buy_post_request_product_hint">Hanao inona ianao?</string>
+    <string name="fragment_buy_post_request_category_hint">Sokajy</string>
+    <string name="fragment_buy_post_request_category_select">Misafidiana</string>
+    <string name="fragment_buy_post_request_category_text">Misafidiana iray</string>
+    <string name="fragment_buy_post_request_quantity_text">Habetsahany</string>
+    <string name="fragment_buy_post_request_quantity_error_empty">Firy ny habetsahany?</string>
+    <string name="fragment_buy_post_request_unity_type_hint">Karazam-pamaram-bondrona</string>
+    <string name="fragment_buy_post_request_price_hint">Vidiny</string>
+    <string name="fragment_buy_post_request_price_error_empty">Ohatrinona ny vidiny?</string>
+
+    <!-- screen: fragment-business sell -->
+    <string name="fragment_sell_post_request_title">Momba ilay entana</string>
 
     <!-- screen: Request -->
     <string name="request_user_name">Sended by : </string>

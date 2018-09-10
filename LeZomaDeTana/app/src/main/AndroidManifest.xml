@@ -53,13 +53,13 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
+            <!--<meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable" />-->
 
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <!-- screen: about us -->
         <activity

@@ -104,7 +104,7 @@ public class FragmentSellItem extends BaseFragment implements
             @Override
             public void onClick(View view) {
                 // open post popup
-                showPostItemPopup();
+                showPostRequestPopup();
             }
         });
 
@@ -422,10 +422,10 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * Display post item popup
      */
-    private void showPostItemPopup() {
+    private void showPostRequestPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_item, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -497,7 +497,7 @@ public class FragmentSellItem extends BaseFragment implements
 
         // set dialog message
         builder
-                .setTitle("About your offer or your need")
+                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -524,31 +524,31 @@ public class FragmentSellItem extends BaseFragment implements
                         String product = editTextProduct.getText().toString();
                         // product
                         if (product.isEmpty() || TextUtils.isEmpty(product)) {
-                            editTextProduct.setError("Add item product");
+                            editTextProduct.setError(getResources().getString(R.string.fragment_buy_post_request_product_hint));
                             editTextProduct.requestFocus();
                             return;
                         }
                         // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains("Choose")) {
-                            spinnerCategory.setError("Select category");
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
                             spinnerCategory.requestFocus();
                             return;
                         }
                         // quantity
                         if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
-                            editTextQuantity.setError("Add item quantity");
+                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
                             editTextQuantity.requestFocus();
                             return;
                         }
                         // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains("Choose")) {
-                            spinnerUnitType.setError("Select category");
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
                             spinnerUnitType.requestFocus();
                             return;
                         }
                         // price
                         if (price.isEmpty() || TextUtils.isEmpty(price)) {
-                            editTextPrice.setError("Add item price");
+                            editTextPrice.setError(getResources().getString(R.string.fragment_buy_post_request_price_error_empty));
                             editTextPrice.requestFocus();
                             return;
                         }
@@ -668,7 +668,7 @@ public class FragmentSellItem extends BaseFragment implements
 
         // set dialog message
         builder
-                .setTitle("Offer answer")
+                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -693,13 +693,13 @@ public class FragmentSellItem extends BaseFragment implements
 
                         // quantity
                         if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
-                            editTextQuantity.setError("Add item quantity");
+                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
                             editTextQuantity.requestFocus();
                             return;
                         }
                         // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains("Choose")) {
-                            spinnerUnitType.setError("Select category");
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
                             spinnerUnitType.requestFocus();
                             return;
                         }
@@ -740,8 +740,8 @@ public class FragmentSellItem extends BaseFragment implements
                                     // // //
                                     new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                             .setIcon(android.R.drawable.ic_dialog_alert)
-                                            .setTitle("Internal Server Error")
-                                            .setMessage(Html.fromHtml("<b>RequestId is required</b>"))
+                                            .setTitle(getResources().getString(R.string.app_server_error_title))
+                                            .setMessage(Html.fromHtml("<b>" + getResources().getString(R.string.app_server_error_message) + "</b>"))
                                             .setCancelable(false)
                                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int whichButton) {
