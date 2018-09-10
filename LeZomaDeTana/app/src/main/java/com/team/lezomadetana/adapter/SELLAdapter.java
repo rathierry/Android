@@ -16,7 +16,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.fragment.FragmentSellItem;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
@@ -25,6 +29,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by RaThierry on 06/09/2018.
@@ -120,9 +128,10 @@ public class SELLAdapter extends BaseAdapter {
         String date = df.format(Calendar.getInstance().getTime());
 
         // displaying text view data
-        from.setText(Html.fromHtml("Manana <b>" + req.getProduct() + "</b>"));
+        from.setText(Html.fromHtml("<b>" + req.getProduct() + "</b>"));
         subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + req.getQuantity() + "</b>" + req.getUnitType().name()));
-        message.setText("nalefan\'i " + req.getUserId());
+        //message.setText("nalefan\'i " + req.getUserId());
+        getUserInfo(req.getUserId(), message);
 
         // displaying the first letter of From in icon text
         iconText.setText(req.getProduct().substring(0, 1));
@@ -185,6 +194,34 @@ public class SELLAdapter extends BaseAdapter {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    private void getUserInfo(String userId, final TextView textView) {
+        // set retrofit api
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BaseActivity.BasicAuth();
+
+        // send query
+        Call<JsonObject> call = api.getUserById(auth, userId);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
+                    textView.setText("nalefan\'i " + response.body().get("name").getAsString());
+                } else {
+                    //
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                //
+            }
+        });
+    }
 
     private void applyReadStatus(TextView from, TextView subject, Request request) {
 

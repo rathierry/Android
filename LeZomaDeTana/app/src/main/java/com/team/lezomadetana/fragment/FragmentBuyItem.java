@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -32,6 +33,7 @@ import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -121,7 +123,7 @@ public class FragmentBuyItem extends BaseFragment implements
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
-        buyAdapter = new BUYAdapter(getActivity(), requestList, this);
+        buyAdapter = new BUYAdapter(getActivity(), requestList, this, this);
         listViewItem.setAdapter(buyAdapter);
 
         // return current view
@@ -258,6 +260,8 @@ public class FragmentBuyItem extends BaseFragment implements
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
+                    String _userId = "";
+
                     // count data
                     if (filter.size() > 0) {
                         // parsing gson
@@ -270,21 +274,24 @@ public class FragmentBuyItem extends BaseFragment implements
                                 // new class model to set all values
                                 Request req = new Request();
 
-                                // set values
-                                req.setUserId(request.getUserId());
-
                                 // verify server's response
-                                String _userId = (TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getUserId());
-                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct());
-                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getQuantity()));
-                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
+                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
+                                _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
+                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
+                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
+                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
+                                String _type = TextUtils.equals(request.getType().toString(), "null") ? "null" : request.getType().toString();
+                                String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
                                 // set values
+                                req.setId(_id);
                                 req.setUserId(_userId);
                                 req.setProduct(_productName);
                                 req.setQuantity(Integer.valueOf(_quantity));
                                 req.setUnitType(request.getUnitType());
                                 req.setPrice(Float.valueOf(_price));
+                                req.setType(Integer.valueOf(_type));
+                                req.setTemplateId(_templateId);
 
                                 // assetUrls is json array
                                 JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
@@ -578,6 +585,170 @@ public class FragmentBuyItem extends BaseFragment implements
                                     onRefresh();
                                 }
 
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                // stopping swipe refresh
+                                swipeRefreshItem.setRefreshing(false);
+                                hideLoadingView();
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(R.drawable.ic_wifi_black)
+                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
+    }
+
+    /**
+     * Popup to write new sell answer
+     */
+    public void showPostOfferPopup(final String requestId) {
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
+
+        // drop down unit element
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerUnitType.setAdapter(arrayAdapter2);
+
+        // event onClick
+        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+
+                // showing clicked spinner item name and position
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position);
+            }
+        });
+
+        // set dialog message
+        builder
+                .setTitle("Offer answer")
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String quantity = editTextQuantity.getText().toString();
+                        String unitType = spinnerUnitType.getText().toString();
+
+                        // quantity
+                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
+                            editTextQuantity.setError("Add item quantity");
+                            editTextQuantity.requestFocus();
+                            return;
+                        }
+                        // unitType
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains("Choose")) {
+                            spinnerUnitType.setError("Select category");
+                            spinnerUnitType.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        //
+                        BaseActivity baseActivity = (BaseActivity) getActivity();
+
+                        showShortToast(baseActivity, "requestId : " + requestId);
+
+                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
+
+                        // send query
+                        Call<Void> call = api.sendOffer(auth, offerSend);
+
+                        // request
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 201) {
+                                    dialog.dismiss();
+                                    requestList.clear();
+                                    hideLoadingView();
+
+                                    // refresh list
+                                    onRefresh();
+                                } else {
+                                    dialog.dismiss();
+                                    hideLoadingView();
+                                    // // //
+                                    new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                            .setIcon(android.R.drawable.ic_dialog_alert)
+                                            .setTitle("Internal Server Error")
+                                            .setMessage(Html.fromHtml("<b>RequestId is required</b>"))
+                                            .setCancelable(false)
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
+                                }
                             }
 
                             @Override

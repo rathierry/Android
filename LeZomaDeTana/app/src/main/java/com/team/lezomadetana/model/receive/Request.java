@@ -18,24 +18,18 @@ public class Request {
     // Fields
     // ===========================================================
 
-    @Expose
     private Boolean active;
-    @Expose
     private ArrayList<String> assetUrls;
-    @Expose
     private String userId;
+    private String userName;
     private UnitType unitType;
-    @Expose
     private ArrayList<Offer> offers;
-    @Expose
     private Float price;
     private Integer quantity;
-
     private String product;
     private String templateId;
     private String id;
     private Integer type;
-    private String picture;
 
     private boolean isImportant;
     private boolean isRead;
@@ -89,6 +83,10 @@ public class Request {
         this.userId = userId;
     }
 
+    public void setUserName (String userName) {
+        this.userName = userName;
+    }
+
     public void setUnitType(UnitType unitType) {
         this.unitType = unitType;
     }
@@ -121,10 +119,6 @@ public class Request {
         this.type = type;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
     public void setImportant(boolean important) {
         isImportant = important;
     }
@@ -148,6 +142,10 @@ public class Request {
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public UnitType getUnitType() {
@@ -180,10 +178,6 @@ public class Request {
 
     public Integer getType() {
         return type;
-    }
-
-    public String getPicture() {
-        return picture;
     }
 
     public boolean isImportant() {

@@ -86,7 +86,6 @@ public class FragmentSellItem extends BaseFragment implements
     // Methods from SuperClass
     // ===========================================================
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +115,13 @@ public class FragmentSellItem extends BaseFragment implements
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
         swipeRefreshItem.setOnRefreshListener(this);
+        swipeRefreshItem.post(new Runnable() {
+                                  @Override
+                                  public void run() {
+                                      fetchAllRequests();
+                                  }
+                              }
+        );
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
@@ -263,17 +269,25 @@ public class FragmentSellItem extends BaseFragment implements
                             if (request.getType() == 0) {
                                 // new class model to set all values
                                 Request req = new Request();
+
+                                // verify server's response
+                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
+                                String _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
+                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
+                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
+                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
+                                String _type = TextUtils.equals(request.getType().toString(), "null") ? "null" : request.getType().toString();
+                                String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
+
                                 // set values
-                                req.setUserId(request.getUserId());
-                            /*if (TextUtils.isEmpty(request.getTemplateId()) || TextUtils.equals(request.getTemplateId(), "null")) {
-                                req.setTemplateId("NULL");
-                            } else {
-                                req.setTemplateId(request.getTemplateId());
-                            }*/
-                                req.setProduct(request.getProduct());
-                                req.setQuantity(request.getQuantity());
+                                req.setId(_id);
+                                req.setUserId(_userId);
+                                req.setProduct(_productName);
+                                req.setQuantity(Integer.valueOf(_quantity));
                                 req.setUnitType(request.getUnitType());
-                                req.setPrice(request.getPrice());
+                                req.setPrice(Float.valueOf(_price));
+                                req.setType(Integer.valueOf(_type));
+                                req.setTemplateId(_templateId);
 
                                 // assetUrls is json array
                                 JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
@@ -282,6 +296,16 @@ public class FragmentSellItem extends BaseFragment implements
                                     assetUrl.add(String.valueOf(assetArray.get(j)));
                                 }
                                 req.setAssetUrls(assetUrl);
+
+                                // offer
+                                if (request.getOffers() == null) {
+                                    req.setOffers(null);
+                                } else {
+                                    req.setOffers(request.getOffers());
+                                }
+
+                                // generate a random color
+                                req.setColor(getRandomMaterialColor("500"));
 
                                 // adding request to requests array
                                 requestList.add(req);
@@ -693,6 +717,7 @@ public class FragmentSellItem extends BaseFragment implements
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
                         showShortToast(baseActivity, "requestId : " + requestId);
+
                         OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
 
                         // send query

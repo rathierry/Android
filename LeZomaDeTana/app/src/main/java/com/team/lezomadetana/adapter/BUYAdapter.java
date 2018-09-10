@@ -18,7 +18,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.fragment.FragmentBuyItem;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -27,6 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by RaThierry on 06/09/2018.
@@ -47,6 +56,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
     private List<Request> requestList;
     private List<Request> requestListFiltered;
     private BUYAdapter.RequestAdapterListener listener;
+    private FragmentBuyItem fragmentBuyItem;
 
     // ===========================================================
     // Constructors
@@ -57,11 +67,12 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         this.requestList = requestList;
     }
 
-    public BUYAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener) {
+    public BUYAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener, FragmentBuyItem fragmentBuyItem) {
         this.activity = activity;
         this.requestList = requestList;
         this.requestListFiltered = requestList;
         this.listener = listener;
+        this.fragmentBuyItem = fragmentBuyItem;
     }
 
     // ===========================================================
@@ -116,9 +127,10 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         String date = df.format(Calendar.getInstance().getTime());
 
         // displaying text view data
-        from.setText(Html.fromHtml("Mitady <b>" + req.getProduct() + "</b>"));
+        from.setText(Html.fromHtml("<b>" + req.getProduct() + "</b>"));
         subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + req.getQuantity() + "</b>" + req.getUnitType().name()));
-        message.setText("nalefan\'i " + req.getUserId());
+        // message.setText(req.getUserName());
+        getUserInfo(req.getUserId(), message);
 
         // displaying the first letter of From in icon text
         iconText.setText(req.getProduct().substring(0, 1));
@@ -138,7 +150,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO to be continued
+                fragmentBuyItem.showPostOfferPopup(req.getId());
             }
         });
 
@@ -210,6 +222,34 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    private void getUserInfo(String userId, final TextView textView) {
+        // set retrofit api
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BaseActivity.BasicAuth();
+
+        // send query
+        Call<JsonObject> call = api.getUserById(auth, userId);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
+                    textView.setText("nalefan\'i " + response.body().get("name").getAsString());
+                } else {
+                    //
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                //
+            }
+        });
+    }
 
     private void applyReadStatus(TextView from, TextView subject, Request request) {
 
