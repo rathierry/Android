@@ -41,7 +41,9 @@ import com.team.lezomadetana.model.send.RequestSend;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -147,6 +149,7 @@ public class FragmentBuyItem extends BaseFragment implements
         // handle item selection
         switch (item.getItemId()) {
             case R.id.action_search:
+                showSearchRequestPopup();
                 showLongToast(getActivity(), "1) FIKAROHANA");
                 return true;
             case R.id.action_payment:
@@ -617,6 +620,230 @@ public class FragmentBuyItem extends BaseFragment implements
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
+
+    private void showSearchRequestPopup() {
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_search, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.search_category);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
+
+        // drop down element
+        List<String> itemsName = new ArrayList<>();
+        final List<String> itemsId = new ArrayList<>();
+        for (int i = 0; i < _categoryList.size(); i++) {
+            itemsName.add(_categoryList.get(i).getName());
+            itemsId.add(_categoryList.get(i).getId());
+        }
+        itemsName.add("other");
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerCategory.setAdapter(arrayAdapter);
+
+        // event onClick
+        spinnerCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemNameSelected = parent.getItemAtPosition(position).toString();
+
+                // item'clicked position
+                itemIdSelected = itemsId.get(position);
+
+                // showing clicked spinner item name and position
+                showShortToast(parent.getContext(), "Item selected : " + itemNameSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+            }
+        });
+
+
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = spinnerCategory.getText().toString();
+
+                        String product = editTextProduct.getText().toString();
+                        // product
+
+                        // category
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
+                            spinnerCategory.requestFocus();
+                            return;
+                        }
+
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        Map<String,String> map = new HashMap<>();
+                        map.put("type","BUY");
+                        if(category!="other"){
+                            map.put("templateId",itemIdSelected);
+                        }
+
+                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
+                            map.put("product",product);
+                        }
+
+                        // send query
+                        Call<JsonObject> call = api.searchRequest(auth, map);
+
+                        // request
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                if (response.code() == 200) {
+                                    dialog.dismiss();
+                                    hideLoadingView();
+
+                                    // clear list request
+                                    requestList.clear();
+
+                                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                                    String _userId = "";
+
+                                    // count data
+                                    if (filter.size() > 0) {
+                                        // parsing gson
+                                        for (int i = 0; i < filter.size(); i++) {
+                                            // class model to mapping gson
+                                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+
+                                            if (request.getType() == Request.Type.valueOf("BUY").ordinal()) {
+                                                // new class model to set all values
+                                                Request req = new Request();
+
+                                                // verify server's response
+                                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
+                                                _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
+                                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
+                                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
+                                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
+                                                String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
+
+                                                // set values
+                                                req.setId(_id);
+                                                req.setUserId(_userId);
+                                                req.setProduct(_productName);
+                                                req.setQuantity(Integer.valueOf(_quantity));
+                                                req.setUnitType(request.getUnitType());
+                                                req.setPrice(Float.valueOf(_price));
+                                                req.setType(request.getType());
+                                                req.setTemplateId(_templateId);
+
+                                                // assetUrls is json array
+                                                JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
+                                                ArrayList<String> assetUrl = new ArrayList<String>();
+                                                for (int j = 0; j < assetArray.size(); j++) {
+                                                    assetUrl.add(String.valueOf(assetArray.get(j)));
+                                                }
+                                                req.setAssetUrls(assetUrl);
+
+                                                // offer
+                                                if (request.getOffers() == null) {
+                                                    req.setOffers(null);
+                                                } else {
+                                                    req.setOffers(request.getOffers());
+                                                }
+
+                                                // generate a random color
+                                                req.setColor(getRandomMaterialColor("400"));
+
+                                                // adding request to requests array
+                                                requestList.add(req);
+                                            }
+                                        }
+
+                                        // notifying list adapter about data changes
+                                        // so that it renders the list view with updated data
+                                        buyAdapter.notifyDataSetChanged();
+                                    }
+
+                                    // stopping swipe refresh
+                                    swipeRefreshItem.setRefreshing(false);
+                                    fetchAllCategory();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                                // stopping swipe refresh
+                                swipeRefreshItem.setRefreshing(false);
+                                hideLoadingView();
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(R.drawable.ic_wifi_black)
+                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
+    }
+
 
     /**
      * Popup to write new sell answer
