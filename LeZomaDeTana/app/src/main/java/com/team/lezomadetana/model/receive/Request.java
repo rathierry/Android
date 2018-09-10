@@ -1,7 +1,5 @@
 package com.team.lezomadetana.model.receive;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.ArrayList;
 
 /**
@@ -42,33 +40,23 @@ public class Request {
     public Request() {
     }
 
-    public Request(Boolean active, ArrayList<String> assetUrls, String userId, UnitType unitType, ArrayList<Offer> offers, Float price, Integer quantity, String product, String templateId,Integer type) {
+    public Request(Boolean active, ArrayList<String> assetUrls, String userId, String userName, UnitType unitType, ArrayList<Offer> offers, Float price, Integer quantity, String product, String templateId, String id, Integer type) {
         this.active = active;
         this.assetUrls = assetUrls;
         this.userId = userId;
+        this.userName = userName;
         this.unitType = unitType;
         this.offers = offers;
         this.price = price;
         this.quantity = quantity;
         this.product = product;
         this.templateId = templateId;
+        this.id = id;
         this.type = type;
     }
 
     // ===========================================================
     // Getter & Setter
-    // ===========================================================
-
-    // ===========================================================
-    // Methods from SuperClass
-    // ===========================================================
-
-    // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
     // ===========================================================
 
     public void setActive(Boolean active) {
@@ -83,7 +71,7 @@ public class Request {
         this.userId = userId;
     }
 
-    public void setUserName (String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -192,8 +180,19 @@ public class Request {
         return color;
     }
 
-
     public enum UnitType {KG, M, L, M2, UNIT}
 
     public enum Type {SELL, BUY}
+
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 }

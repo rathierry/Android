@@ -267,7 +267,7 @@ public class FragmentBuyItem extends BaseFragment implements
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
 
-                            if (request.getType() == 1) {
+                            if (request.getType() == Request.Type.valueOf("BUY").ordinal()) {
                                 // new class model to set all values
                                 Request req = new Request();
 
@@ -277,7 +277,6 @@ public class FragmentBuyItem extends BaseFragment implements
                                 String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
                                 String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
                                 String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
-                                String _type = TextUtils.equals(request.getType().toString(), "null") ? "null" : request.getType().toString();
                                 String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
                                 // set values
@@ -287,7 +286,7 @@ public class FragmentBuyItem extends BaseFragment implements
                                 req.setQuantity(Integer.valueOf(_quantity));
                                 req.setUnitType(request.getUnitType());
                                 req.setPrice(Float.valueOf(_price));
-                                req.setType(Integer.valueOf(_type));
+                                req.setType(request.getType());
                                 req.setTemplateId(_templateId);
 
                                 // assetUrls is json array
@@ -789,7 +788,7 @@ public class FragmentBuyItem extends BaseFragment implements
     /**
      * chooses a random color from array.xml
      */
-    private int getRandomMaterialColor(String typeColor) {
+    public int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
         int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
 

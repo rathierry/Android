@@ -2,7 +2,19 @@ package com.team.lezomadetana.model.send;
 
 import com.team.lezomadetana.model.receive.Request;
 
+/**
+ * Created by Hery Andoniaina on 30/08/2018.
+ **/
+
 public class RequestSend {
+
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
 
     private String userId;
     private String product;
@@ -11,6 +23,10 @@ public class RequestSend {
     private Float price;
     private Request.Type type;
     private String templateId;
+
+    // ===========================================================
+    // Constructors
+    // ===========================================================
 
     public RequestSend() {
     }
@@ -24,6 +40,10 @@ public class RequestSend {
         this.templateId = templateId;
         this.active = active;
     }
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
     public Boolean getActive() {
         return active;
@@ -58,4 +78,24 @@ public class RequestSend {
     public String getTemplateId() {
         return templateId;
     }
+
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Inner Classes/Interfaces
+    // ===========================================================
 }

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -273,7 +274,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
     private void applyProfilePicture(ImageView imgProfile, TextView iconText, String url) {
         // verif
         if (!TextUtils.isEmpty(url)) {
-            Glide.with(activity)
+            /*Glide.with(activity)
                     .load(url)
                     .thumbnail(0.5f)
                     .crossFade()
@@ -282,11 +283,16 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
                     .placeholder(R.drawable.ic_account_circle_black)
                     .into(imgProfile);
             imgProfile.setColorFilter(null);
+            iconText.setVisibility(View.GONE);*/
+            Toast.makeText(activity, "!null : " + url, Toast.LENGTH_SHORT).show();
+            imgProfile.setImageResource(R.drawable.bg_circle);
+            imgProfile.setColorFilter(fragmentBuyItem.getRandomMaterialColor("400"));
             iconText.setVisibility(View.VISIBLE);
         } else {
-            imgProfile.setImageResource(R.drawable.bg_circle);
-            imgProfile.setColorFilter(android.R.color.holo_red_light);
-            iconText.setVisibility(View.VISIBLE);
+            /*imgProfile.setImageResource(R.drawable.bg_circle);
+            imgProfile.setColorFilter(fragmentBuyItem.getRandomMaterialColor("400"));
+            iconText.setVisibility(View.VISIBLE);*/
+            Toast.makeText(activity, "NULL : " + url, Toast.LENGTH_SHORT).show();
         }
     }
 
