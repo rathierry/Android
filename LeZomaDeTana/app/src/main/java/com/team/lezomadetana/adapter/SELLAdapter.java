@@ -242,7 +242,7 @@ public class SELLAdapter extends BaseAdapter {
     private void applyProfilePicture(ImageView imgProfile, TextView iconText, String url) {
         // verif
         if (!TextUtils.isEmpty(url)) {
-            Glide.with(activity).load(url)
+            /*Glide.with(activity).load(url)
                     .thumbnail(0.5f)
                     .crossFade()
                     .transform(new CircleTransform(activity))
@@ -250,11 +250,14 @@ public class SELLAdapter extends BaseAdapter {
                     .placeholder(R.drawable.ic_account_circle_black)
                     .into(imgProfile);
             imgProfile.setColorFilter(null);
+            iconText.setVisibility(View.VISIBLE);*/
+            imgProfile.setImageResource(R.drawable.bg_circle);
+            imgProfile.setColorFilter(fragmentSellItem.getRandomMaterialColor("500"));
             iconText.setVisibility(View.VISIBLE);
         } else {
-            imgProfile.setImageResource(R.drawable.bg_circle);
+            /*imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(android.R.color.holo_red_light);
-            iconText.setVisibility(View.VISIBLE);
+            iconText.setVisibility(View.VISIBLE);*/
         }
     }
 

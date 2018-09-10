@@ -83,8 +83,8 @@ public class BaseActivity extends AppCompatActivity {
     public static String CURRENT_TAG = TAG_BUSINESS;
 
     // url
-    public static String ROOT_MDZ_USER_API = "http://41.188.17.163:5080/";
-    public static String ROOT_MDZ_API = "http://41.188.17.163:5081/";
+    public static String ROOT_MDZ_USER_API = "http://user-api.madawin.mg";
+    public static String ROOT_MDZ_API = "http://api.madawin.mg";
     public static String APP_USER_NAME = "app";
     public static String APP_PASSWORD = "app-password";
 

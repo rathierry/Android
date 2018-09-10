@@ -284,7 +284,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
                     .into(imgProfile);
             imgProfile.setColorFilter(null);
             iconText.setVisibility(View.GONE);*/
-            Toast.makeText(activity, "!null : " + url, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity, "!null : " + url, Toast.LENGTH_SHORT).show();
             imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(fragmentBuyItem.getRandomMaterialColor("400"));
             iconText.setVisibility(View.VISIBLE);
@@ -292,7 +292,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
             /*imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(fragmentBuyItem.getRandomMaterialColor("400"));
             iconText.setVisibility(View.VISIBLE);*/
-            Toast.makeText(activity, "NULL : " + url, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity, "NULL : " + url, Toast.LENGTH_SHORT).show();
         }
     }
 

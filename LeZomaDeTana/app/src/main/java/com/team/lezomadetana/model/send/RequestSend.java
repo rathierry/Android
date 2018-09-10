@@ -18,8 +18,8 @@ public class RequestSend {
 
     private String userId;
     private String product;
-
     private Request.UnitType unitType;
+    private Integer quantity;
     private Float price;
     private Request.Type type;
     private String templateId;
@@ -37,6 +37,17 @@ public class RequestSend {
         this.unitType = unitType;
         this.price = price;
         this.type = type;
+        this.templateId = templateId;
+        this.active = active;
+    }
+
+    public RequestSend(String userId, String product, Request.UnitType unitType, Integer quantity, Request.Type type, Float price, String templateId, Boolean active) {
+        this.userId = userId;
+        this.product = product;
+        this.unitType = unitType;
+        this.quantity = quantity;
+        this.type = type;
+        this.price = price;
         this.templateId = templateId;
         this.active = active;
     }
@@ -65,6 +76,14 @@ public class RequestSend {
 
     public Request.UnitType getUnitType() {
         return unitType;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Float getPrice() {

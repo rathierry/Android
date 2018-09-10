@@ -84,7 +84,7 @@ public interface APIInterface {
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
     // list request
-    @GET("rest/requests/")
+    @GET("rest/requests")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
     // search advanced

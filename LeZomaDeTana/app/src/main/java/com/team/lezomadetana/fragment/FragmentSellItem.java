@@ -157,22 +157,23 @@ public class FragmentSellItem extends BaseFragment implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    /*@Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && rootView != null) {
-            onResume();
+            //onResume();
+            Toast.makeText(getContext(), "2- setUserVisibleHint", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
     @Override
     public void onResume() {
         super.onResume();
         if (!getUserVisibleHint()) {
+            isRefresh = false;
+            fetchAllRequests();
             return;
         }
-        isRefresh = false;
-        fetchAllRequests();
     }
 
     @Override
@@ -264,11 +265,11 @@ public class FragmentSellItem extends BaseFragment implements
                                 Request req = new Request();
 
                                 // verify server's response
-                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
-                                String _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
-                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
-                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
-                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
+                                String _id = TextUtils.equals(request.getId(), "null") ? "null" : request.getId();
+                                String _userId = TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId();
+                                String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
+                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice()));
+                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
                                 String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
                                 // set values
@@ -785,7 +786,7 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * chooses a random color from array.xml
      */
-    private int getRandomMaterialColor(String typeColor) {
+    public int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
         int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
 

@@ -257,8 +257,6 @@ public class FragmentBuyItem extends BaseFragment implements
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
-                    String _userId = "";
-
                     // count data
                     if (filter.size() > 0) {
                         // parsing gson
@@ -272,11 +270,11 @@ public class FragmentBuyItem extends BaseFragment implements
                                 Request req = new Request();
 
                                 // verify server's response
-                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
-                                _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
-                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
-                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
-                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
+                                String _id = TextUtils.equals(request.getId(), "null") ? "null" : request.getId();
+                                String _userId = TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId();
+                                String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
+                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice()));
+                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
                                 String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
                                 // set values
@@ -560,11 +558,10 @@ public class FragmentBuyItem extends BaseFragment implements
                         //
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
-                        //
-                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.BUY, itemIdSelected, true);
+                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
 
                         // send query
-                        Call<Void> call = api.sendRequest(auth, request);
+                        Call<Void> call = api.sendRequest(auth, postRequest);
 
                         // request
                         call.enqueue(new Callback<Void>() {
