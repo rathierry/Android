@@ -30,6 +30,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 
 import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
 
@@ -49,6 +51,9 @@ public class FragmentChat extends BaseFragment {
     ImageView orange;
     ImageView airtel;
     UserCredentialResponse user;
+
+
+
 
     // ===========================================================
     // Constructors
@@ -75,7 +80,7 @@ public class FragmentChat extends BaseFragment {
         user = ((BaseActivity) getActivity()).getCurrentUser(getActivity());
 
 
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+       /* View view = inflater.inflate(R.layout.fragment_chat, container, false);
         madCoin = view.findViewById(R.id.madcoin_text);
         madCointText = view.findViewById(R.id.madcoin_text);
         telma = view.findViewById(R.id.m_vola_item);
@@ -94,7 +99,7 @@ public class FragmentChat extends BaseFragment {
         });
 
 
-        refreshMadcoin();
+        refreshMadcoin();*/
 
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }

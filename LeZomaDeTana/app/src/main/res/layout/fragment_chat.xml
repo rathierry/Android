@@ -7,56 +7,106 @@
     android:background="@color/color_white">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.20"
         android:orientation="horizontal"
         android:id="@+id/madacoin_item"
-        android:padding="5dp">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            app:srcCompat="@drawable/ic_bitcoin_logo"
+        android:padding="5dp"
+        android:background="@color/color_green_sea">
 
-            />
         <TextView
-            android:layout_weight="0.5"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center|bottom"
-            android:text="0"
-            android:textSize="50dp"
+            android:layout_gravity="center"
+            android:text="Vola ao anaty vata : 150 000 Ar"
+            android:textSize="50sp"
+            android:textColor="@color/color_white"
             android:id="@+id/madcoin_text"/>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/m_vola_item"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="0.80"
+        android:padding="5dp"
+        android:id="@+id/payment_main_layout">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+               <ImageView
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_weight="0.35"
+                   />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Ampiditra vola ao anaty vata"
+                    android:textSize="50sp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.35"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Hamoaka vola ao anaty vata"
+                    android:textSize="50sp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.35"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Handoa na andefa vola"
+                    android:textSize="50sp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.35"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Handray vola"
+                    android:textSize="50sp"/>
+            </LinearLayout>
+        </LinearLayout>
 
-        android:layout_weight="0.25"
-        app:srcCompat="@drawable/ic_mvola"
-        android:padding="5dp"/>
+    </FrameLayout>
 
-    <ImageView
-        android:id="@+id/orange_money_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
 
-        android:layout_weight="0.25"
-        app:srcCompat="@drawable/ic_orange_money"
-        android:padding="5dp"/>
-
-    <ImageView
-        android:id="@+id/airtel_money_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:layout_weight="0.25"
-        app:srcCompat="@drawable/ic_airtelmoney"
-        android:padding="5dp"/>
 
 
 
