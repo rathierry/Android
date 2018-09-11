@@ -94,9 +94,9 @@
 
     <!-- screen: MainActivity -->
     <string name="activity_main_menu_business">Raharaham-barotra</string><!-- not add a text -->
-    <!--<string name="activity_main_menu_offer">Offer/Require</string>-->
     <string name="activity_main_menu_chat">Firesahana</string>
     <string name="activity_main_menu_offer">Tolotra</string>
+    <string name="activity_main_menu_payment">Vola</string>
     <string name="activity_main_menu_setting">Fikirana</string>
     <string name="activity_main_menu_info">Open LZT Official Site</string>
     <string name="activity_main_menu_about">Ny momba anay</string>
@@ -105,6 +105,7 @@
     <string-array name="nav_item_activity_titles">
         <item></item>
         <item>@string/activity_main_menu_offer</item>
+        <item>@string/activity_main_menu_payment</item>
         <item>@string/activity_main_menu_chat</item>
         <item>@string/activity_main_menu_setting</item>
     </string-array>

@@ -76,6 +76,7 @@ public class BaseActivity extends AppCompatActivity {
     // different navigation tag
     public static final String TAG_BUSINESS = "business";
     public static final String TAG_OFFER = "offer";
+    public static final String TAG_PAYMENT = "payment";
     public static final String TAG_CHAT = "chat";
     public static final String TAG_SETTING = "setting";
 

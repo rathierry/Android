@@ -46,7 +46,7 @@ public class FragmentHome extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_business, container, false);
+        rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         // init view
         tabLayout = (TabLayout) rootView.findViewById(R.id.result_tabs);

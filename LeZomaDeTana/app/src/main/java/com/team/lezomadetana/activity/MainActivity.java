@@ -25,6 +25,7 @@ import com.team.lezomadetana.R;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentListOffer;
+import com.team.lezomadetana.fragment.FragmentPayment;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -135,7 +136,7 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu; this adds items to the action bar if it is present.
         // show menu only when home fragment is selected
-        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3) {
+        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4) {
             getMenuInflater().inflate(R.menu.menu_main_activity, menu);
         }
 
@@ -147,7 +148,7 @@ public class MainActivity extends BaseActivity {
         MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
         MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
         MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
-        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3) {
+        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4) {
             itemMenuSearch.setEnabled(false);
             itemMenuSearch.setVisible(false);
             itemMenuPayment.setEnabled(false);
@@ -233,12 +234,16 @@ public class MainActivity extends BaseActivity {
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_OFFER;
                         break;
-                    case R.id.nav_chat:
+                    case R.id.nav_payment:
                         navItemIndex = 2;
+                        CURRENT_TAG = TAG_PAYMENT;
+                        break;
+                    case R.id.nav_chat:
+                        navItemIndex = 3;
                         CURRENT_TAG = TAG_CHAT;
                         break;
                     case R.id.nav_setting:
-                        navItemIndex = 3;
+                        navItemIndex = 4;
                         CURRENT_TAG = TAG_SETTING;
                         break;
                     case R.id.nav_about_us:
@@ -356,9 +361,12 @@ public class MainActivity extends BaseActivity {
                 FragmentListOffer offer = new FragmentListOffer();
                 return offer;
             case 2:
+                FragmentPayment payment = new FragmentPayment();
+                return payment;
+            case 3:
                 FragmentChat chat = new FragmentChat();
                 return chat;
-            case 3:
+            case 4:
                 FragmentSetting setting = new FragmentSetting();
                 return setting;
             default:

@@ -12,13 +12,20 @@
             android:title="@string/activity_main_menu_offer"
             android:visible="false"/>
         <item
+            android:id="@+id/nav_payment"
+            android:icon="@drawable/ic_money_black"
+            android:title="@string/activity_main_menu_payment"
+            android:visible="true"/>
+        <item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_chat_black"
-            android:title="@string/activity_main_menu_chat" />
+            android:title="@string/activity_main_menu_chat"
+            android:visible="true" />
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings_black"
-            android:title="@string/activity_main_menu_setting" />
+            android:title="@string/activity_main_menu_setting"
+            android:visible="true" />
     </group>
 
     <item android:title="Other">
