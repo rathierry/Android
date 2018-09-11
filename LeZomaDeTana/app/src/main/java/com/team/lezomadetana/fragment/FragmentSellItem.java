@@ -79,7 +79,7 @@ public class FragmentSellItem extends BaseFragment implements
     private ListView listViewItem;
     private SELLAdapter sellAdapter;
     private List<ProductTemplate> listCategory = new ArrayList<ProductTemplate>();
-    private boolean isRefresh = false;
+    private boolean startFragment = false;
 
     // ===========================================================
     // Constructors
@@ -164,20 +164,25 @@ public class FragmentSellItem extends BaseFragment implements
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && rootView != null) {
-            //onResume();
-            Toast.makeText(getContext(), "2- setUserVisibleHint", Toast.LENGTH_SHORT).show();
+            onResume();
         }
-    }*/
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!getUserVisibleHint()) {
-            isRefresh = false;
+        if (getUserVisibleHint()) {
+            if (!startFragment) {
+                swipeRefreshItem.setRefreshing(false);
+                showLoadingView(getResources().getString(R.string.app_spinner));
+                startFragment = true;
+            } else {
+                swipeRefreshItem.setRefreshing(true);
+            }
             fetchAllRequests();
             return;
         }
@@ -185,7 +190,7 @@ public class FragmentSellItem extends BaseFragment implements
 
     @Override
     public void onRefresh() {
-        isRefresh = true;
+        swipeRefreshItem.setRefreshing(true);
         fetchAllRequests();
     }
 
@@ -243,15 +248,6 @@ public class FragmentSellItem extends BaseFragment implements
      * Fetch all requests
      */
     private void fetchAllRequests() {
-        // showing refresh animation before making http call
-        if (isRefresh) {
-            swipeRefreshItem.setRefreshing(true);
-            hideLoadingView();
-        } else {
-            swipeRefreshItem.setRefreshing(false);
-            showLoadingView(getResources().getString(R.string.app_spinner));
-        }
-
         // set retrofit api
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
 
@@ -334,7 +330,7 @@ public class FragmentSellItem extends BaseFragment implements
                         sellAdapter.notifyDataSetChanged();
                     }
 
-                    // stopping swipe refresh
+                    // stopping swipe refresh / loading
                     swipeRefreshItem.setRefreshing(false);
 
                     // call list category api
@@ -356,13 +352,7 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
                                 showLoadingView(getResources().getString(R.string.app_spinner));
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        hideLoadingView();
-                                        fetchAllRequests();
-                                    }
-                                }, BaseActivity.LOADING_TIME_OUT);
+                                fetchAllRequests();
                             }
                         })
                         .show();

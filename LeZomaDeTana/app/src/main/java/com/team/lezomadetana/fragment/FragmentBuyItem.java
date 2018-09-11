@@ -77,7 +77,7 @@ public class FragmentBuyItem extends BaseFragment implements
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
     private ListView listViewItem;
     private BUYAdapter buyAdapter;
-    private boolean isRefresh = false;
+    private boolean startFragment = false;
 
     // ===========================================================
     // Constructors
@@ -162,24 +162,38 @@ public class FragmentBuyItem extends BaseFragment implements
     }
 
     @Override
-    public void onClick(View v) {
-        //
-    }
-
-    @Override
-    public void onRefresh() {
-        isRefresh = true;
-        fetchAllRequests();
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && rootView != null) {
+            onResume();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!getUserVisibleHint()) {
+        if (getUserVisibleHint()) {
+            if (!startFragment) {
+                swipeRefreshItem.setRefreshing(false);
+                showLoadingView(getResources().getString(R.string.app_spinner));
+                startFragment = true;
+            } else {
+                swipeRefreshItem.setRefreshing(true);
+            }
+            fetchAllRequests();
             return;
         }
-        isRefresh = false;
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshItem.setRefreshing(true);
         fetchAllRequests();
+    }
+
+    @Override
+    public void onClick(View v) {
+        //
     }
 
     @Override
@@ -228,15 +242,6 @@ public class FragmentBuyItem extends BaseFragment implements
      * Fetch all requests
      */
     private void fetchAllRequests() {
-        // showing refresh animation before making http call
-        if (isRefresh) {
-            swipeRefreshItem.setRefreshing(true);
-            hideLoadingView();
-        } else {
-            swipeRefreshItem.setRefreshing(false);
-            showLoadingView(getResources().getString(R.string.app_spinner));
-        }
-
         // set retrofit api
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
 
@@ -340,7 +345,6 @@ public class FragmentBuyItem extends BaseFragment implements
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
                                 showLoadingView(getResources().getString(R.string.app_spinner));
-                                hideLoadingView();
                                 fetchAllRequests();
                             }
                         })
