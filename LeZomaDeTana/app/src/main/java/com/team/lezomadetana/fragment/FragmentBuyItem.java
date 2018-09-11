@@ -268,8 +268,8 @@ public class FragmentBuyItem extends BaseFragment implements
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-
-                            if (request.getType() == Request.Type.valueOf("BUY").ordinal()) {
+                            // // // Request.Type.valueOf("BUY").ordinal()
+                            if (request.getType() == Request.Type.BUY) {
                                 // new class model to set all values
                                 Request req = new Request();
 
@@ -934,8 +934,8 @@ public class FragmentBuyItem extends BaseFragment implements
                                                 // class model to mapping gson
                                                 Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                                                // // //
-                                                if (request.getType() == Request.Type.valueOf("BUY").ordinal()) {
+                                                // // // Request.Type.valueOf("BUY").ordinal()
+                                                if (request.getType() == Request.Type.BUY) {
                                                     // new class model to set all values
                                                     Request req = new Request();
 

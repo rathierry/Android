@@ -17,17 +17,17 @@ public class Request {
     // ===========================================================
 
     private Boolean active;
-    private ArrayList<String> assetUrls;
-    private String userId;
-    private String userName;
-    private UnitType unitType;
     private ArrayList<Offer> offers;
+    private ArrayList<String> assetUrls;
+    private UnitType unitType;
     private Float price;
-    private Integer quantity;
+    private String userId;
     private String product;
     private String templateId;
+    private Integer quantity;
     private String id;
-    private Integer type;
+    private Type type;
+    private String userName;
 
     private boolean isImportant;
     private boolean isRead;
@@ -40,7 +40,7 @@ public class Request {
     public Request() {
     }
 
-    public Request(Boolean active, ArrayList<String> assetUrls, String userId, String userName, UnitType unitType, ArrayList<Offer> offers, Float price, Integer quantity, String product, String templateId, String id, Integer type) {
+    public Request(Boolean active, ArrayList<String> assetUrls, String userId, String userName, UnitType unitType, ArrayList<Offer> offers, Float price, Integer quantity, String product, String templateId, String id, Type type) {
         this.active = active;
         this.assetUrls = assetUrls;
         this.userId = userId;
@@ -103,7 +103,7 @@ public class Request {
         this.id = id;
     }
 
-    public void setType(Integer type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -164,7 +164,7 @@ public class Request {
         return id;
     }
 
-    public Integer getType() {
+    public Type getType() {
         return type;
     }
 
