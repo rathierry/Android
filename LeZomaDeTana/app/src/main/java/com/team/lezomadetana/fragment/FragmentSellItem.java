@@ -207,28 +207,64 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     @Override
-    public void onIconImportantClicked(int position) {
-        // TODO
-    }
-
-    @Override
-    public void onMessageRowClicked(int position) {
+    public void onMessageRowClicked(int position, Request request) {
         // read the "message" which removes bold from the row
-        Request request = requestList.get(position);
+        /*Request request = requestList.get(position);
         request.setRead(true);
         requestList.set(position, request);
-        sellAdapter.notifyDataSetChanged();
-        // showShortToast(getContext(), "Detail: " + request.getUserId());
-        // TODO TODO TODO
+        buyAdapter.notifyDataSetChanged();*/
+        // // //
+        // Toast.makeText(getContext(), "onMessageRowClicked: START", Toast.LENGTH_SHORT).show();
+        startPaymentFragment(request);
+        // Toast.makeText(getContext(), "onMessageRowClicked: END", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment, Request request) {
+        // use bundle to pass data
+        Bundle args = new Bundle();
+
+        // put string, int, etc in bundle with a key value
+        args.putSerializable("request", request);
+
+        // manager
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // set argument bundle to fragment
+        fragment.setArguments(args);
+
+        // transaction
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
+
+        // back stack
         fragmentTransaction.addToBackStack(fragment.toString());
+
+        // commit
         fragmentTransaction.commit();
+    }
+
+    /**
+     * Replace fragment by "FragmentListOffer"
+     */
+    public void startPaymentFragment(Request request) {
+        replaceFragment(new FragmentListOffer(), request);
+    }
+
+    /**
+     * chooses a random color from array.xml
+     */
+    public int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
     }
 
     // ===========================================================
@@ -1050,29 +1086,6 @@ public class FragmentSellItem extends BaseFragment implements
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
-    }
-
-    /**
-     * chooses a random color from array.xml
-     */
-    public int getRandomMaterialColor(String typeColor) {
-        int returnColor = Color.GRAY;
-        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
-
-        if (arrayId != 0) {
-            TypedArray colors = getResources().obtainTypedArray(arrayId);
-            int index = (int) (Math.random() * colors.length());
-            returnColor = colors.getColor(index, Color.GRAY);
-            colors.recycle();
-        }
-        return returnColor;
-    }
-
-    /**
-     * Replace fragment by "FragmentListOffer"
-     */
-    public void ChangeThisFragment() {
-        replaceFragment(new FragmentListOffer());
     }
 
     // ===========================================================

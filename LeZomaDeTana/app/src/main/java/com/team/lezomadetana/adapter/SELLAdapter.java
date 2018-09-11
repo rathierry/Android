@@ -137,7 +137,7 @@ public class SELLAdapter extends BaseAdapter {
             btnSum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentSellItem.ChangeThisFragment();
+                    fragmentSellItem.startPaymentFragment(req);
                 }
             });
         }
@@ -158,7 +158,7 @@ public class SELLAdapter extends BaseAdapter {
         applyProfilePicture(imgProfile, iconText, req.getAssetUrls().get(0));
 
         // apply click events
-        applyClickEvents(iconContainer, convertView, messageContainer, position);
+        applyClickEvents(iconContainer, convertView, messageContainer, position, req);
 
         return convertView;
     }
@@ -170,11 +170,9 @@ public class SELLAdapter extends BaseAdapter {
     public interface RequestAdapterListener {
         void onIconClicked(int position);
 
-        void onIconImportantClicked(int position);
+        void onMessageRowClicked(int position, Request request);
 
-        void onMessageRowClicked(int position);
-
-        void replaceFragment(Fragment fragment);
+        void replaceFragment(Fragment fragment, Request request);
     }
 
     // ===========================================================
@@ -223,7 +221,7 @@ public class SELLAdapter extends BaseAdapter {
         }
     }
 
-    private void applyClickEvents(RelativeLayout iconContainer, View itemView, LinearLayout messageContainer, final int position) {
+    private void applyClickEvents(RelativeLayout iconContainer, View itemView, LinearLayout messageContainer, final int position, final Request request) {
         iconContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,17 +229,10 @@ public class SELLAdapter extends BaseAdapter {
             }
         });
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onIconImportantClicked(position);
-            }
-        });
-
         messageContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onMessageRowClicked(position);
+                listener.onMessageRowClicked(position, request);
             }
         });
     }

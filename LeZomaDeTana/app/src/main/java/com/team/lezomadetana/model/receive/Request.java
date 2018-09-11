@@ -1,12 +1,13 @@
 package com.team.lezomadetana.model.receive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Hery Andoniaina on 06/09/2018.
  */
 
-public class Request {
+public class Request implements Serializable {
 
     // ===========================================================
     // Constants
