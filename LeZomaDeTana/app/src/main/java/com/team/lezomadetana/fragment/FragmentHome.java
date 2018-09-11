@@ -3,6 +3,7 @@ package com.team.lezomadetana.fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,9 @@ public class FragmentHome extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        // toolBar title
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Entana");
 
         // init view
         tabLayout = (TabLayout) rootView.findViewById(R.id.result_tabs);

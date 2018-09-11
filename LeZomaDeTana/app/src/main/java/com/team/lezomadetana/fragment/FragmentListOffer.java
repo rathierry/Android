@@ -2,11 +2,16 @@ package com.team.lezomadetana.fragment;
 
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.team.lezomadetana.R;
@@ -54,11 +59,24 @@ public class FragmentListOffer extends BaseFragment {
         rootView = getView() != null ? getView() :
                 inflater.inflate(R.layout.fragment_list_offer, container, false);
 
+        // toolBar title
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Lisitra");
+
+        // initialize view
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.icon_profile);
+        TextView from = (TextView) rootView.findViewById(R.id.from);
+        TextView txt_primary = (TextView) rootView.findViewById(R.id.txt_primary);
+        TextView txt_secondary = (TextView) rootView.findViewById(R.id.txt_secondary);
+        TextView txt_footer = (TextView) rootView.findViewById(R.id.txt_footer);
+        Button button = (Button) rootView.findViewById(R.id.answer);
+
+        // loading
         showLoadingView("Miandry");
 
         // fetch data in serializable
         request = (Request) getArguments().getSerializable("request");
 
+        // initialize request's data
         String totalOffer = "..null..";
         if (request.getOffers() != null) {
             totalOffer = String.valueOf(request.getOffers().size());
@@ -79,6 +97,7 @@ public class FragmentListOffer extends BaseFragment {
         String itemQuantity = request.getQuantity().toString();
         String itemType = request.getType().name();
 
+        // test
         Toast.makeText(getContext(),
                 "--------------------" +
                         "\ncurrent item selected" +
@@ -95,8 +114,16 @@ public class FragmentListOffer extends BaseFragment {
                         "\n--------------------",
                 Toast.LENGTH_LONG).show();
 
+        // set values
+        from.setText(Html.fromHtml("Nalefan\'i <b>" + userName + "</b>"));
+        txt_primary.setText(Html.fromHtml("<b>" + itemProduct + "</b>"));
+        txt_secondary.setText(Html.fromHtml("Lanjany: <b>" + itemQuantity + " " + itemUnitType + "</b>"));
+        txt_footer.setText(Html.fromHtml("Vidin\'iray " + itemUnitType + ": <b>" + itemPrice + "</b> Ariary"));
+
+        // hide spinner
         hideLoadingView();
 
+        // return view
         return rootView;
     }
 
