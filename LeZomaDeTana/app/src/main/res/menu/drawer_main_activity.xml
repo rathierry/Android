@@ -10,7 +10,7 @@
             android:id="@+id/nav_offer"
             android:icon="@drawable/ic_local_offer_black"
             android:title="@string/activity_main_menu_offer"
-            android:visible="true"/>
+            android:visible="false"/>
         <item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_chat_black"

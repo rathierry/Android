@@ -2,6 +2,7 @@ package com.team.lezomadetana.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,8 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
@@ -23,7 +22,6 @@ import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.fragment.FragmentSellItem;
 import com.team.lezomadetana.model.receive.Request;
-import com.team.lezomadetana.utils.CircleTransform;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -137,19 +135,12 @@ public class SELLAdapter extends BaseAdapter {
         iconText.setText(req.getProduct().substring(0, 1));
 
         // sum answer btn
-        if (req.getOffers() == null) {
-            btnSum.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO to be continued
-                }
-            });
-        } else {
+        if (req.getOffers() != null) {
             btnSum.setText(String.valueOf(req.getOffers().size()));
             btnSum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO to be continued
+                    fragmentSellItem.ChangeThisFragment();
                 }
             });
         }
@@ -158,7 +149,7 @@ public class SELLAdapter extends BaseAdapter {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentSellItem.showPostOfferPopup(req.getId());
+                fragmentSellItem.showAnswerOfferPopup(req.getId());
             }
         });
 
@@ -185,6 +176,8 @@ public class SELLAdapter extends BaseAdapter {
         void onIconImportantClicked(int position);
 
         void onMessageRowClicked(int position);
+
+        void replaceFragment(Fragment fragment);
     }
 
     // ===========================================================

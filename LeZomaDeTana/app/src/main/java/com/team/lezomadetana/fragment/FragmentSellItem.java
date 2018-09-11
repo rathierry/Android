@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -150,7 +155,6 @@ public class FragmentSellItem extends BaseFragment implements
         switch (item.getItemId()) {
             case R.id.action_search:
                 showSearchRequestPopup();
-                showLongToast(getActivity(), "2) FIKAROHANA");
                 break;
             case R.id.action_payment:
                 showLongToast(getActivity(), "2) RESA-BOLA");
@@ -210,8 +214,17 @@ public class FragmentSellItem extends BaseFragment implements
         request.setRead(true);
         requestList.set(position, request);
         sellAdapter.notifyDataSetChanged();
-        // // //
-        showShortToast(getContext(), "Read: " + request.getUserId());
+        // showShortToast(getContext(), "Detail: " + request.getUserId());
+        // TODO TODO TODO
+    }
+
+    @Override
+    public void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
+        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.commit();
     }
 
     // ===========================================================
@@ -252,12 +265,19 @@ public class FragmentSellItem extends BaseFragment implements
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.code() == 200) {
+                // verification
+                if (response.body() == null) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                } else if (response.code() == 200) {
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
-                    // count data
-                    if (filter.size() > 0) {
+                    if (filter == null || (filter.size() == 0)) {
+                        Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                    } else {
+                        // clear list request
+                        requestList.clear();
+
                         // parsing gson
                         for (int i = 0; i < filter.size(); i++) {
                             // class model to mapping gson
@@ -315,6 +335,8 @@ public class FragmentSellItem extends BaseFragment implements
 
                     // stopping swipe refresh
                     swipeRefreshItem.setRefreshing(false);
+
+                    // call list category api
                     fetchAllCategory();
                 }
             }
@@ -364,15 +386,19 @@ public class FragmentSellItem extends BaseFragment implements
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.code() == 200) {
+                // verification
+                if (response.body() == null) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                } else if (response.code() == 200) {
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
 
-                    // class model to mapping gson
-                    List<ProductTemplate> productTemplates = null;
+                    if (filter == null || (filter.size() == 0)) {
+                        Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                    } else {
+                        // class model to mapping gson
+                        List<ProductTemplate> productTemplates = null;
 
-                    // count data
-                    if (filter.size() > 0) {
                         // new class model to set all values
                         productTemplates = new ArrayList<ProductTemplate>();
 
@@ -443,6 +469,7 @@ public class FragmentSellItem extends BaseFragment implements
             itemsName.add(listCategory.get(i).getName());
             itemsId.add(listCategory.get(i).getId());
         }
+        itemsName.add(getResources().getString(R.string.app_other_category));
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
@@ -458,11 +485,13 @@ public class FragmentSellItem extends BaseFragment implements
                 // item'clicked name
                 itemNameSelected = parent.getItemAtPosition(position).toString();
 
-                // item'clicked position
-                itemIdSelected = itemsId.get(position);
+                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    // item'clicked position
+                    itemIdSelected = itemsId.get(position);
 
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemNameSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+                    // showing clicked spinner item name and position
+                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
+                }
             }
         });
 
@@ -625,7 +654,7 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * Popup to write new sell answer
      */
-    public void showPostOfferPopup(final String requestId) {
+    public void showAnswerOfferPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
@@ -786,10 +815,13 @@ public class FragmentSellItem extends BaseFragment implements
         dialog.show();
     }
 
+    /**
+     * Display popup search request
+     */
     private void showSearchRequestPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_search, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -808,7 +840,7 @@ public class FragmentSellItem extends BaseFragment implements
             itemsName.add(listCategory.get(i).getName());
             itemsId.add(listCategory.get(i).getId());
         }
-        itemsName.add("other");
+        itemsName.add(getResources().getString(R.string.app_other_category));
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
@@ -824,14 +856,15 @@ public class FragmentSellItem extends BaseFragment implements
                 // item'clicked name
                 itemNameSelected = parent.getItemAtPosition(position).toString();
 
-                // item'clicked position
-                itemIdSelected = itemsId.get(position);
+                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    // item'clicked position
+                    itemIdSelected = itemsId.get(position);
 
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemNameSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+                    // showing clicked spinner item name and position
+                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid: " + itemIdSelected);
+                }
             }
         });
-
 
 
         // set dialog message
@@ -878,23 +911,23 @@ public class FragmentSellItem extends BaseFragment implements
                         // create basic authentication
                         String auth = BasicAuth();
 
-                        Map<String,String> map = new HashMap<>();
-                        map.put("type","SELL");
-                        if(category!="other"){
-                            String id="";
+                        Map<String, String> map = new HashMap<>();
+                        map.put("type", "SELL");
+                        if (category != getResources().getString(R.string.app_other_category)) {
+                            String id = "";
 
-                            for(int i = 0;i<listCategory.size();i++){
-                                if(listCategory.get(i).equals(category)){
+                            for (int i = 0; i < listCategory.size(); i++) {
+                                if (listCategory.get(i).equals(category)) {
                                     id = listCategory.get(i).getId();
                                     break;
                                 }
                             }
 
-                            map.put("templateId",id);
+                            map.put("templateId", id);
                         }
 
                         if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
-                            map.put("product",product);
+                            map.put("product", product);
                         }
 
                         // send query
@@ -906,76 +939,80 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                 if (response.code() == 200) {
                                     dialog.dismiss();
-                                    hideLoadingView();
 
-                                    // clear list request
-                                    requestList.clear();
+                                    // verification
+                                    if (response.body() == null) {
+                                        Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        // array filter
+                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
-                                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+                                        if (filter == null || (filter.size() == 0)) {
+                                            Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                                        } else {
+                                            // clear list request
+                                            requestList.clear();
 
-                                    String _userId = "";
+                                            // parsing gson
+                                            for (int i = 0; i < filter.size(); i++) {
+                                                // class model to mapping gson
+                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                                    // count data
-                                    if (filter.size() > 0) {
-                                        // parsing gson
-                                        for (int i = 0; i < filter.size(); i++) {
-                                            // class model to mapping gson
-                                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+                                                // // //
+                                                if (request.getType() == Request.Type.valueOf("SELL").ordinal()) {
+                                                    // new class model to set all values
+                                                    Request req = new Request();
 
+                                                    // verify server's response
+                                                    String _id = TextUtils.equals(request.getId(), "null") ? "null" : request.getId();
+                                                    String _userId = TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId();
+                                                    String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
+                                                    String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice()));
+                                                    String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
+                                                    String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
-                                            if (request.getType() == Request.Type.valueOf("SELL").ordinal()) {
-                                                // new class model to set all values
-                                                Request req = new Request();
+                                                    // set values
+                                                    req.setId(_id);
+                                                    req.setUserId(_userId);
+                                                    req.setProduct(_productName);
+                                                    req.setQuantity(Integer.valueOf(_quantity));
+                                                    req.setUnitType(request.getUnitType());
+                                                    req.setPrice(Float.valueOf(_price));
+                                                    req.setType(request.getType());
+                                                    req.setTemplateId(_templateId);
 
-                                                // verify server's response
-                                                String _id = String.valueOf(TextUtils.equals(request.getId(), "null") ? "null" : request.getId().toString());
-                                                _userId = (TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId().toString());
-                                                String _productName = (request.getProduct().isEmpty() ? "null" : request.getProduct().toString());
-                                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice().toString()));
-                                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity().toString()));
-                                                String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
+                                                    // assetUrls is json array
+                                                    JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
+                                                    ArrayList<String> assetUrl = new ArrayList<String>();
+                                                    for (int j = 0; j < assetArray.size(); j++) {
+                                                        assetUrl.add(String.valueOf(assetArray.get(j)));
+                                                    }
+                                                    req.setAssetUrls(assetUrl);
 
-                                                // set values
-                                                req.setId(_id);
-                                                req.setUserId(_userId);
-                                                req.setProduct(_productName);
-                                                req.setQuantity(Integer.valueOf(_quantity));
-                                                req.setUnitType(request.getUnitType());
-                                                req.setPrice(Float.valueOf(_price));
-                                                req.setType(request.getType());
-                                                req.setTemplateId(_templateId);
+                                                    // offer
+                                                    if (request.getOffers() == null) {
+                                                        req.setOffers(null);
+                                                    } else {
+                                                        req.setOffers(request.getOffers());
+                                                    }
 
-                                                // assetUrls is json array
-                                                JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
-                                                ArrayList<String> assetUrl = new ArrayList<String>();
-                                                for (int j = 0; j < assetArray.size(); j++) {
-                                                    assetUrl.add(String.valueOf(assetArray.get(j)));
+                                                    // generate a random color
+                                                    req.setColor(getRandomMaterialColor("400"));
+
+                                                    // adding request to requests array
+                                                    requestList.add(req);
                                                 }
-                                                req.setAssetUrls(assetUrl);
-
-                                                // offer
-                                                if (request.getOffers() == null) {
-                                                    req.setOffers(null);
-                                                } else {
-                                                    req.setOffers(request.getOffers());
-                                                }
-
-                                                // generate a random color
-                                                req.setColor(getRandomMaterialColor("400"));
-
-                                                // adding request to requests array
-                                                requestList.add(req);
                                             }
+
+                                            // notifying list adapter about data changes
+                                            // so that it renders the list view with updated data
+                                            sellAdapter.notifyDataSetChanged();
+
+                                            // alert user
+                                            Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + filter.size(), Toast.LENGTH_LONG).show();
                                         }
-
-                                        // notifying list adapter about data changes
-                                        // so that it renders the list view with updated data
-                                       sellAdapter.notifyDataSetChanged();
                                     }
-
-                                    // stopping swipe refresh
-                                    swipeRefreshItem.setRefreshing(false);
-                                    fetchAllCategory();
+                                    hideLoadingView();
                                 }
 
                             }
@@ -1032,6 +1069,13 @@ public class FragmentSellItem extends BaseFragment implements
             colors.recycle();
         }
         return returnColor;
+    }
+
+    /**
+     * Replace fragment by "FragmentListOffer"
+     */
+    public void ChangeThisFragment() {
+        replaceFragment(new FragmentListOffer());
     }
 
     // ===========================================================

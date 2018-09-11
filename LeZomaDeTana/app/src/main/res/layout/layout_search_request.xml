@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="@color/color_white"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingRight="?listPreferredItemPaddingRight">
+
+    <!-- Category search -->
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+        android:id="@+id/search_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:fontFamily="monospace"
+        android:hint="@string/fragment_buy_post_request_category_hint"
+        android:text="@string/fragment_buy_post_request_category_text"
+        android:textColor="@color/color_black"
+        android:textColorHighlight="@color/color_black"
+        android:textColorHint="@color/color_black"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:met_floatingLabel="highlight" />
+
+    <!-- product -->
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fragment_post_item_text_input_layout_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
+
+        <EditText
+            android:id="@+id/search_product"
+            style="@style/ediTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/fragment_buy_search_request_product_hint"
+            android:textSize="20sp"
+            android:typeface="monospace" />
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

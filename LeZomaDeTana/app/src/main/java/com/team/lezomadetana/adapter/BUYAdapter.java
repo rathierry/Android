@@ -10,16 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
@@ -27,11 +22,9 @@ import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.fragment.FragmentBuyItem;
 import com.team.lezomadetana.model.receive.Request;
-import com.team.lezomadetana.utils.CircleTransform;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,7 +36,7 @@ import retrofit2.Response;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class BUYAdapter extends BaseAdapter implements Filterable {
+public class BUYAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -56,7 +49,6 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
     private Activity activity;
     private LayoutInflater layoutInflater;
     private List<Request> requestList;
-    private List<Request> requestListFiltered;
     private BUYAdapter.RequestAdapterListener listener;
     private FragmentBuyItem fragmentBuyItem;
 
@@ -72,7 +64,6 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
     public BUYAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener, FragmentBuyItem fragmentBuyItem) {
         this.activity = activity;
         this.requestList = requestList;
-        this.requestListFiltered = requestList;
         this.listener = listener;
         this.fragmentBuyItem = fragmentBuyItem;
     }
@@ -152,7 +143,7 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentBuyItem.showPostOfferPopup(req.getId());
+                fragmentBuyItem.showAnswerOfferPopup(req.getId());
             }
         });
 
@@ -169,40 +160,6 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    @Override
-    public Filter getFilter() {
-        // TODO : to be continued
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
-                if (charString.isEmpty()) {
-                    requestListFiltered = requestList;
-                } else {
-                    List<Request> filteredList = new ArrayList<>();
-                    for (Request row : requestList) {
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
-                        if (row.getProduct().toLowerCase().contains(charString.toLowerCase()) || row.getQuantity().toString().contains(charSequence)) {
-                            filteredList.add(row);
-                        }
-                    }
-                    requestListFiltered = filteredList;
-                }
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = requestListFiltered;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                requestListFiltered = (ArrayList<Request>) filterResults.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
-
     // ===========================================================
     // Methods for Interfaces
     // ===========================================================
@@ -213,8 +170,6 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
         void onButtonAnswerClicked(int position);
 
         void onMessageRowClicked(int position);
-
-        void onRequestSelected(Request request);
 
         void replaceFragment(Fragment fragment);
     }
@@ -315,7 +270,6 @@ public class BUYAdapter extends BaseAdapter implements Filterable {
             @Override
             public void onClick(View view) {
                 listener.onMessageRowClicked(position);
-                listener.onRequestSelected(requestListFiltered.get(position));
             }
         });
     }
