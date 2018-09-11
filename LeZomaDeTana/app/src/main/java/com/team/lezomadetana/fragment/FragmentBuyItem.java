@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -286,15 +285,19 @@ public class FragmentBuyItem extends BaseFragment implements
                                 String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
                                 String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
 
-                                // set values
-                                req.setId(_id);
-                                req.setUserId(_userId);
-                                req.setProduct(_productName);
-                                req.setQuantity(Integer.valueOf(_quantity));
-                                req.setUnitType(request.getUnitType());
-                                req.setPrice(Float.valueOf(_price));
-                                req.setType(request.getType());
-                                req.setTemplateId(_templateId);
+                                // offer
+                                if (request.getOffers() == null) {
+                                    req.setOffers(null);
+                                } else {
+                                    req.setOffers(request.getOffers());
+                                }
+
+                                // set user who create request item
+                                if (request.getUser() == null) {
+                                    req.setUser(null);
+                                } else {
+                                    req.setUser(request.getUser());
+                                }
 
                                 // assetUrls is json array
                                 JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
@@ -304,12 +307,15 @@ public class FragmentBuyItem extends BaseFragment implements
                                 }
                                 req.setAssetUrls(assetUrl);
 
-                                // offer
-                                if (request.getOffers() == null) {
-                                    req.setOffers(null);
-                                } else {
-                                    req.setOffers(request.getOffers());
-                                }
+                                // set values
+                                req.setUnitType(request.getUnitType());
+                                req.setPrice(Float.valueOf(_price));
+                                req.setUserId(_userId);
+                                req.setProduct(_productName);
+                                req.setTemplateId(_templateId);
+                                req.setQuantity(Integer.valueOf(_quantity));
+                                req.setId(_id);
+                                req.setType(request.getType());
 
                                 // generate a random color
                                 req.setColor(getRandomMaterialColor("400"));

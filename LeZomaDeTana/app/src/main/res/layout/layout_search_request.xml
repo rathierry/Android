@@ -12,6 +12,24 @@
     android:paddingLeft="?listPreferredItemPaddingLeft"
     android:paddingRight="?listPreferredItemPaddingRight">
 
+    <!-- product -->
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fragment_post_item_text_input_layout_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
+
+        <EditText
+            android:id="@+id/search_product"
+            style="@style/ediTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/fragment_buy_search_request_product_hint"
+            android:textSize="20sp"
+            android:typeface="monospace" />
+    </android.support.design.widget.TextInputLayout>
+
     <!-- Category search -->
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
         android:id="@+id/search_category"
@@ -30,23 +48,5 @@
         android:textSize="20sp"
         android:visibility="visible"
         app:met_floatingLabel="highlight" />
-
-    <!-- product -->
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/fragment_post_item_text_input_layout_quantity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
-
-        <EditText
-            android:id="@+id/search_product"
-            style="@style/ediTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/fragment_buy_search_request_product_hint"
-            android:textSize="20sp"
-            android:typeface="monospace" />
-    </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>
