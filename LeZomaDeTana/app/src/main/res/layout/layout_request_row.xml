@@ -199,7 +199,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:background="@color/md_green_500"
-        android:text="Hamaly"
+        android:text="@string/fragment_buy_btn_answer_request_text"
         android:textAllCaps="true"
         android:textColor="@color/color_white"
         android:textSize="12dp"

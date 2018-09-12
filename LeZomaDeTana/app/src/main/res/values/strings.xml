@@ -12,6 +12,8 @@
     <string name="app_response_body_null">Tsy misy fampahalalana voaray.</string>
     <string name="app_filter_data_null">Tsy misy entana hita ho an\'ilay fikarohana teo.</string>
     <string name="app_filter_data_size">Nahitana valiny miisa</string>
+    <string name="app_payment_unity_type_text">Ariary</string>
+    <string name="app_no_list_offer_message">Tsy misy olona namaly.</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -127,6 +129,8 @@
     <string name="fragment_buy_post_request_price_hint">Vidiny</string>
     <string name="fragment_buy_post_request_price_error_empty">Ohatrinona ny vidiny?</string>
     <string name="fragment_buy_search_request_product_hint">Apetrao ny hafatrao</string>
+    <string name="fragment_buy_btn_answer_request_text">Hamaly</string>
+    <string name="fragment_buy_btn_get_request_text">Alaina</string>
 
     <!-- screen: fragment-business sell -->
     <string name="fragment_sell_post_request_title">Momba ilay entana</string>

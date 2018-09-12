@@ -15,9 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.fragment.FragmentSellItem;
 import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.utils.CircleTransform;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -113,6 +116,13 @@ public class SELLAdapter extends BaseAdapter {
         // getting request data for the row
         final Request req = requestItems.get(position);
 
+        // display profile image
+        if (req.getAssetUrls() != null) {
+            String itemUrl = req.getAssetUrls().get(0);
+            itemUrl = itemUrl.replace("\"", "");
+            applyProfilePicture(imgProfile, iconText, itemUrl);
+        }
+
         // get current date
         DateFormat df = new SimpleDateFormat("MMM dd");
         String date = df.format(Calendar.getInstance().getTime());
@@ -133,13 +143,18 @@ public class SELLAdapter extends BaseAdapter {
 
         // sum answer btn
         if (req.getOffers() != null) {
+            // set value
             btnSum.setText(String.valueOf(req.getOffers().size()));
-            btnSum.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fragmentSellItem.startPaymentFragment(req);
-                }
-            });
+
+            // event
+            if (req.getOffers().size() != 0) {
+                btnSum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentSellItem.startPaymentFragment(req);
+                    }
+                });
+            }
         }
 
         // answer btn
@@ -152,10 +167,6 @@ public class SELLAdapter extends BaseAdapter {
 
         // change the font style depending on message read status
         applyReadStatus(from, subject, req);
-
-        // display profile image
-        // Toast.makeText(activity, "imageUrl : " + req.getAssetUrls().get(0), Toast.LENGTH_SHORT).show();
-        applyProfilePicture(imgProfile, iconText, req.getAssetUrls().get(0));
 
         // apply click events
         applyClickEvents(iconContainer, convertView, messageContainer, position, req);
@@ -200,24 +211,21 @@ public class SELLAdapter extends BaseAdapter {
     }
 
     private void applyProfilePicture(ImageView imgProfile, TextView iconText, String url) {
-        // verif
+        // verification
         if (!TextUtils.isEmpty(url)) {
-            /*Glide.with(activity).load(url)
+            Glide.with(activity).load(url)
                     .thumbnail(0.5f)
                     .crossFade()
                     .transform(new CircleTransform(activity))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_account_circle_black)
+                    .placeholder(R.mipmap.ic_launcher_round)
                     .into(imgProfile);
             imgProfile.setColorFilter(null);
-            iconText.setVisibility(View.VISIBLE);*/
+            iconText.setVisibility(View.GONE);
+        } else {
             imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(fragmentSellItem.getRandomMaterialColor("500"));
             iconText.setVisibility(View.VISIBLE);
-        } else {
-            /*imgProfile.setImageResource(R.drawable.bg_circle);
-            imgProfile.setColorFilter(android.R.color.holo_red_light);
-            iconText.setVisibility(View.VISIBLE);*/
         }
     }
 
