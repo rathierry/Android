@@ -82,7 +82,7 @@ public class FragmentPayment extends BaseFragment {
         paymentCharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity,"AMPIDITRA CLICKED",Toast.LENGTH_LONG);
+                Toast.makeText(getContext(),"AMPIDITRA CLICKED",Toast.LENGTH_LONG);
             }
         });
 
