@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -292,13 +291,13 @@ public class FragmentBuyItem extends BaseFragment implements
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 // verification
                 if (response.body() == null) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
-                        Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // clear list request
                         requestList.clear();
@@ -414,13 +413,13 @@ public class FragmentBuyItem extends BaseFragment implements
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 // verification
                 if (response.body() == null) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
-                        Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // class model to mapping gson
                         List<ProductTemplate> productTemplates = null;
@@ -964,13 +963,13 @@ public class FragmentBuyItem extends BaseFragment implements
 
                                     // verification
                                     if (response.body() == null) {
-                                        Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                                     } else {
                                         // array filter
                                         JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                                         if (filter == null || (filter.size() == 0)) {
-                                            Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_null), Toast.LENGTH_LONG).show();
+                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
                                         } else {
                                             // clear list request
                                             requestList.clear();
@@ -981,7 +980,8 @@ public class FragmentBuyItem extends BaseFragment implements
                                                 Request request = new Gson().fromJson(filter.get(i), Request.class);
 
                                                 // // // Request.Type.valueOf("BUY").ordinal()
-                                                if (request.getType() == Request.Type.BUY) {
+                                                // // // Request.Type.SELL
+                                                if (request.getType().name() == "BUY") {
                                                     // new class model to set all values
                                                     Request req = new Request();
 
@@ -1023,15 +1023,26 @@ public class FragmentBuyItem extends BaseFragment implements
 
                                                     // adding request to requests array
                                                     requestList.add(req);
+
+                                                    showLongToast(getContext(), "requestList = " + requestList.size());
                                                 }
                                             }
 
-                                            // notifying list adapter about data changes
-                                            // so that it renders the list view with updated data
-                                            buyAdapter.notifyDataSetChanged();
+                                            // alert info
+                                            if (requestList.size() == 0) {
+                                                onRefresh();
+                                                // message
+                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
 
-                                            // alert user
-                                            Toast.makeText(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + filter.size(), Toast.LENGTH_LONG).show();
+                                            } else {
+                                                // message
+                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + requestList.size());
+
+                                                // notifying list adapter about data changes
+                                                // so that it renders the list view with updated data
+                                                buyAdapter.notifyDataSetChanged();
+                                            }
+
                                         }
                                     }
                                     hideLoadingView();

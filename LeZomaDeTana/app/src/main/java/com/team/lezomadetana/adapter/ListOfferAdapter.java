@@ -3,6 +3,7 @@ package com.team.lezomadetana.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.model.receive.Offer;
+import com.team.lezomadetana.utils.CircleTransform;
 
 import java.util.List;
 
@@ -33,6 +38,7 @@ public class ListOfferAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater layoutInflater;
     private List<Offer> offerList;
+    private FragmentListOffer fragmentListOffer;
 
     // ===========================================================
     // Constructors
@@ -42,11 +48,11 @@ public class ListOfferAdapter extends BaseAdapter {
     public ListOfferAdapter() {
     }
 
-    public ListOfferAdapter(Activity activity, List<Offer> offerList) {
+    public ListOfferAdapter(Activity activity, List<Offer> offerList, FragmentListOffer fragmentListOffer) {
         this.activity = activity;
         this.offerList = offerList;
+        this.fragmentListOffer = fragmentListOffer;
     }
-
 
     // ===========================================================
     // Getter & Setter
@@ -91,18 +97,36 @@ public class ListOfferAdapter extends BaseAdapter {
         final Offer ofr = offerList.get(position);
 
         // display profile image
-        // TODO TODO TODO
+        if (ofr.getUser() != null) {
+            // image avatar
+            String itemUrl = ofr.getUser().getProfileImageUrl();
+            itemUrl = itemUrl.replace("\"", "");
+            // verification
+            if (!TextUtils.isEmpty(itemUrl)) {
+                Glide.with(activity)
+                        .load(itemUrl)
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .transform(new CircleTransform(activity))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.mipmap.ic_launcher_round)
+                        .into(imageView);
+                imageView.setColorFilter(null);
+                iconText.setVisibility(View.GONE);
+            } else {
+                imageView.setImageResource(R.drawable.bg_circle);
+                imageView.setColorFilter(fragmentListOffer.getRandomMaterialColor("400"));
+                iconText.setText(ofr.getUser().getName().substring(0, 1));
+                // displaying the first letter of From in icon text
+                iconText.setVisibility(View.VISIBLE);
+            }
 
-        // displaying text view data
-        from.setText(Html.fromHtml("Nalefan\'i<b> *** . ***</b>"));
-        // TODO TODO TODO
+            // name
+            from.setText(Html.fromHtml("Avy amin\'i <b>" + ofr.getUser().getName() + "</b>"));
+        }
 
-        txt_primary.setText(Html.fromHtml("<b>Manana OVY " + ofr.getQuantity() + " " + ofr.getUnitType().name()));
+        txt_primary.setText(Html.fromHtml("Izaho manana <b>" + ofr.getQuantity() + "" + ofr.getUnitType().name() + "</b>"));
         txt_secondary.setText(Html.fromHtml("Vidiny: " + ofr.getPrice() + " " + activity.getResources().getString(R.string.app_payment_unity_type_text)));
-
-        // displaying the first letter of From in icon text
-        //iconText.setText(ofr.getProduct().substring(0, 1));
-        // TODO TODO TODO
 
         // event onClick button
         button.setOnClickListener(new View.OnClickListener() {

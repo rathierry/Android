@@ -10,7 +10,7 @@
     <string name="app_server_error_message">Miala tsiny fa tsy misy valiny ny *RequestId*</string>
     <string name="app_other_category">- Hafa -</string>
     <string name="app_response_body_null">Tsy misy fampahalalana voaray.</string>
-    <string name="app_filter_data_null">Tsy misy entana hita ho an\'ilay fikarohana teo.</string>
+    <string name="app_filter_data_null">Tsy misy entana mifanaraka amin\'ilay fikarohana natao teo.</string>
     <string name="app_filter_data_size">Nahitana valiny miisa</string>
     <string name="app_payment_unity_type_text">Ariary</string>
     <string name="app_no_list_offer_message">Tsy misy olona namaly.</string>

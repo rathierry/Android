@@ -1,16 +1,26 @@
 package com.team.lezomadetana.fragment;
 
 
+import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,14 +28,29 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.adapter.ListOfferAdapter;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.receive.Offer;
 import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.utils.CircleTransform;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
 
 /**
  * Created by RaThierry on 10/09/2018.
@@ -48,6 +73,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
     private Request request;
     private ListOfferAdapter listOfferAdapter;
     private TextView txt_no_list;
+    private String itemUnitTypeSelected;
 
     // ===========================================================
     // Constructors
@@ -82,6 +108,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         TextView from = (TextView) rootView.findViewById(R.id.from);
         TextView txt_primary = (TextView) rootView.findViewById(R.id.txt_primary);
         TextView txt_secondary = (TextView) rootView.findViewById(R.id.txt_secondary);
+        TextView iconText = (TextView) rootView.findViewById(R.id.icon_text);
         TextView txt_footer = (TextView) rootView.findViewById(R.id.txt_footer);
         txt_no_list = (TextView) rootView.findViewById(R.id.no_list_offer);
         Button buttonAnswer = (Button) rootView.findViewById(R.id.answer);
@@ -102,6 +129,25 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         if (request.getUser() != null) {
             userName = request.getUser().getName();
             userImageUrl = request.getUser().getProfileImageUrl();
+            // verification
+            if (!TextUtils.isEmpty(userImageUrl)) {
+                Glide.with(getActivity())
+                        .load(userImageUrl)
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .transform(new CircleTransform(getActivity()))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.mipmap.ic_launcher_round)
+                        .into(imageView);
+                imageView.setColorFilter(null);
+                iconText.setVisibility(View.GONE);
+            } else {
+                imageView.setImageResource(R.drawable.bg_circle);
+                imageView.setColorFilter(getRandomMaterialColor("400"));
+                iconText.setText(request.getUser().getName().substring(0, 1));
+                // displaying the first letter of From in icon text
+                iconText.setVisibility(View.VISIBLE);
+            }
         }
         String itemImageUrl = "..null..";
         if (request.getAssetUrls().size() != 0) {
@@ -112,17 +158,6 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         String itemProduct = request.getProduct();
         String itemQuantity = request.getQuantity().toString();
         String itemType = request.getType().name();
-
-        // set user image avatar
-        Glide.with(getActivity())
-                .load(userImageUrl)
-                .thumbnail(0.5f)
-                .crossFade()
-                .transform(new CircleTransform(getActivity()))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.ic_launcher_round)
-                .into(imageView);
-        imageView.setColorFilter(null);
 
         // test
         /*Toast.makeText(getContext(),
@@ -152,6 +187,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Hamaly ve?", Toast.LENGTH_SHORT).show();
+                showAnswerOfferPopup(request.getId());
             }
         });
 
@@ -169,7 +205,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_list_offer_list_view_item);
-        listOfferAdapter = new ListOfferAdapter(getActivity(), offerList);
+        listOfferAdapter = new ListOfferAdapter(getActivity(), offerList, this);
         listViewItem.setAdapter(listOfferAdapter);
 
         // hide spinner
@@ -215,7 +251,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         super.onResume();
         swipeRefreshItem.setRefreshing(true);
         fetchAllOfferData();
-        // Toast.makeText(getContext(), "onResume", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "onResume", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -223,7 +259,23 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         super.onResume();
         swipeRefreshItem.setRefreshing(true);
         fetchAllOfferData();
-        // Toast.makeText(getContext(), "onRefresh", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "onRefresh", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * chooses a random color from array.xml
+     */
+    public int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
     }
 
     // ===========================================================
@@ -242,29 +294,248 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
      * Fetch all offers
      */
     private void fetchAllOfferData() {
-        // verification
-        if (request.getOffers().size() != 0) {
-            // clear list request
-            offerList.clear();
+        // set retrofit api
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
 
-            Offer offer = null;
-            for (int i = 0; i < request.getOffers().size(); i++) {
-                // class model to mapping gson
-                offer = request.getOffers().get(i);
+        // create basic authentication
+        String auth = BasicAuth();
 
-                // adding request to requests array
-                offerList.add(offer);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("id", request.getId());
+
+        // send query
+        Call<JsonObject> call = api.getListOfferInRequest(auth, map);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // verification
+                if (response.body() == null) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.app_response_body_null), Toast.LENGTH_LONG).show();
+                } else if (response.code() == 200) {
+                    // array filter
+                    JsonObject filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray().get(0).getAsJsonObject();
+
+                    // clear list request
+                    offerList.clear();
+
+                    // class model to mapping gson
+                    Request request = new Gson().fromJson(filter, Request.class);
+
+                    // verification
+                    if (request.getOffers().size() != 0) {
+                        Offer offer = null;
+                        for (int i = 0; i < request.getOffers().size(); i++) {
+                            // class model to mapping gson
+                            offer = request.getOffers().get(i);
+
+                            // adding request to requests array
+                            offerList.add(offer);
+                        }
+
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        listOfferAdapter.notifyDataSetChanged();
+
+                        // hide alert text
+                        txt_no_list.setVisibility(View.INVISIBLE);
+                    } else {
+                        txt_no_list.setVisibility(View.VISIBLE);
+                    }
+
+                    // hide swipe refresh
+                    swipeRefreshItem.setRefreshing(false);
+                    hideLoadingView();
+                }
             }
 
-            // notifying list adapter about data changes
-            // so that it renders the list view with updated data
-            listOfferAdapter.notifyDataSetChanged();
-        } else {
-            txt_no_list.setVisibility(View.VISIBLE);
-        }
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                // stopping swipe refresh
+                swipeRefreshItem.setRefreshing(false);
+                hideLoadingView();
 
-        // hide swipe refresh
-        swipeRefreshItem.setRefreshing(false);
+                // alert
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(R.drawable.ic_wifi_black)
+                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                showLoadingView(getResources().getString(R.string.app_spinner));
+                                fetchAllOfferData();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
+    /**
+     * Display popup post new offer
+     */
+    private void showAnswerOfferPopup(final String requestId) {
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
+
+        // drop down unit element
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerUnitType.setAdapter(arrayAdapter2);
+
+        // event onClick
+        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+
+                // showing clicked spinner item name and position
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position);
+            }
+        });
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String quantity = editTextQuantity.getText().toString();
+                        String unitType = spinnerUnitType.getText().toString();
+
+                        // quantity
+                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
+                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
+                            editTextQuantity.requestFocus();
+                            return;
+                        }
+                        // unitType
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
+                            spinnerUnitType.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        //
+                        BaseActivity baseActivity = (BaseActivity) getActivity();
+
+                        showShortToast(baseActivity, "requestId : " + requestId);
+
+                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
+
+                        // send query
+                        Call<Void> call = api.sendOffer(auth, offerSend);
+
+                        // request
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 201) {
+                                    dialog.dismiss();
+                                    hideLoadingView();
+                                    onRefresh();
+                                } else {
+                                    dialog.dismiss();
+                                    hideLoadingView();
+
+                                    // alert
+                                    new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                            .setIcon(android.R.drawable.ic_dialog_alert)
+                                            .setTitle(getResources().getString(R.string.app_server_error_title))
+                                            .setMessage(Html.fromHtml("<b>" + getResources().getString(R.string.app_server_error_message) + "</b>"))
+                                            .setCancelable(false)
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                // stopping swipe refresh
+                                swipeRefreshItem.setRefreshing(false);
+                                hideLoadingView();
+
+                                // alert
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(R.drawable.ic_wifi_black)
+                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
+                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
     }
 
     // ===========================================================

@@ -87,6 +87,10 @@ public interface APIInterface {
     @GET("rest/requests")
     Call<JsonObject> getAllRequest(@Header("Authorization") String auth);
 
+    // list offer
+    @GET("rest/requests")
+    Call<JsonObject> getListOfferInRequest(@Header("Authorization") String auth, @QueryMap Map<String, String> map);
+
     // search advanced
     @GET("rest/requests/search/advancedSearch")
     Call<JsonObject> searchRequest(@Header("Authorization") String auth, @QueryMap Map<String, String> map);
