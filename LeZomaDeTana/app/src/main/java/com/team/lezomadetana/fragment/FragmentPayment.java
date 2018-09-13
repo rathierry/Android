@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.api.APIClient;
@@ -104,6 +105,8 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
 
         //ExampleUseOfAPI.sendTransactionAr2Jt();
 
+
+
         // fetch user mad coin
         refreshMadCoin();
 
@@ -130,6 +133,7 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_payment_charge:
+
                 switchToMenuPaymentFragment(new FragmentPaymentCharge());
                 break;
             case R.id.fragment_payment_give_money:
@@ -217,6 +221,9 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
         });
 
     }
+
+
+
 
     // ===========================================================
     // Inner Classes/Interfaces

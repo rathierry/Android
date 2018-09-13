@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.fragment.FragmentChat;
@@ -401,6 +404,31 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if(result != null){
+            if(result.getContents()==null){
+                showLongToast(this,"tsy misy valiny");
+
+            }
+            else
+            {
+                showLongToast(this,result.getContents());
+            }
+
+
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+
+        }
+
+
+    }
+
 
     // ===========================================================
     // Inner Classes/Interfaces

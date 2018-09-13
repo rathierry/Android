@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 
@@ -94,6 +95,17 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    public void scanQrCode(){
+        IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
+        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        intentIntegrator.setPrompt("Scan");
+        intentIntegrator.setBeepEnabled(false);
+        intentIntegrator.setCameraId(0);
+        intentIntegrator.setBarcodeImageEnabled(false);
+        intentIntegrator.setOrientationLocked(true);
+        intentIntegrator.initiateScan();
+    }
 
     // ===========================================================
     // Inner Classes/Interfaces
