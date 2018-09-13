@@ -22,7 +22,6 @@
             android:fontFamily="monospace"
             android:gravity="start"
             android:text="Mari-bola ampidirina"
-            android:textAllCaps="true"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
@@ -45,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:layout_weight="0.1"
-                android:drawableRight="@color/color_red"
+                android:drawableRight="@drawable/edit_text_bg_selector"
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:hint="ampidiro ny mari-bola"
@@ -84,7 +83,6 @@
             android:fontFamily="monospace"
             android:gravity="start"
             android:text="Laharana finday akana ny vola"
-            android:textAllCaps="true"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 

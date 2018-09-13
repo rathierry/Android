@@ -22,7 +22,6 @@
             android:fontFamily="monospace"
             android:gravity="start"
             android:text="@string/fragment_payment_charge_text_view_qr_code"
-            android:textAllCaps="true"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
