@@ -36,6 +36,12 @@ public class UserCredentialResponse {
     @Expose
     private String region;
 
+    public void setQr(String qr) {
+        this.qr = qr;
+    }
+
+    private String qr;
+
     // ===========================================================
     // Constructors
     // ===========================================================
@@ -107,7 +113,12 @@ public class UserCredentialResponse {
         this.region = region;
     }
 
-    // ===========================================================
+    public String getQr() {
+        return qr;
+    }
+
+
+// ===========================================================
     // Private Methods
     // ===========================================================
 

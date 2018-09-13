@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -22,10 +24,16 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -300,6 +308,7 @@ public class BaseActivity extends AppCompatActivity {
         settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         editor = settings.edit();
         Gson gson = new Gson();
+        user.setQr(encodeBitmap2String(generateQrCode(user.getId())));
         String json = gson.toJson(user);
         editor.putString(PREFS_KEY_USER, json);
         editor.commit();
@@ -364,6 +373,48 @@ public class BaseActivity extends AppCompatActivity {
 
     public static String[] getNames(Class<? extends Enum<?>> e) {
         return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+    }
+
+
+    public Bitmap generateQrCode(String text) {
+
+        Bitmap bit = null;
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try
+        {
+            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,200,200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            bit = bitmap;
+        }
+        catch (WriterException e){
+            e.printStackTrace();;
+        }
+
+
+        return bit;
+
+    }
+
+    public String encodeBitmap2String(Bitmap bitmap){
+        String stringBitmap = null;
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,200,byteArrayOutputStream);
+        byte[] b = byteArrayOutputStream.toByteArray();
+
+        stringBitmap = Base64.encodeToString(b,Base64.DEFAULT);
+
+        return  stringBitmap;
+    }
+
+    public Bitmap decodeString2Bitmap(String str){
+        Bitmap bitmap = null;
+
+        byte[] b = Base64.decode(str.getBytes(),Base64.DEFAULT);
+        bitmap = BitmapFactory.decodeByteArray(b,0,b.length);
+
+        return  bitmap;
     }
 
     // ===========================================================
