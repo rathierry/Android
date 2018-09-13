@@ -4,18 +4,119 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    android:background="@color/color_white"
+    android:background="@drawable/bg_list_row"
     tools:context=".fragment.FragmentSetting">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:fontFamily="monospace"
-        android:gravity="center"
-        android:text="@string/fragment_payment_menu_charge_text"
-        android:textAllCaps="true"
-        android:textColor="@color/color_black"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="?listPreferredItemPaddingLeft"
+        android:paddingRight="?listPreferredItemPaddingRight">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="start"
+            android:text="Mari-bola ampidirina"
+            android:textAllCaps="true"
+            android:textColor="@color/color_black"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/transparent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/md_black_1000_10"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:layout_weight="0.1"
+                android:drawableRight="@color/color_red"
+                android:fontFamily="monospace"
+                android:gravity="end"
+                android:hint="ampidiro ny mari-bola"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingRight="?listPreferredItemPaddingRight"
+                android:textAllCaps="true"
+                android:textColor="@color/color_black"
+                android:textColorHint="@color/md_disabled_hint_text"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center"
+                android:layout_weight="0.9"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:text="AR"
+                android:textAllCaps="true"
+                android:textColor="@color/color_black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/transparent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="start"
+            android:text="Laharana finday akana ny vola"
+            android:textAllCaps="true"
+            android:textColor="@color/color_black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:fontFamily="monospace"
+            android:gravity="left"
+            android:hint="laharana finday"
+            android:inputType="number"
+            android:maxLines="1"
+            android:textAllCaps="true"
+            android:textColor="@color/color_black"
+            android:textColorHint="@color/md_disabled_hint_text"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/transparent" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDarker"
+            android:fontFamily="monospace"
+            android:text="Alefa ny fangatahana"
+            android:textColor="@color/color_white" />
+
+    </LinearLayout>
 
 </RelativeLayout>
