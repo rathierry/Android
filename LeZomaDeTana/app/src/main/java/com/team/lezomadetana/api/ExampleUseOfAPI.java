@@ -217,6 +217,7 @@ public class ExampleUseOfAPI
 
 
     // Transation Jeton2Jegon
+    // ecran Handefa vola
     public static void sendTransaction(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
@@ -261,6 +262,7 @@ public class ExampleUseOfAPI
 
 
     // Transation Ariary2Jegon
+    // ecran Hampiditra vola
     public static void sendTransactionAr2Jt(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
@@ -304,6 +306,7 @@ public class ExampleUseOfAPI
 
 
     // Transation Jegon2Ariary
+    // Hamoaka vola
     public static void sendTransactionJt2Ar(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
