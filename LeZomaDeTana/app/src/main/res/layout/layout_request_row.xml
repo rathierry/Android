@@ -1,96 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_row_selector"
-    android:padding="8dp">
-
-    &lt;!&ndash; Thumbnail Image &ndash;&gt;
-    <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_new_black" />
-
-    &lt;!&ndash; Person &ndash;&gt;
-    <TextView
-        android:id="@+id/person"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:fontFamily="monospace"
-        android:textColor="@color/color_black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
-
-    &lt;!&ndash; Template &ndash;&gt;
-    <TextView
-        android:id="@+id/template"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/person"
-        android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:fontFamily="monospace"
-        android:textColor="@color/color_black"
-        android:textSize="16sp"
-        android:textStyle="normal"
-        android:typeface="monospace" />
-
-    &lt;!&ndash; Quantity &ndash;&gt;
-    <TextView
-        android:id="@+id/quantity"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/template"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:fontFamily="monospace"
-        android:textColor="@color/color_black"
-        android:textSize="14sp"
-        android:textStyle="normal"
-        android:typeface="monospace" />
-
-    &lt;!&ndash; Price &ndash;&gt;
-    <TextView
-        android:id="@+id/price"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/quantity"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:fontFamily="monospace"
-        android:textColor="@color/color_black"
-        android:textSize="12sp"
-        android:textStyle="normal"
-        android:typeface="monospace" />
-
-    &lt;!&ndash; Number view &ndash;&gt;
-    <Button
-        android:id="@+id/numberView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/md_blue_A400"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:fontFamily="monospace"
-        android:text="Answer"
-        android:textAllCaps="true"
-        android:textColor="@color/color_white"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
-
-</RelativeLayout>-->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -167,17 +76,6 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
-    <!--<TextView
-        android:id="@+id/timestamp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:textColor="#4285f4"
-        android:textSize="12dp"
-        android:textStyle="bold"
-        android:visibility="invisible" />-->
 
     <Button
         android:id="@+id/sum_answer"

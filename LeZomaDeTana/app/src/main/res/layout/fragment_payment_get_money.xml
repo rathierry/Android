@@ -4,18 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    android:background="@color/color_white"
+    android:background="@drawable/bg_list_row"
     tools:context=".fragment.FragmentSetting">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:fontFamily="monospace"
-        android:gravity="center"
-        android:text="@string/fragment_payment_menu_get_money_text"
-        android:textAllCaps="true"
-        android:textColor="@color/color_black"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="?listPreferredItemPaddingLeft"
+        android:paddingRight="?listPreferredItemPaddingRight">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:gravity="start"
+            android:text="@string/fragment_payment_charge_text_view_qr_code"
+            android:textAllCaps="true"
+            android:textColor="@color/color_black"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/md_statusbar_translucent" />
+
+        <ImageView
+            android:id="@+id/fragment_payment_get_money_imageView_qr_code"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
 
 </RelativeLayout>

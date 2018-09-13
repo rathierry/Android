@@ -159,6 +159,15 @@
     <string name="fragment_payment_toolbar_send_money">Handefa VOLA</string>
     <string name="fragment_payment_toolbar_get_money">Handray VOLA</string>
 
+    <!-- screen: fragment-payment-charge -->
+    <string name="fragment_payment_charge_text_view_qr_code">QR Code andraisanao VOLA</string>
+
+    <!-- screen: fragment-payment-give-money -->
+
+    <!-- screen: fragment-payment-send-money -->
+
+    <!-- screen: fragment-payment-get-money -->
+
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>
     <string name="activity_about_us_info_2">\n\n\nCopyright &#169; 2k18 by Team (Hery-Nakay)</string>
