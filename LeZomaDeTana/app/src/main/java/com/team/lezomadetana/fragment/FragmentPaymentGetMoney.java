@@ -1,5 +1,6 @@
 package com.team.lezomadetana.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
@@ -60,6 +62,13 @@ public class FragmentPaymentGetMoney extends BaseFragment {
 
         // set navItemIndex value
         activity.navItemIndex = 3;
+
+
+        ImageView qrView = rootView.findViewById(R.id.fragment_payment_get_money_imageView_qr_code);
+       
+
+
+        qrView.setImageBitmap(activity.decodeString2Bitmap(activity.getCurrentUser(activity).getQr()));
 
         // toolBar title
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.fragment_payment_toolbar_get_money));

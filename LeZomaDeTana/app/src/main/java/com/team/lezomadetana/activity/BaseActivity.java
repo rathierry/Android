@@ -386,7 +386,7 @@ public class BaseActivity extends AppCompatActivity {
             bit = bitmap;
         } catch (WriterException e) {
             e.printStackTrace();
-            ;
+
         }
 
 
@@ -399,6 +399,7 @@ public class BaseActivity extends AppCompatActivity {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
         byte[] b = byteArrayOutputStream.toByteArray();
 
         stringBitmap = Base64.encodeToString(b, Base64.DEFAULT);
