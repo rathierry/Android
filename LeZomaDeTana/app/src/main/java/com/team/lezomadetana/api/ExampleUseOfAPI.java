@@ -11,8 +11,10 @@ import com.google.gson.JsonObject;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.model.receive.Transaction;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.RequestSend;
+import com.team.lezomadetana.model.send.TransactionSend;
 
 
 import java.lang.reflect.Field;
@@ -197,6 +199,50 @@ public class ExampleUseOfAPI
                 {
                     Log.d("aaa",""+response.body());
 
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+    }
+
+
+    // POST item
+    public static void sendTransaction(){
+
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        TransactionSend transactionSend = new TransactionSend();
+        transactionSend.setSenderId("70d4b023-f790-4060-8cdd-e171deb5f017");
+        transactionSend.setRecipientId("ce91ea8a-e18b-467f-82a1-7fc041d7535b");
+        transactionSend.setAmount(1f);
+        transactionSend.setDescription("Ito ny volan ilay ovy");
+        transactionSend.setStatus(TransactionSend.Status.PENDING);
+
+
+        // send query
+        Call<Void> call = api.commitTransaction(auth,transactionSend);
+
+        // request
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                if(response.code() == 201)
+                {
+
+                    Log.d("Payment","METY lesy dada");
                 }
 
             }

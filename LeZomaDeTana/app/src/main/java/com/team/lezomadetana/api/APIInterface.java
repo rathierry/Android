@@ -1,9 +1,11 @@
 package com.team.lezomadetana.api;
 
 import com.google.gson.JsonObject;
+import com.team.lezomadetana.model.receive.Transaction;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
+import com.team.lezomadetana.model.send.TransactionSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
@@ -110,6 +112,10 @@ public interface APIInterface {
     // user: ???
     @GET("/rest/userWallets")
     Call<JsonObject> getAllWallet(@Header("Authorization") String auth);
+
+    //transaction
+    @POST("/rest/transactionRequests")
+    Call<Void> commitTransaction(@Header("Authorization")String auth,@Body TransactionSend transactionSend);
 
 
     // ===========================================================

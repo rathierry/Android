@@ -21,6 +21,7 @@ import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.ExampleUseOfAPI;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.receive.Wallet;
 
@@ -100,6 +101,8 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
         layout_payment_give_money.setOnClickListener(this);
         layout_payment_send_money.setOnClickListener(this);
         layout_payment_get_money.setOnClickListener(this);
+
+        ExampleUseOfAPI.sendTransaction();
 
         // fetch user mad coin
         refreshMadCoin();
