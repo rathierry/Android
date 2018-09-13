@@ -5,6 +5,7 @@ import com.team.lezomadetana.model.receive.Transaction;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
+import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.team.lezomadetana.model.send.TransactionSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
@@ -113,9 +114,14 @@ public interface APIInterface {
     @GET("/rest/userWallets")
     Call<JsonObject> getAllWallet(@Header("Authorization") String auth);
 
-    //transaction
+    //transaction jeton jeton
     @POST("/rest/transactionRequests")
     Call<Void> commitTransaction(@Header("Authorization")String auth,@Body TransactionSend transactionSend);
+
+
+    //transaction ariary jeton
+    @POST("/rest/mobileBankingRequests")
+    Call<Void> commitTransactionAriary2Jeton(@Header("Authorization")String auth,@Body TransactionAriaryJeton transactionSend);
 
 
     // ===========================================================

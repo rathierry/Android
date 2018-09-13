@@ -41,6 +41,7 @@ public  class TransactionSend{
     }
 
     public enum Status{VALIDATED, PENDING, REJECTED}
+
 }
 
 

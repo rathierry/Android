@@ -14,6 +14,7 @@ import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.Transaction;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.RequestSend;
+import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.team.lezomadetana.model.send.TransactionSend;
 
 
@@ -215,7 +216,7 @@ public class ExampleUseOfAPI
     }
 
 
-    // POST item
+    // Transation Jeton2Jegon
     public static void sendTransaction(){
 
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
@@ -258,6 +259,91 @@ public class ExampleUseOfAPI
 
     }
 
+
+    // Transation Ariary2Jegon
+    public static void sendTransactionAr2Jt(){
+
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+        transactionSend.setUserId("70d4b023-f790-4060-8cdd-e171deb5f017");
+        transactionSend.setPhone("0346655762");
+        transactionSend.setAmount(1f);
+        transactionSend.setOperator(TransactionAriaryJeton.Operator.TELMA);
+
+        transactionSend.setType(TransactionAriaryJeton.Type.DEPOSIT);
+        // send query
+        Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+
+        // request
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                if(response.code() == 201)
+                {
+
+                    Log.d("Payment","METY lesy dada");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+    }
+
+
+    // Transation Jegon2Ariary
+    public static void sendTransactionJt2Ar(){
+
+        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+        transactionSend.setUserId("70d4b023-f790-4060-8cdd-e171deb5f017");
+        transactionSend.setPhone("0346655762");
+        transactionSend.setAmount(1f);
+        transactionSend.setOperator(TransactionAriaryJeton.Operator.TELMA);
+
+        transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
+        // send query
+        Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+
+        // request
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                if(response.code() == 201)
+                {
+
+                    Log.d("Payment","METY lesy dada");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+    }
 
 
     public void ExplicationEnum()

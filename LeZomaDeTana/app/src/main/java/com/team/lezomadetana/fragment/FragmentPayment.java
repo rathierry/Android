@@ -102,7 +102,7 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
         layout_payment_send_money.setOnClickListener(this);
         layout_payment_get_money.setOnClickListener(this);
 
-        ExampleUseOfAPI.sendTransaction();
+        //ExampleUseOfAPI.sendTransactionAr2Jt();
 
         // fetch user mad coin
         refreshMadCoin();
