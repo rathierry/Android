@@ -222,9 +222,6 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
 
     }
 
-
-
-
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================

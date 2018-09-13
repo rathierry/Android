@@ -78,10 +78,6 @@ public class FragmentPaymentCharge extends BaseFragment {
         editTextPhone = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_phone);
         btnSend = (Button) rootView.findViewById(R.id.fragment_payment_charge_btn_send);
 
-        // cursor view
-        editTextAmount.setSelection(editTextAmount.getText().length());
-        editTextPhone.setSelection(editTextAmount.getText().length());
-
         // listener, event
         initializeListenerAndEvent();
 
@@ -124,6 +120,9 @@ public class FragmentPaymentCharge extends BaseFragment {
     // Private Methods
     // ===========================================================
 
+    /**
+     * Init listener and event
+     */
     private void initializeListenerAndEvent() {
         // amount/phone edit text
         editTextAmount.addTextChangedListener(onTextAmountChangedListener(editTextAmount));
@@ -153,8 +152,10 @@ public class FragmentPaymentCharge extends BaseFragment {
                     clearAllInputFocus();
 
                     // showing formatted text and original text of "editTextAmount" to toast
-                    showLongToast(getContext(), "Formatted number value: " + editTextAmount.getText().toString() +
-                            "\nOriginal input: " + amountText);
+                    showLongToast(getContext(),
+                            "Formatted amount value: " + editTextAmount.getText().toString() +
+                                    "\nOriginal input amount: " + amountText +
+                                    "\nPhone: " + phoneText);
                 }
             }
         });
