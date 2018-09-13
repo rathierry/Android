@@ -15,6 +15,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.BUYAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
@@ -49,8 +51,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
-
 /**
  * Created by RaThierry on 04/09/2018.
  **/
@@ -66,6 +66,8 @@ public class FragmentBuyItem extends BaseFragment implements
     // Fields
     // ===========================================================
 
+    private BaseActivity activity;
+    private MainActivity mainActivity;
     private View rootView;
     private String itemNameSelected;
     private String itemIdSelected;
@@ -101,6 +103,10 @@ public class FragmentBuyItem extends BaseFragment implements
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
                 inflater.inflate(R.layout.fragment_list_buy_item, container, false);
+
+        // current activity
+        activity = ((BaseActivity) getActivity());
+        mainActivity = ((MainActivity) getActivity());
 
         // floating btn to add new item
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_search_item_fab);
@@ -152,7 +158,9 @@ public class FragmentBuyItem extends BaseFragment implements
                 showSearchRequestPopup();
                 return true;
             case R.id.action_payment:
-                showLongToast(getActivity(), "1) RESA-BOLA");
+                /*MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.drawerLayout.openDrawer(Gravity.LEFT);*/
+                mainActivity.launchPaymentFragment();
                 break;
         }
 
@@ -233,6 +241,9 @@ public class FragmentBuyItem extends BaseFragment implements
         // back stack
         fragmentTransaction.addToBackStack(fragment.toString());
 
+        // hide current fragment
+        // fragmentTransaction.hide(current_fragment_tiana_ho_hide);
+
         // commit
         fragmentTransaction.commit();
     }
@@ -249,7 +260,7 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     public int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
-        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getActivity().getPackageName());
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", activity.getPackageName());
 
         if (arrayId != 0) {
             TypedArray colors = getResources().obtainTypedArray(arrayId);
@@ -277,10 +288,10 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // set retrofit api
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        APIInterface api = APIClient.getClient(activity.ROOT_MDZ_API).create(APIInterface.class);
 
         // create basic authentication
-        String auth = BasicAuth();
+        String auth = activity.BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllRequest(auth);
@@ -378,9 +389,9 @@ public class FragmentBuyItem extends BaseFragment implements
                 swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(R.drawable.ic_wifi_black)
-                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -399,10 +410,10 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     private void fetchAllCategory() {
         // set retrofit api
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        APIInterface api = APIClient.getClient(activity.ROOT_MDZ_API).create(APIInterface.class);
 
         // create basic authentication
-        String auth = BasicAuth();
+        String auth = activity.BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllProductTemplate(auth);
@@ -447,9 +458,9 @@ public class FragmentBuyItem extends BaseFragment implements
                 hideLoadingView();
                 // // //
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(R.drawable.ic_wifi_black)
-                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -519,7 +530,7 @@ public class FragmentBuyItem extends BaseFragment implements
 
 
         // drop down unit element
-        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+        String[] unitTypeName = activity.getNames(Request.UnitType.class);
 
 
         // set adapter for spinner
@@ -604,15 +615,13 @@ public class FragmentBuyItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        APIInterface api = APIClient.getClient(activity.ROOT_MDZ_API).create(APIInterface.class);
 
                         // create basic authentication
-                        String auth = BasicAuth();
+                        String auth = activity.BasicAuth();
 
-                        //
-                        BaseActivity baseActivity = (BaseActivity) getActivity();
-
-                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
+                        // request
+                        RequestSend postRequest = new RequestSend(activity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
 
                         // send query
                         Call<Void> call = api.sendRequest(auth, postRequest);
@@ -640,9 +649,9 @@ public class FragmentBuyItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -691,7 +700,7 @@ public class FragmentBuyItem extends BaseFragment implements
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
 
         // drop down unit element
-        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+        String[] unitTypeName = activity.getNames(Request.UnitType.class);
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
@@ -754,17 +763,14 @@ public class FragmentBuyItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        APIInterface api = APIClient.getClient(activity.ROOT_MDZ_API).create(APIInterface.class);
 
                         // create basic authentication
-                        String auth = BasicAuth();
+                        String auth = activity.BasicAuth();
 
-                        //
-                        BaseActivity baseActivity = (BaseActivity) getActivity();
+                        showShortToast(activity, "requestId : " + requestId);
 
-                        showShortToast(baseActivity, "requestId : " + requestId);
-
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
+                        OfferSend offerSend = new OfferSend(requestId, activity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);
@@ -802,9 +808,9 @@ public class FragmentBuyItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -925,10 +931,10 @@ public class FragmentBuyItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        APIInterface api = APIClient.getClient(activity.ROOT_MDZ_API).create(APIInterface.class);
 
                         // create basic authentication
-                        String auth = BasicAuth();
+                        String auth = activity.BasicAuth();
 
                         Map<String, String> map = new HashMap<>();
                         map.put("type", "BUY");
@@ -1055,9 +1061,9 @@ public class FragmentBuyItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {

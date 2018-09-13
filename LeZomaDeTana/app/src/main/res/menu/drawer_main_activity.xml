@@ -17,6 +17,11 @@
             android:title="@string/activity_main_menu_payment"
             android:visible="true"/>
         <item
+            android:id="@+id/nav_payment_menu"
+            android:icon="@drawable/ic_money"
+            android:title="@string/activity_main_menu_payment_menu"
+            android:visible="false"/>
+        <item
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_chat_black"
             android:title="@string/activity_main_menu_chat"

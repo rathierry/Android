@@ -3,6 +3,8 @@ package com.team.lezomadetana.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.widget.Toast;
@@ -123,6 +125,7 @@ public class BaseFragment extends Fragment {
         // show
         _alertDialog = builder.show();
     }
+
     /**
      * Show long toast
      */
@@ -139,6 +142,24 @@ public class BaseFragment extends Fragment {
         if (BuildConfig.DEBUG) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Switch to payment menu fragment
+     */
+    public void switchToMenuPaymentFragment(Fragment fragment) {
+        // manager
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // transaction
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_payment_content_layout, fragment, fragment.toString());
+
+        // Add fragment one in back stack.So it will not be destroyed. Press back menu can pop it up from the stack.
+        fragmentTransaction.addToBackStack(fragment.toString());
+
+        // commit
+        fragmentTransaction.commit();
     }
 
     // ===========================================================

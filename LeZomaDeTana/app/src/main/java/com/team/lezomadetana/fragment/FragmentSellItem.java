@@ -17,6 +17,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.SELLAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
@@ -155,7 +157,8 @@ public class FragmentSellItem extends BaseFragment implements
                 showSearchRequestPopup();
                 break;
             case R.id.action_payment:
-                showLongToast(getActivity(), "2) RESA-BOLA");
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.drawerLayout.openDrawer(Gravity.LEFT);
                 break;
         }
 
@@ -385,9 +388,9 @@ public class FragmentSellItem extends BaseFragment implements
                 swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(R.drawable.ic_wifi_black)
-                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -457,9 +460,9 @@ public class FragmentSellItem extends BaseFragment implements
                 hideLoadingView();
                 // // //
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(R.drawable.ic_wifi_black)
-                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -651,9 +654,9 @@ public class FragmentSellItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -815,9 +818,9 @@ public class FragmentSellItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -1068,9 +1071,9 @@ public class FragmentSellItem extends BaseFragment implements
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {

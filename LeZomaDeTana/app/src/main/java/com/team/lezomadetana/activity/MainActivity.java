@@ -26,6 +26,7 @@ import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.fragment.FragmentPayment;
+import com.team.lezomadetana.fragment.FragmentPaymentCharge;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -44,7 +45,7 @@ public class MainActivity extends BaseActivity {
     // ===========================================================
 
     private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
+    public DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private View navView;
     private TextView textViewName;
@@ -56,7 +57,7 @@ public class MainActivity extends BaseActivity {
     private String[] activityTitles;
 
     // flag to load home fragment when user presses back key
-    private boolean shouldLoadHomeFragOnBackPress = true;
+    public boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
 
     // ===========================================================
@@ -121,11 +122,16 @@ public class MainActivity extends BaseActivity {
         if (shouldLoadHomeFragOnBackPress) {
             // checking if user is on other navigation menu
             // rather than home
-            if (navItemIndex != 0) {
+            if (navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 4 || navItemIndex == 5) {
                 navItemIndex = 0;
                 CURRENT_TAG = TAG_BUSINESS;
                 loadDefaultFragment();
                 return;
+            } else if (navItemIndex == 3) {
+                // back to payment fragment
+                navItemIndex = 2;
+                CURRENT_TAG = TAG_PAYMENT;
+                loadDefaultFragment();
             }
         }
 
@@ -136,7 +142,7 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu; this adds items to the action bar if it is present.
         // show menu only when home fragment is selected
-        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4) {
+        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4 || navItemIndex == 5) {
             getMenuInflater().inflate(R.menu.menu_main_activity, menu);
         }
 
@@ -148,7 +154,7 @@ public class MainActivity extends BaseActivity {
         MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
         MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
         MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
-        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4) {
+        if (navItemIndex == 0 || navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 3 || navItemIndex == 4 || navItemIndex == 5) {
             itemMenuSearch.setEnabled(false);
             itemMenuSearch.setVisible(false);
             itemMenuPayment.setEnabled(false);
@@ -175,6 +181,12 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void launchPaymentFragment() {
+        navItemIndex = 2;
+        CURRENT_TAG = TAG_PAYMENT;
+        loadDefaultFragment();
     }
 
     // ===========================================================
@@ -238,12 +250,16 @@ public class MainActivity extends BaseActivity {
                         navItemIndex = 2;
                         CURRENT_TAG = TAG_PAYMENT;
                         break;
-                    case R.id.nav_chat:
+                    case R.id.nav_payment_menu:
                         navItemIndex = 3;
+                        CURRENT_TAG = TAG_PAYMENT_MENU;
+                        break;
+                    case R.id.nav_chat:
+                        navItemIndex = 4;
                         CURRENT_TAG = TAG_CHAT;
                         break;
                     case R.id.nav_setting:
-                        navItemIndex = 4;
+                        navItemIndex = 5;
                         CURRENT_TAG = TAG_SETTING;
                         break;
                     case R.id.nav_about_us:
@@ -364,9 +380,12 @@ public class MainActivity extends BaseActivity {
                 FragmentPayment payment = new FragmentPayment();
                 return payment;
             case 3:
+                FragmentPaymentCharge charge = new FragmentPaymentCharge();
+                return charge;
+            case 4:
                 FragmentChat chat = new FragmentChat();
                 return chat;
-            case 4:
+            case 5:
                 FragmentSetting setting = new FragmentSetting();
                 return setting;
             default:

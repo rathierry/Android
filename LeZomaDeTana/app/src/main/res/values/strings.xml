@@ -13,7 +13,13 @@
     <string name="app_filter_data_null">Tsy misy entana mifanaraka amin\'ilay fikarohana natao teo.</string>
     <string name="app_filter_data_size">Nahitana valiny miisa</string>
     <string name="app_payment_unity_type_text">Ariary</string>
+    <string name="app_payment_symbole_type_ariary_text">AR</string>
+    <string name="app_payment_symbole_type_euro_text">€</string>
+    <string name="app_payment_symbole_type_dollar_text">$</string>
+    <string name="app_payment_symbole_type_livre_text">¥</string>
     <string name="app_no_list_offer_message">Tsy misy olona namaly.</string>
+    <string name="app_send_request_on_failure_title">Angona mpizara</string>
+    <string name="app_send_request_on_failure_message">Tsy lasa ilay API</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -98,7 +104,8 @@
     <string name="activity_main_menu_business">Raharaham-barotra</string><!-- not add a text -->
     <string name="activity_main_menu_chat">Firesahana</string>
     <string name="activity_main_menu_offer">Tolotra</string>
-    <string name="activity_main_menu_payment">Vola</string>
+    <string name="activity_main_menu_payment">Fikirakirana VOLA</string>
+    <string name="activity_main_menu_payment_menu">Menu VOLA</string>
     <string name="activity_main_menu_setting">Fikirana</string>
     <string name="activity_main_menu_info">Open LZT Official Site</string>
     <string name="activity_main_menu_about">Ny momba anay</string>
@@ -108,6 +115,7 @@
         <item></item>
         <item>@string/activity_main_menu_offer</item>
         <item>@string/activity_main_menu_payment</item>
+        <item>@string/activity_main_menu_payment_menu</item>
         <item>@string/activity_main_menu_chat</item>
         <item>@string/activity_main_menu_setting</item>
     </string-array>
@@ -132,16 +140,24 @@
     <string name="fragment_buy_btn_answer_request_text">Hamaly</string>
     <string name="fragment_buy_btn_get_request_text">Alaina</string>
 
+    <!-- screen: fragment-list-offer -->
+    <string name="fragment_list_offer_toolbar_title">Lisitra</string>
+
     <!-- screen: fragment-business sell -->
     <string name="fragment_sell_post_request_title">Momba ilay entana</string>
 
-    <!-- screen: Request -->
-    <string name="request_user_name">Sended by : </string>
-    <string name="request_user_product_needed">Need</string>
-    <string name="request_user_product_weight">Weight</string>
-    <string name="request_user_product_unit_price">Unit price</string>
-    <string name="request_user_product_answer">Answer</string>
-
+    <!-- screen: fragment-payment -->
+    <string name="fragment_payment_solde_compte_text">VOLA AO ANATY VATA:</string>
+    <!-- menu -->
+    <string name="fragment_payment_menu_charge_text">Ampiditra vola ao anaty vata</string>
+    <string name="fragment_payment_menu_give_money_text">Hamoaka vola ao anaty vata</string>
+    <string name="fragment_payment_menu_send_money_text">Handoa na handefa vola</string>
+    <string name="fragment_payment_menu_get_money_text">Handray vola</string>
+    <!-- toolbar -->
+    <string name="fragment_payment_toolbar_charge">Ampiditra VOLA</string>
+    <string name="fragment_payment_toolbar_give_money">Hamoaka VOLA</string>
+    <string name="fragment_payment_toolbar_send_money">Handefa VOLA</string>
+    <string name="fragment_payment_toolbar_get_money">Handray VOLA</string>
 
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>

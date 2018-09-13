@@ -77,6 +77,7 @@ public class BaseActivity extends AppCompatActivity {
     public static final String TAG_BUSINESS = "business";
     public static final String TAG_OFFER = "offer";
     public static final String TAG_PAYMENT = "payment";
+    public static final String TAG_PAYMENT_MENU = "payment_menu";
     public static final String TAG_CHAT = "chat";
     public static final String TAG_SETTING = "setting";
 

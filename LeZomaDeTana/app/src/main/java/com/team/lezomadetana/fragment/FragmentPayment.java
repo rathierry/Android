@@ -1,18 +1,18 @@
 package com.team.lezomadetana.fragment;
 
-import android.net.wifi.hotspot2.pps.Credential;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Layout;
+import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -37,7 +37,7 @@ import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
  * Created by RaThierry on 11/09/2018.
  **/
 
-public class FragmentPayment extends BaseFragment {
+public class FragmentPayment extends BaseFragment implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -47,9 +47,15 @@ public class FragmentPayment extends BaseFragment {
     // Fields
     // ===========================================================
 
-    private  TextView money;
+    private View rootView;
+    private BaseActivity activity;
     private UserCredentialResponse user;
-    private LinearLayout paymentCharge;
+
+    private TextView textViewMadCoin;
+    private RelativeLayout layout_payment_charge;
+    private RelativeLayout layout_payment_give_money;
+    private RelativeLayout layout_payment_send_money;
+    private RelativeLayout layout_payment_get_money;
 
     // ===========================================================
     // Constructors
@@ -72,22 +78,33 @@ public class FragmentPayment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // inflate the layout for this fragment or reuse the existing one
+        rootView = getView() != null ? getView() :
+                inflater.inflate(R.layout.fragment_payment, container, false);
 
-        View mView = inflater.inflate(R.layout.fragment_payment, container, false);
-        money = (TextView) mView.findViewById(R.id.madcoin_text);
-        final BaseActivity activity =  ((BaseActivity)getActivity());
+        // current activity
+        activity = ((BaseActivity) getActivity());
+
+        // current user
         user = activity.getCurrentUser(activity);
-        paymentCharge = (LinearLayout) mView.findViewById(R.id.payement_charge);
 
-        paymentCharge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(),"AMPIDITRA CLICKED",Toast.LENGTH_LONG);
-            }
-        });
+        // set view
+        textViewMadCoin = (TextView) rootView.findViewById(R.id.mad_coin_text);
+        layout_payment_charge = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_charge);
+        layout_payment_give_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_give_money);
+        layout_payment_send_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_send_money);
+        layout_payment_get_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_get_money);
 
-        refreshMadcoin();
-        return inflater.inflate(R.layout.fragment_payment, container, false);
+        // event onClick
+        layout_payment_charge.setOnClickListener(this);
+        layout_payment_give_money.setOnClickListener(this);
+        layout_payment_send_money.setOnClickListener(this);
+        layout_payment_get_money.setOnClickListener(this);
+
+        // fetch user mad coin
+        refreshMadCoin();
+
+        return rootView;
     }
 
     @Override
@@ -106,6 +123,31 @@ public class FragmentPayment extends BaseFragment {
         itemMenuInfo.setVisible(false);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fragment_payment_charge:
+                switchToMenuPaymentFragment(new FragmentPaymentCharge());
+                break;
+            case R.id.fragment_payment_give_money:
+                switchToMenuPaymentFragment(new FragmentPaymentGiveMoney());
+                break;
+            case R.id.fragment_payment_send_money:
+                switchToMenuPaymentFragment(new FragmentPaymentSendMoney());
+                break;
+            case R.id.fragment_payment_get_money:
+                switchToMenuPaymentFragment(new FragmentPaymentGetMoney());
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     // ===========================================================
     // Methods for Interfaces
     // ===========================================================
@@ -117,7 +159,8 @@ public class FragmentPayment extends BaseFragment {
     // ===========================================================
     // Private Methods
     // ===========================================================
-    public void refreshMadcoin() {
+
+    public void refreshMadCoin() {
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
 
         // create basic authentication
@@ -132,6 +175,7 @@ public class FragmentPayment extends BaseFragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.code() == 200) {
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("userWallets").getAsJsonArray();
+
                     List<Wallet> wallets = null;
 
                     if (filter.size() > 0) {
@@ -139,29 +183,33 @@ public class FragmentPayment extends BaseFragment {
                         for (int i = 0; i < filter.size(); i++) {
                             Wallet wallet = new Gson().fromJson(filter.get(i), Wallet.class);
                             wallets.add(wallet);
-
                         }
-
 
                         for (int i = 0; i < wallets.size(); i++) {
                             if (wallets.get(i).getUserId().equals(user.getId())) {
-                                money.setText("Vola ao anaty vata :" + wallets.get(i).getBalance() + " Ar");
-
+                                textViewMadCoin.setText(getResources().getString(R.string.fragment_payment_solde_compte_text) + " " + wallets.get(i).getBalance() + " " + getResources().getString(R.string.app_payment_symbole_type_ariary_text));
                                 break;
                             }
-
                         }
-
                     }
-
-
                 }
-
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                showLoadingView(getResources().getString(R.string.app_spinner));
+                                refreshMadCoin();
+                            }
+                        })
+                        .show();
             }
         });
 

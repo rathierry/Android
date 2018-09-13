@@ -1,6 +1,5 @@
 package com.team.lezomadetana.fragment;
 
-
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -101,7 +100,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
                 inflater.inflate(R.layout.fragment_list_offer, container, false);
 
         // toolBar title
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Lisitra");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.fragment_list_offer_toolbar_title));
 
         // initialize view
         ImageView imageView = (ImageView) rootView.findViewById(R.id.icon_profile);
@@ -358,9 +357,9 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
 
                 // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(R.drawable.ic_wifi_black)
-                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -506,9 +505,9 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(R.drawable.ic_wifi_black)
-                                        .setTitle(getResources().getString(R.string.app_internet_error_title))
-                                        .setMessage(getResources().getString(R.string.app_internet_error_message))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
