@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
     android:background="@drawable/bg_list_row"
-    tools:context=".fragment.FragmentSetting">
+    tools:context=".fragment.FragmentSetting"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,37 +37,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/md_black_1000_10"
             android:orientation="horizontal"
             android:weightSum="1">
 
             <EditText
+                android:id="@+id/fragment_payment_charge_edit_text_amount"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="46dp"
                 android:layout_gravity="start|center"
-                android:layout_weight="0.1"
-                android:drawableRight="@drawable/edit_text_bg_selector"
+                android:layout_marginEnd="1dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 android:fontFamily="monospace"
-                android:gravity="end"
-                android:hint="ampidiro ny mari-bola"
+                android:gravity="end|center"
+                android:hint="mari-bola"
                 android:inputType="number"
                 android:maxLines="1"
                 android:paddingRight="?listPreferredItemPaddingRight"
                 android:textAllCaps="true"
-                android:textColor="@color/color_black"
-                android:textColorHint="@color/md_disabled_hint_text"
+                android:textColor="@color/color_white"
+                android:textColorHint="@color/color_white"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="end|center"
-                android:layout_weight="0.9"
+                android:layout_weight="0.8"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 android:fontFamily="monospace"
                 android:gravity="center"
-                android:text="AR"
+                android:text="Ar"
                 android:textAllCaps="true"
-                android:textColor="@color/color_black"
+                android:textColor="@color/color_white"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -87,17 +91,19 @@
             android:textStyle="bold" />
 
         <EditText
+            android:id="@+id/fragment_payment_charge_edit_text_phone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:layout_gravity="start|center"
+            android:background="@drawable/payment_edit_text_bg_selector"
             android:fontFamily="monospace"
-            android:gravity="left"
-            android:hint="laharana finday"
+            android:gravity="left|center"
+            android:hint="03XXXXXXXX"
             android:inputType="number"
             android:maxLines="1"
             android:textAllCaps="true"
-            android:textColor="@color/color_black"
-            android:textColorHint="@color/md_disabled_hint_text"
+            android:textColor="@color/color_white"
+            android:textColorHint="@color/color_white"
             android:textStyle="bold" />
 
         <View
@@ -108,12 +114,15 @@
             android:background="@color/transparent" />
 
         <Button
+            android:id="@+id/fragment_payment_charge_btn_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDarker"
             android:fontFamily="monospace"
             android:text="Alefa ny fangatahana"
-            android:textColor="@color/color_white" />
+            android:textAllCaps="false"
+            android:textColor="@color/color_white"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

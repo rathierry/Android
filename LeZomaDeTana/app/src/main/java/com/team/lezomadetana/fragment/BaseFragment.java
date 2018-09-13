@@ -7,10 +7,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Created by RaThierry on 06/09/2018.
@@ -160,6 +169,83 @@ public class BaseFragment extends Fragment {
 
         // commit
         fragmentTransaction.commit();
+    }
+
+    /**
+     * Text listener for amount
+     */
+    public TextWatcher onTextAmountChangedListener(final EditText editText) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 15) {
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                editText.removeTextChangedListener(this);
+
+                try {
+                    String originalString = s.toString();
+
+                    Long longVal;
+                    if (originalString.contains(",")) {
+                        originalString = originalString.replaceAll(",", "");
+                    }
+                    longVal = Long.parseLong(originalString);
+
+                    DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+                    formatter.applyPattern("#,###,###,###");
+                    String formattedString = formatter.format(longVal);
+
+                    //setting text after format to EditText
+                    editText.setText(formattedString);
+                    editText.setSelection(editText.getText().length());
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                }
+
+                editText.addTextChangedListener(this);
+            }
+        };
+    }
+
+    /**
+     * Text listener for phone number
+     */
+    public TextWatcher onTextPhoneNumberChangedListener() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 10) {
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
     }
 
     // ===========================================================
