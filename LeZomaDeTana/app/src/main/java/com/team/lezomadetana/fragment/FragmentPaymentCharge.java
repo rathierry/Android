@@ -1,10 +1,14 @@
 package com.team.lezomadetana.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,10 +21,19 @@ import android.widget.EditText;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.model.receive.Transaction;
+import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by RaThierry on 13/09/2018.
@@ -205,6 +218,72 @@ public class FragmentPaymentCharge extends BaseFragment {
 
                     resetAllInputText();
                 }
+
+                showLoadingView(getResources().getString(R.string.app_spinner));
+
+                APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+                BaseActivity activity = (BaseActivity) getActivity();
+                // create basic authentication
+                String auth = activity.BasicAuth();
+
+                TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+                transactionSend.setUserId(activity.getCurrentUser(getContext()).getId());
+                transactionSend.setPhone(phoneNumberText);
+                transactionSend.setAmount(Float.parseFloat(amountText));
+
+                TransactionAriaryJeton.Operator operator = null;
+
+                if(codeOperatorText == "032"){
+                    operator = TransactionAriaryJeton.Operator.ORANGE;
+                }
+                else  if(codeOperatorText == "033"){
+                    operator = TransactionAriaryJeton.Operator.AIRTEL;
+                }
+                else  if(codeOperatorText == "034"){
+                    operator = TransactionAriaryJeton.Operator.TELMA;
+                }
+
+                transactionSend.setOperator(operator);
+
+                transactionSend.setType(TransactionAriaryJeton.Type.DEPOSIT);
+                // send query
+                Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+
+                // request
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response)
+                    {
+                        if(response.code() == 201)
+                        {
+
+                            hideLoadingView();
+                            new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                    .setIcon(android.R.drawable.ic_dialog_info)
+                                    .setTitle("Qr Code")
+                                    .setMessage("Vita tompoko")
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            dialog.dismiss();
+
+                                            MainActivity mainActivity = (MainActivity) getActivity();
+                                            mainActivity.launchPaymentFragment();
+
+                                            showLongToast(getContext(),"TSY TONGA ATO");
+                                        }
+                                    })
+                                    .show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                        hideLoadingView();
+                    }
+                });
             }
         });
     }

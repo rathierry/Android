@@ -25,11 +25,13 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.fragment.BaseFragment;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.fragment.FragmentPayment;
 import com.team.lezomadetana.fragment.FragmentPaymentCharge;
+import com.team.lezomadetana.fragment.FragmentPaymentSendMoney;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity {
     private TextView textViewInfo;
     private ImageView imageViewBg;
     private ImageView imageViewProfile;
+    private BaseFragment paymentFragement;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -381,6 +384,7 @@ public class MainActivity extends BaseActivity {
                 return offer;
             case 2:
                 FragmentPayment payment = new FragmentPayment();
+                paymentFragement = (BaseFragment) payment;
                 return payment;
             case 3:
                 FragmentPaymentCharge charge = new FragmentPaymentCharge();
@@ -416,7 +420,15 @@ public class MainActivity extends BaseActivity {
             }
             else
             {
-                showLongToast(this,result.getContents());
+                if(paymentFragement != null){
+
+                    FragmentPaymentSendMoney sendMoney = (FragmentPaymentSendMoney)paymentFragement.getPaymentActiveFragement();
+
+                    sendMoney.onQrFindSomething(result.getContents());
+
+                }
+
+
             }
 
 

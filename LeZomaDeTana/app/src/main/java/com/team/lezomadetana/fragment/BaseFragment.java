@@ -41,6 +41,7 @@ public class BaseFragment extends Fragment {
 
     private ProgressDialog _progressDialog;
     private android.support.v7.app.AlertDialog _alertDialog;
+    private BaseFragment activePaymentFragment = null;
 
     // ===========================================================
     // Constructors
@@ -169,6 +170,14 @@ public class BaseFragment extends Fragment {
 
         // commit
         fragmentTransaction.commit();
+
+        activePaymentFragment = (BaseFragment) fragment;
+    }
+
+
+
+    public BaseFragment getPaymentActiveFragement(){
+        return activePaymentFragment;
     }
 
     /**

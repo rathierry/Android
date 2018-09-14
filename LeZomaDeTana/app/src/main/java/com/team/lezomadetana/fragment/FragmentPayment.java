@@ -133,7 +133,6 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_payment_charge:
-
                 switchToMenuPaymentFragment(new FragmentPaymentCharge());
                 break;
             case R.id.fragment_payment_give_money:

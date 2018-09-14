@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,10 +19,17 @@ import android.widget.EditText;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.api.APIClient;
+import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by RaThierry on 13/09/2018.
@@ -121,17 +129,6 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
     // Public Methods
     // ===========================================================
 
-    public void scanQrCode() {
-        IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
-        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-        intentIntegrator.setPrompt("Scan");
-        intentIntegrator.setBeepEnabled(false);
-        intentIntegrator.setCameraId(0);
-        intentIntegrator.setBarcodeImageEnabled(false);
-        intentIntegrator.setOrientationLocked(true);
-        intentIntegrator.initiateScan();
-    }
-
     // ===========================================================
     // Private Methods
     // ===========================================================
@@ -219,6 +216,44 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
 
                     resetAllInputText();
                 }
+
+                BaseActivity baseActivity = (BaseActivity) getActivity();
+                final String auth = baseActivity.BasicAuth();
+
+
+                APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+
+                // create basic authentication
+
+
+                TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+                transactionSend.setUserId(baseActivity.getCurrentUser(getContext()).getId());
+                transactionSend.setPhone("0346655762");
+                transactionSend.setAmount(1f);
+                transactionSend.setOperator(TransactionAriaryJeton.Operator.TELMA);
+
+                transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
+                // send query
+                Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+
+                // request
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response)
+                    {
+                        if(response.code() == 201)
+                        {
+
+                            Log.d("Payment","METY lesy dada");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+
+                    }
+                });
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.team.lezomadetana.fragment;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -65,9 +64,6 @@ public class FragmentPaymentGetMoney extends BaseFragment {
 
 
         ImageView qrView = rootView.findViewById(R.id.fragment_payment_get_money_imageView_qr_code);
-       
-
-
         qrView.setImageBitmap(activity.decodeString2Bitmap(activity.getCurrentUser(activity).getQr()));
 
         // toolBar title
