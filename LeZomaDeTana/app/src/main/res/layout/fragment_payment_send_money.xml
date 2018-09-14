@@ -1,66 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
     android:layout_gravity="top|center"
     android:background="@drawable/bg_list_row"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:gravity="center"
+    android:orientation="vertical"
+    android:weightSum="4"
     tools:context=".fragment.FragmentPaymentSendMoney">
 
+    <!-- 0.5 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="?listPreferredItemPaddingLeft"
-        android:paddingRight="?listPreferredItemPaddingRight">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="monospace"
-            android:gravity="start"
+            android:gravity="start|center"
             android:text="QR Code ny olona handefasana ny VOLA"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@color/transparent" />
+    </LinearLayout>
+
+    <!-- 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/md_grey_50"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/fragment_payment_send_money_imageView_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
+
+    <!-- 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:background="@color/md_grey_50"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/md_grey_200"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/fragment_payment_send_money_imageView_qr_code"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:adjustViewBounds="true"
-                android:src="@mipmap/ic_launcher" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/transparent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/md_grey_200"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingLeft="?listPreferredItemPaddingLeft"
             android:paddingRight="?listPreferredItemPaddingRight">
@@ -88,7 +86,7 @@
                 android:weightSum="1">
 
                 <EditText
-                    android:id="@+id/fragment_payment_give_money_edit_text_amount"
+                    android:id="@+id/fragment_payment_send_money_edit_text_amount"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
                     android:layout_gravity="start|center"
@@ -148,7 +146,7 @@
                 app:passwordToggleTint="@color/color_black">
 
                 <EditText
-                    android:id="@+id/fragment_payment_give_money_edit_text_password"
+                    android:id="@+id/fragment_payment_send_money_edit_text_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
@@ -166,8 +164,22 @@
 
         </LinearLayout>
 
+    </LinearLayout>
+
+    <!-- 0.5 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingLeft="?listPreferredItemPaddingLeft"
+        android:paddingRight="?listPreferredItemPaddingRight"
+        android:paddingTop="5dp">
+
         <Button
-            android:id="@+id/fragment_payment_give_money_btn_send"
+            android:id="@+id/fragment_payment_send_money_btn_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDarker"
@@ -179,4 +191,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

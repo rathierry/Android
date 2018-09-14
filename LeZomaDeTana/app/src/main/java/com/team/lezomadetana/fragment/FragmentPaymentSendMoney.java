@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
@@ -28,7 +31,13 @@ public class FragmentPaymentSendMoney extends BaseFragment {
     // ===========================================================
 
     private BaseActivity activity;
+    private EditText editTextAmount;
+    private EditText editTextPassword;
+    private Button btnSend;
     private View rootView;
+
+    private String amountText;
+    private String passwordText;
 
     // ===========================================================
     // Constructors
@@ -64,6 +73,14 @@ public class FragmentPaymentSendMoney extends BaseFragment {
         // toolBar title
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.fragment_payment_toolbar_send_money));
 
+        // init view
+        editTextAmount = (EditText) rootView.findViewById(R.id.fragment_payment_send_money_edit_text_amount);
+        editTextPassword = (EditText) rootView.findViewById(R.id.fragment_payment_send_money_edit_text_password);
+        btnSend = (Button) rootView.findViewById(R.id.fragment_payment_send_money_btn_send);
+
+        // listener, event
+        initializeListenerAndEvent();
+
         return rootView;
     }
 
@@ -94,6 +111,70 @@ public class FragmentPaymentSendMoney extends BaseFragment {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * Init listener and event
+     */
+    private void initializeListenerAndEvent() {
+        // amount/phone edit text
+        editTextAmount.addTextChangedListener(onTextAmountChangedListener(editTextAmount));
+
+        // btn submit
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // set values
+                amountText = editTextAmount.getText().toString().replaceAll(",", "");
+                passwordText = editTextPassword.getText().toString();
+
+                // amount
+                if (amountText.isEmpty() || TextUtils.isEmpty(amountText)) {
+                    editTextAmount.setError("amount required");
+                    editTextAmount.requestFocus();
+                }
+                // password
+                else if (passwordText.isEmpty() || TextUtils.isEmpty(passwordText)) {
+                    editTextPassword.setError("password required");
+                    editTextPassword.requestFocus();
+                }
+                // call api
+                else {
+                    clearAllInputError();
+                    clearAllInputFocus();
+
+                    // showing formatted text and original text of "editTextAmount" to toast
+                    showLongToast(getContext(),
+                            "Formatted amount value: " + editTextAmount.getText().toString() +
+                                    "\nOriginal input amount: " + amountText +
+                                    "\nPassword: " + passwordText);
+                }
+            }
+        });
+    }
+
+    /**
+     * Clear inputs error
+     */
+    private void clearAllInputError() {
+        editTextAmount.setError(null);
+        editTextPassword.setError(null);
+    }
+
+    /**
+     * Clear inputs focus
+     */
+    private void clearAllInputFocus() {
+        editTextAmount.clearFocus();
+        editTextPassword.clearFocus();
+    }
+
+    /**
+     * Reset inputs text
+     */
+    private void resetAllInputText() {
+        editTextAmount.setText("");
+        editTextPassword.setText("");
+    }
 
     // ===========================================================
     // Inner Classes/Interfaces
