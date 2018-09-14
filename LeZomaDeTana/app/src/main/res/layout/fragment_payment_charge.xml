@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:gravity="start"
-            android:text="Mari-bola ampidirina"
+            android:text="@string/fragment_payment_charge_amount_text"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
@@ -50,7 +51,7 @@
                 android:background="@drawable/payment_edit_text_bg_selector"
                 android:fontFamily="monospace"
                 android:gravity="end|center"
-                android:hint="mari-bola"
+                android:hint="@string/fragment_payment_charge_amount_hint_text"
                 android:inputType="number"
                 android:maxLines="1"
                 android:paddingRight="?listPreferredItemPaddingRight"
@@ -67,7 +68,7 @@
                 android:background="@drawable/payment_edit_text_bg_selector"
                 android:fontFamily="monospace"
                 android:gravity="center"
-                android:text="Ar"
+                android:text="@string/app_payment_symbole_type_ariary_text"
                 android:textAllCaps="true"
                 android:textColor="@color/color_white"
                 android:textStyle="bold" />
@@ -86,25 +87,46 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:gravity="start"
-            android:text="Laharana finday akana ny vola"
+            android:text="@string/fragment_payment_charge_phone_text"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/fragment_payment_charge_edit_text_phone"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_gravity="start|center"
-            android:background="@drawable/payment_edit_text_bg_selector"
-            android:fontFamily="monospace"
-            android:gravity="left|center"
-            android:hint="03XXXXXXXX"
-            android:inputType="number"
-            android:maxLines="1"
-            android:textAllCaps="true"
-            android:textColor="@color/color_white"
-            android:textColorHint="@color/color_white"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
+
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/fragment_payment_charge_spinner_operator"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:fontFamily="monospace"
+                android:gravity="center|start"
+                android:text="@string/fragment_payment_charge_phone_hint_spinner"
+                android:textColor="@color/color_black"
+                android:textColorHighlight="@color/color_black"
+                android:visibility="visible"
+                app:met_floatingLabel="none" />
+
+            <EditText
+                android:id="@+id/fragment_payment_charge_edit_text_phone"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/fragment_payment_charge_spinner_operator"
+                android:background="@drawable/payment_edit_text_bg_selector"
+                android:fontFamily="monospace"
+                android:hint="@string/fragment_payment_charge_phone_hint_text"
+                android:inputType="number"
+                android:maxLength="7"
+                android:maxLines="1"
+                android:textAllCaps="true"
+                android:textColor="@color/color_white"
+                android:textColorHint="@color/color_white"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
@@ -119,7 +141,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDarker"
             android:fontFamily="monospace"
-            android:text="Alefa ny fangatahana"
+            android:text="@string/fragment_payment_charge_btn_submit"
             android:textAllCaps="false"
             android:textColor="@color/color_white"
             android:textStyle="bold" />

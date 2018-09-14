@@ -10,11 +10,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by RaThierry on 13/09/2018.
@@ -31,12 +37,14 @@ public class FragmentPaymentCharge extends BaseFragment {
     // ===========================================================
 
     private BaseActivity activity;
+    private MaterialBetterSpinner spinnerOperatorCode;
     private EditText editTextAmount;
     private EditText editTextPhone;
     private Button btnSend;
     private View rootView;
 
     private String amountText;
+    private String codeOperatorText;
     private String phoneText;
 
     // ===========================================================
@@ -75,6 +83,7 @@ public class FragmentPaymentCharge extends BaseFragment {
 
         // init view
         editTextAmount = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_amount);
+        spinnerOperatorCode = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_payment_charge_spinner_operator);
         editTextPhone = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_phone);
         btnSend = (Button) rootView.findViewById(R.id.fragment_payment_charge_btn_send);
 
@@ -124,9 +133,33 @@ public class FragmentPaymentCharge extends BaseFragment {
      * Init listener and event
      */
     private void initializeListenerAndEvent() {
-        // amount/phone edit text
+        // amount edit text
         editTextAmount.addTextChangedListener(onTextAmountChangedListener(editTextAmount));
-        editTextPhone.addTextChangedListener(onTextPhoneNumberChangedListener());
+
+        // drop down element
+        List<String> codeOperator = Arrays.asList(getResources().getStringArray(R.array.array_code_operator));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, codeOperator);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerOperatorCode.setAdapter(arrayAdapter);
+
+        // event onClick
+        spinnerOperatorCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                codeOperatorText = parent.getItemAtPosition(position).toString();
+
+                // showing clicked spinner item name and position
+                showLongToast(parent.getContext(), "Code selected: " + codeOperatorText + "\nPosition: " + position + ")");
+            }
+        });
+
+        // phone edit text
+        editTextPhone.addTextChangedListener(onTextPhoneNumberChangedListenerForPayment());
 
         // btn submit
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -134,16 +167,25 @@ public class FragmentPaymentCharge extends BaseFragment {
             public void onClick(View v) {
                 // set values
                 amountText = editTextAmount.getText().toString().replaceAll(",", "");
+                codeOperatorText = spinnerOperatorCode.getText().toString();
                 phoneText = editTextPhone.getText().toString();
+                String phoneNumberText = codeOperatorText + phoneText;
 
                 // amount
                 if (amountText.isEmpty() || TextUtils.isEmpty(amountText)) {
-                    editTextAmount.setError("amount required");
+                    editTextAmount.setError(getResources().getString(R.string.fragment_payment_charge_amount_text));
                     editTextAmount.requestFocus();
                 }
+                // code operator
+                else if (codeOperatorText.isEmpty() || TextUtils.isEmpty(codeOperatorText) || codeOperatorText.contains(getResources().getString(R.string.fragment_payment_charge_phone_hint_spinner))) {
+                    spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_white));
+                    editTextPhone.setError(getResources().getString(R.string.fragment_payment_charge_phone_code_error));
+                    editTextPhone.requestFocus();
+                }
                 // phone
-                else if (phoneText.isEmpty() || TextUtils.isEmpty(phoneText) || phoneText.length() != 10) {
-                    editTextPhone.setError("phone number required");
+                else if (phoneNumberText.isEmpty() || TextUtils.isEmpty(phoneNumberText) || phoneNumberText.length() != 10) {
+                    editTextPhone.setError(getResources().getString(R.string.fragment_payment_charge_phone_text));
                     editTextPhone.requestFocus();
                 }
                 // call api
@@ -155,7 +197,10 @@ public class FragmentPaymentCharge extends BaseFragment {
                     showLongToast(getContext(),
                             "Formatted amount value: " + editTextAmount.getText().toString() +
                                     "\nOriginal input amount: " + amountText +
-                                    "\nPhone: " + phoneText);
+                                    "\nPhone: " + phoneNumberText);
+
+
+                    resetAllInputText();
                 }
             }
         });
@@ -166,6 +211,8 @@ public class FragmentPaymentCharge extends BaseFragment {
      */
     private void clearAllInputError() {
         editTextAmount.setError(null);
+        spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.transparent));
+        spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_black));
         editTextPhone.setError(null);
     }
 
@@ -174,6 +221,7 @@ public class FragmentPaymentCharge extends BaseFragment {
      */
     private void clearAllInputFocus() {
         editTextAmount.clearFocus();
+        spinnerOperatorCode.clearFocus();
         editTextPhone.clearFocus();
     }
 
@@ -182,6 +230,7 @@ public class FragmentPaymentCharge extends BaseFragment {
      */
     private void resetAllInputText() {
         editTextAmount.setText("");
+        spinnerOperatorCode.setText(getResources().getString(R.string.fragment_payment_charge_phone_hint_spinner));
         editTextPhone.setText("");
     }
 

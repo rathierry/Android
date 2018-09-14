@@ -160,13 +160,25 @@
     <string name="fragment_payment_toolbar_get_money">Handray VOLA</string>
 
     <!-- screen: fragment-payment-charge -->
-    <string name="fragment_payment_charge_text_view_qr_code">QR Code andraisanao VOLA</string>
+    <string name="fragment_payment_charge_amount_text">Mari-bola ampidirina</string>
+    <string name="fragment_payment_charge_amount_hint_text">mari-bola</string>
+    <string name="fragment_payment_charge_phone_text">Laharana finday akana ny vola</string>
+    <string name="fragment_payment_charge_phone_hint_spinner">03X</string>
+    <string name="fragment_payment_charge_phone_code_error">Misafidiana code</string>
+    <string name="fragment_payment_charge_phone_hint_text">XXXXXXX</string>
+    <string name="fragment_payment_charge_btn_submit">Alefa ny fangatahana</string>
+    <string-array name="array_code_operator">
+        <item>032</item>
+        <item>033</item>
+        <item>034</item>
+    </string-array>
 
     <!-- screen: fragment-payment-give-money -->
 
     <!-- screen: fragment-payment-send-money -->
 
     <!-- screen: fragment-payment-get-money -->
+    <string name="fragment_payment_charge_text_view_qr_code">QR Code andraisanao VOLA</string>
 
     <!-- screen: AboutUsActivity -->
     <string name="activity_about_us_info_1">Le Zoma de Tana (version Android)</string>

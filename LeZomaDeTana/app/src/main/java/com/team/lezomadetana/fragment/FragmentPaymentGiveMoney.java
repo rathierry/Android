@@ -133,7 +133,7 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
     private void initializeListenerAndEvent() {
         // amount/phone edit text
         editTextAmount.addTextChangedListener(onTextAmountChangedListener(editTextAmount));
-        editTextPhone.addTextChangedListener(onTextPhoneNumberChangedListener());
+        editTextPhone.addTextChangedListener(onTextPhoneNumberChangedListenerForPayment());
 
         // btn submit
         btnSend.setOnClickListener(new View.OnClickListener() {

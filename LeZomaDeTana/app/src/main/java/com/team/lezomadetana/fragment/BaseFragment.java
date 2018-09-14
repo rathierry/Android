@@ -224,7 +224,7 @@ public class BaseFragment extends Fragment {
     /**
      * Text listener for phone number
      */
-    public TextWatcher onTextPhoneNumberChangedListener() {
+    public TextWatcher onTextPhoneNumberChangedListenerForPayment() {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -232,7 +232,7 @@ public class BaseFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 10) {
+                if (s.length() == 7) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
                         // hide keyboard
