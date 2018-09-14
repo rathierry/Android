@@ -174,8 +174,15 @@
     </string-array>
 
     <!-- screen: fragment-payment-give-money -->
+    <string name="fragment_payment_give_money_amount_text">Mari-bola avoaka</string>
+    <string name="fragment_payment_give_money_password_text">Teny miafinao</string>
+    <string name="fragment_payment_give_money_password_hint">*****</string>
+    <string name="fragment_payment_give_money_btn_submit">Alefa ny famoahana ny vola</string>
 
     <!-- screen: fragment-payment-send-money -->
+    <string name="fragment_payment_send_money_text_view_qr_code">QR Code ny olona handefasana ny VOLA</string>
+    <string name="fragment_payment_send_money_amount_text">Mari-bola alefa</string>
+    <string name="fragment_payment_send_money_btn_submit">Alefa ny vola</string>
 
     <!-- screen: fragment-payment-get-money -->
     <string name="fragment_payment_charge_text_view_qr_code">QR Code andraisanao VOLA</string>

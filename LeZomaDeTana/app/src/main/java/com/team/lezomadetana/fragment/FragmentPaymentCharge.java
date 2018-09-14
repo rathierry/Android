@@ -185,6 +185,9 @@ public class FragmentPaymentCharge extends BaseFragment {
                 }
                 // phone
                 else if (phoneNumberText.isEmpty() || TextUtils.isEmpty(phoneNumberText) || phoneNumberText.length() != 10) {
+                    spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_black));
+                    // // //
                     editTextPhone.setError(getResources().getString(R.string.fragment_payment_charge_phone_text));
                     editTextPhone.requestFocus();
                 }

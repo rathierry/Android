@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:fontFamily="monospace"
             android:gravity="start|center"
-            android:text="QR Code ny olona handefasana ny VOLA"
+            android:text="@string/fragment_payment_send_money_text_view_qr_code"
             android:textColor="@color/color_black"
             android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
             android:layout_height="150dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/ic_qr_code" />
 
     </LinearLayout>
 
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
                 android:gravity="start"
-                android:text="Mari-bola alefa"
+                android:text="@string/fragment_payment_send_money_amount_text"
                 android:textColor="@color/color_black"
                 android:textStyle="bold" />
 
@@ -95,7 +95,7 @@
                     android:background="@drawable/payment_edit_text_bg_selector"
                     android:fontFamily="monospace"
                     android:gravity="end|center"
-                    android:hint="mari-bola"
+                    android:hint="@string/fragment_payment_charge_amount_hint_text"
                     android:inputType="number"
                     android:maxLines="1"
                     android:paddingRight="?listPreferredItemPaddingRight"
@@ -112,7 +112,7 @@
                     android:background="@drawable/payment_edit_text_bg_selector"
                     android:fontFamily="monospace"
                     android:gravity="center"
-                    android:text="Ar"
+                    android:text="@string/app_payment_symbole_type_ariary_text"
                     android:textAllCaps="true"
                     android:textColor="@color/color_white"
                     android:textStyle="bold" />
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
                 android:gravity="start"
-                android:text="Teny miafinao"
+                android:text="@string/fragment_payment_give_money_password_text"
                 android:textColor="@color/color_black"
                 android:textStyle="bold" />
 
@@ -153,7 +153,7 @@
                     android:background="@null"
                     android:fontFamily="monospace"
                     android:gravity="left|center"
-                    android:hint="*****"
+                    android:hint="@string/fragment_payment_give_money_password_hint"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:textAllCaps="true"
@@ -184,7 +184,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDarker"
             android:fontFamily="monospace"
-            android:text="Alefa ny vola"
+            android:text="@string/fragment_payment_send_money_btn_submit"
             android:textAllCaps="false"
             android:textColor="@color/color_white"
             android:textStyle="bold" />

@@ -129,12 +129,12 @@ public class FragmentPaymentSendMoney extends BaseFragment {
 
                 // amount
                 if (amountText.isEmpty() || TextUtils.isEmpty(amountText)) {
-                    editTextAmount.setError("amount required");
+                    editTextAmount.setError(getResources().getString(R.string.fragment_payment_send_money_amount_text));
                     editTextAmount.requestFocus();
                 }
                 // password
                 else if (passwordText.isEmpty() || TextUtils.isEmpty(passwordText)) {
-                    editTextPassword.setError("password required");
+                    editTextPassword.setError(getResources().getString(R.string.fragment_payment_give_money_password_text));
                     editTextPassword.requestFocus();
                 }
                 // call api
@@ -147,6 +147,8 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                             "Formatted amount value: " + editTextAmount.getText().toString() +
                                     "\nOriginal input amount: " + amountText +
                                     "\nPassword: " + passwordText);
+
+                    resetAllInputText();
                 }
             }
         });
