@@ -1,11 +1,14 @@
 package com.team.lezomadetana.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +22,7 @@ import android.widget.EditText;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
@@ -228,9 +232,22 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
 
                 TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
                 transactionSend.setUserId(baseActivity.getCurrentUser(getContext()).getId());
-                transactionSend.setPhone("0346655762");
-                transactionSend.setAmount(1f);
-                transactionSend.setOperator(TransactionAriaryJeton.Operator.TELMA);
+                transactionSend.setPhone("phoneNumberText");
+                transactionSend.setAmount(Float.parseFloat(amountText));
+
+
+                TransactionAriaryJeton.Operator operator = null;
+
+                if(codeOperatorText == "032"){
+                    operator = TransactionAriaryJeton.Operator.ORANGE;
+                }
+                else  if(codeOperatorText == "033"){
+                    operator = TransactionAriaryJeton.Operator.AIRTEL;
+                }
+                else  if(codeOperatorText == "034"){
+                    operator = TransactionAriaryJeton.Operator.TELMA;
+                }
+                transactionSend.setOperator(operator);
 
                 transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
                 // send query
@@ -244,14 +261,34 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                         if(response.code() == 201)
                         {
 
-                            Log.d("Payment","METY lesy dada");
+                            hideLoadingView();
+                            new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                    .setIcon(android.R.drawable.ic_dialog_info)
+                                    .setTitle("Fanomezana")
+                                    .setMessage("Vita tompoko")
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            dialog.dismiss();
+
+                                            MainActivity mainActivity = (MainActivity) getActivity();
+                                            mainActivity.launchPaymentFragment();
+
+                                            showLongToast(getContext(),"TSY TONGA ATO");
+                                        }
+                                    })
+                                    .show();
+                        }else{
+                            hideLoadingView();
+                            showLongToast(getContext(),"Misy tsy fihetezana");
                         }
 
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-
+                        hideLoadingView();
+                        showLongToast(getContext(),"Misy tsy fihetezana");
                     }
                 });
             }

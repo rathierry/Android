@@ -260,7 +260,7 @@ public class FragmentPaymentCharge extends BaseFragment {
                             hideLoadingView();
                             new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                     .setIcon(android.R.drawable.ic_dialog_info)
-                                    .setTitle("Qr Code")
+                                    .setTitle("Hameno vola")
                                     .setMessage("Vita tompoko")
                                     .setCancelable(false)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
