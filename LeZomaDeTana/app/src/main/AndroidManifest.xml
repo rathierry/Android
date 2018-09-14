@@ -62,7 +62,11 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>-->
         </activity>
-        <activity android:name="com.journeyapps.barcodescanner.CaptureActivity" android:screenOrientation="portrait" tools:replace="screenOrientation" />
+        <!-- screen: capture qr code -->
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="screenOrientation" />
         <!-- screen: about us -->
         <activity
             android:name=".activity.AboutUsActivity"

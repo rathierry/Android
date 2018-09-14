@@ -14,7 +14,7 @@
     <color name="list_row_hover_end_color">#ebeef0</color>
     <color name="from">#000000</color>
     <color name="subject">#111111</color>
-    <color name="timestamp">#4285f4</color>
+    <color name="datetamp">#4285f4</color>
     <color name="message">#7a7a7a</color>
     <color name="icon_tint_normal">#7a7a7a</color>
     <color name="icon_tint_selected">#fed776</color>
@@ -55,6 +55,11 @@
     <color name="color_divider">#281636</color>
     <color name="color_black">#000000</color>
     <color name="transparent">#00000000</color>
+    <color name="placeholder_bg">#dddddd</color>
+    <color name="item_name">#0c0c0c</color>
+    <color name="description">#1a1a1a</color>
+    <color name="chef">#777</color>
+    <color name="timestamp">#777</color>
 
     <!-- -->
     <array name="reds">

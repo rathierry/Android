@@ -124,6 +124,7 @@
     <string name="closeDrawer">close_drawer</string>
 
     <!-- screen: fragment-business buy -->
+    <string name="fragment_buy_toolBar_title">Entana</string>
     <string name="fragment_buy_tab_layout_search_item">MITADY ENTANA</string>
     <string name="fragment_buy_tab_layout_available_item">MIVAROTRA ENTANA</string>
     <string name="fragment_buy_post_request_title">Momba ilay entana</string>

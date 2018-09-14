@@ -20,6 +20,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0-rc01'
     implementation 'com.android.support:design:28.0.0-rc01'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
@@ -41,16 +42,16 @@ dependencies {
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     // glide image
     implementation 'com.github.bumptech.glide:glide:3.7.0'
-    // recycler view
-    implementation 'com.android.support:recyclerview-v7:24.2.1'
     // expandable layout
     implementation 'com.github.aakira:expandable-layout:1.4.2@aar'
+    // shimmer (content-placeholder-animation-like-facebook)
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
+    // qr code (Hery Andoniana)
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
-
-    implementation 'com.google.zxing:core:3.2.1'
-    implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
 }

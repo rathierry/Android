@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
     private TextView textViewInfo;
     private ImageView imageViewBg;
     private ImageView imageViewProfile;
-    private BaseFragment paymentFragement;
+    private BaseFragment baseFragment;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -189,6 +189,24 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                showLongToast(this, "tsy misy valiny");
+            } else {
+                if (baseFragment != null) {
+                    FragmentPaymentSendMoney sendMoney = (FragmentPaymentSendMoney) baseFragment.getCurrentFragment();
+                    sendMoney.onQrFindSomething(result.getContents());
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    // use this to call PaymentFragment
     public void launchPaymentFragment() {
         navItemIndex = 2;
         CURRENT_TAG = TAG_PAYMENT;
@@ -202,6 +220,15 @@ public class MainActivity extends BaseActivity {
     // ===========================================================
     // Public Methods
     // ===========================================================
+
+    /**
+     * Show long toast
+     */
+    public void showLongToast(Context context, String message) {
+        if (BuildConfig.DEBUG) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
+    }
 
     // ===========================================================
     // Private Methods
@@ -321,7 +348,7 @@ public class MainActivity extends BaseActivity {
      * Returns respected fragment that user
      * selected from navigation menu
      */
-    public void loadDefaultFragment() {
+    private void loadDefaultFragment() {
         // selecting appropriate nav menu item
         selectNavMenu();
 
@@ -364,12 +391,12 @@ public class MainActivity extends BaseActivity {
     }
 
     // select navigation's menu
-    public void selectNavMenu() {
+    private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
 
     // set toolBar title
-    public void setToolbarTitle() {
+    private void setToolbarTitle() {
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
 
@@ -384,7 +411,7 @@ public class MainActivity extends BaseActivity {
                 return offer;
             case 2:
                 FragmentPayment payment = new FragmentPayment();
-                paymentFragement = (BaseFragment) payment;
+                baseFragment = (BaseFragment) payment;
                 return payment;
             case 3:
                 FragmentPaymentCharge charge = new FragmentPaymentCharge();
@@ -399,48 +426,6 @@ public class MainActivity extends BaseActivity {
                 return new FragmentHome();
         }
     }
-
-    /**
-     * Show long toast
-     */
-    public void showLongToast(Context context, String message) {
-        if (BuildConfig.DEBUG) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-        if(result != null){
-            if(result.getContents()==null){
-                showLongToast(this,"tsy misy valiny");
-
-            }
-            else
-            {
-                if(paymentFragement != null){
-
-                    FragmentPaymentSendMoney sendMoney = (FragmentPaymentSendMoney)paymentFragement.getPaymentActiveFragement();
-
-                    sendMoney.onQrFindSomething(result.getContents());
-
-                }
-
-
-            }
-
-
-        }
-        else {
-            super.onActivityResult(requestCode, resultCode, data);
-
-        }
-
-
-    }
-
 
     // ===========================================================
     // Inner Classes/Interfaces
