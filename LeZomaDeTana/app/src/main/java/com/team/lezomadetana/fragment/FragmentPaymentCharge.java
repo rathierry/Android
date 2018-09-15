@@ -262,7 +262,7 @@ public class FragmentPaymentCharge extends BaseFragment {
                                 // // //
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(R.drawable.ic_info_black)
-                                        .setTitle("Famidiram-bola")
+                                        .setTitle("Fampidiram-bola")
                                         .setMessage("Tontosa ny fangatahanao.")
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -272,7 +272,7 @@ public class FragmentPaymentCharge extends BaseFragment {
                                                 activity.navItemIndex = 3;
                                                 mainActivity.onBackPressed();
                                                 // toast
-                                                showLongToast(activity, "- FragmentPaymentCharge -");
+                                                showLongToast(activity, "- FragmentPayment / Ampiditra Vola -");
                                             }
                                         })
                                         .show();

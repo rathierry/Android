@@ -48,6 +48,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
     // ===========================================================
 
     private BaseActivity activity;
+    private MainActivity mainActivity;
     private EditText editTextAmount;
     private EditText editTextPassword;
     private Button btnSend;
@@ -87,6 +88,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
 
         // current activity
         activity = ((BaseActivity) getActivity());
+        mainActivity = ((MainActivity) getActivity());
 
         // set navItemIndex value
         activity.navItemIndex = 3;
@@ -220,9 +222,9 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                             hideLoadingView();
                                             // // //
                                             new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                                    .setIcon(android.R.drawable.ic_dialog_info)
-                                                    .setTitle("Qr Code")
-                                                    .setMessage("Vita tompoko")
+                                                    .setIcon(R.drawable.ic_info_black)
+                                                    .setTitle("Fandefasana Vola")
+                                                    .setMessage("Tontosa ny fangatahanao.")
                                                     .setCancelable(false)
                                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -232,7 +234,8 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                                             MainActivity mainActivity = (MainActivity) getActivity();
                                                             mainActivity.launchPaymentFragment();
 
-                                                            showLongToast(getContext(), "TSY TONGA ATO");
+                                                            // toast
+                                                            showLongToast(activity, "- FragmentPayment / Handoha Vola -");
                                                         }
                                                     })
                                                     .show();
