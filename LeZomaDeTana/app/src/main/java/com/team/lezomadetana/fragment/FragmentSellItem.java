@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -40,6 +42,7 @@ import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.SELLAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.helper.BottomNavigationBehavior;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
@@ -72,7 +75,10 @@ public class FragmentSellItem extends BaseFragment implements
     // Fields
     // ===========================================================
 
+    private BaseActivity activity;
+    private MainActivity mainActivity;
     private View rootView;
+    private ShimmerFrameLayout mShimmerViewContainer;
     private BottomNavigationView footerMenu;
     private SwipeRefreshLayout swipeRefreshItem;
     private List<Request> requestList = new ArrayList<Request>();
@@ -109,6 +115,10 @@ public class FragmentSellItem extends BaseFragment implements
         rootView = getView() != null ? getView() :
                 inflater.inflate(R.layout.fragment_list_sell_item, container, false);
 
+        // current activity
+        activity = ((BaseActivity) getActivity());
+        mainActivity = ((MainActivity) getActivity());
+
         // floating btn to add new item
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_available_item_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +132,13 @@ public class FragmentSellItem extends BaseFragment implements
         // footer menu navigation
         footerMenu = (BottomNavigationView) rootView.findViewById(R.id.menu_footer_navigation);
         footerMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        // shimmer frame layout
+        mShimmerViewContainer = (ShimmerFrameLayout) rootView.findViewById(R.id.shimmer_view_container);
+
+        // attaching bottom sheet behaviour - hide / show on scroll
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) footerMenu.getLayoutParams();
+        layoutParams.setBehavior(new BottomNavigationBehavior());
 
         // refresh
         swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
@@ -187,7 +204,9 @@ public class FragmentSellItem extends BaseFragment implements
         if (getUserVisibleHint()) {
             if (!startFragment) {
                 swipeRefreshItem.setRefreshing(false);
-                showLoadingView(getResources().getString(R.string.app_spinner));
+                footerMenu.setVisibility(View.INVISIBLE);
+                showShimmerAnimation(mShimmerViewContainer);
+                // // //
                 startFragment = true;
             } else {
                 swipeRefreshItem.setRefreshing(true);
@@ -200,6 +219,7 @@ public class FragmentSellItem extends BaseFragment implements
     @Override
     public void onRefresh() {
         swipeRefreshItem.setRefreshing(true);
+        footerMenu.setVisibility(View.INVISIBLE);
         fetchAllRequests();
     }
 
@@ -392,9 +412,11 @@ public class FragmentSellItem extends BaseFragment implements
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                // stopping swipe refresh
                 swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
+                hideShimmerAnimation(mShimmerViewContainer);
+
+                // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
@@ -454,19 +476,26 @@ public class FragmentSellItem extends BaseFragment implements
                         // init spinner
                         listCategory = productTemplates;
 
-                        // verif in LOG
+                        // verification in LOG
                         Log.d("REQUESTS", "" + productTemplates);
 
-                        // hide spinner
+                        swipeRefreshItem.setRefreshing(false);
                         hideLoadingView();
+                        hideShimmerAnimation(mShimmerViewContainer);
+
+                        // show footer menu
+                        footerMenu.setVisibility(View.VISIBLE);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                swipeRefreshItem.setRefreshing(false);
                 hideLoadingView();
-                // // //
+                hideShimmerAnimation(mShimmerViewContainer);
+
+                // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
@@ -645,7 +674,10 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.code() == 201) {
                                     dialog.dismiss();
+
+                                    swipeRefreshItem.setRefreshing(false);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
 
                                     // clear list request
                                     requestList.clear();
@@ -658,9 +690,11 @@ public class FragmentSellItem extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                // stopping swipe refresh
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
+
+                                // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
                                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
@@ -798,14 +832,21 @@ public class FragmentSellItem extends BaseFragment implements
                                 if (response.code() == 201) {
                                     dialog.dismiss();
                                     requestList.clear();
+
+                                    swipeRefreshItem.setRefreshing(false);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
 
                                     // refresh list
                                     onRefresh();
                                 } else {
                                     dialog.dismiss();
+
+                                    swipeRefreshItem.setRefreshing(false);
                                     hideLoadingView();
-                                    // // //
+                                    hideShimmerAnimation(mShimmerViewContainer);
+
+                                    // alert
                                     new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                             .setIcon(android.R.drawable.ic_dialog_alert)
                                             .setTitle(getResources().getString(R.string.app_server_error_title))
@@ -822,9 +863,11 @@ public class FragmentSellItem extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                // stopping swipe refresh
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
+
+                                // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
                                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
@@ -1068,16 +1111,20 @@ public class FragmentSellItem extends BaseFragment implements
                                             }
                                         }
                                     }
+                                    swipeRefreshItem.setRefreshing(false);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
                                 }
 
                             }
 
                             @Override
                             public void onFailure(Call<JsonObject> call, Throwable t) {
-                                // stopping swipe refresh
                                 swipeRefreshItem.setRefreshing(false);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
+
+                                // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
                                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
