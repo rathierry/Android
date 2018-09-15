@@ -48,6 +48,7 @@ public class FragmentPaymentCharge extends BaseFragment {
     // ===========================================================
 
     private BaseActivity activity;
+    private MainActivity mainActivity;
     private MaterialBetterSpinner spinnerOperatorCode;
     private EditText editTextAmount;
     private EditText editTextPhone;
@@ -85,6 +86,7 @@ public class FragmentPaymentCharge extends BaseFragment {
 
         // current activity
         activity = ((BaseActivity) getActivity());
+        mainActivity = ((MainActivity) getActivity());
 
         // set navItemIndex value
         activity.navItemIndex = 3;
@@ -259,20 +261,18 @@ public class FragmentPaymentCharge extends BaseFragment {
                                 hideLoadingView();
                                 // // //
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_info)
-                                        .setTitle("Hameno vola")
-                                        .setMessage("Vita tompoko")
+                                        .setIcon(R.drawable.ic_info_black)
+                                        .setTitle("Famidiram-bola")
+                                        .setMessage("Tontosa ny fangatahanao.")
                                         .setCancelable(false)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 dialog.dismiss();
-
-                                                // TODO: implement here code to back on FragmentPayment.class
-                                                MainActivity mainActivity = (MainActivity) getActivity();
-                                                mainActivity.launchPaymentFragment();
-
+                                                // back to payment fragment
+                                                activity.navItemIndex = 3;
+                                                mainActivity.onBackPressed();
                                                 // toast
-                                                showLongToast(getContext(), "TSY TONGA ATO");
+                                                showLongToast(activity, "- FragmentPaymentCharge -");
                                             }
                                         })
                                         .show();

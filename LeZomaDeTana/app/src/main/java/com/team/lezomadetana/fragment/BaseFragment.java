@@ -164,10 +164,10 @@ public class BaseFragment extends Fragment {
 
         // transaction
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_payment_content_layout, fragment, fragment.toString());
+        fragmentTransaction.replace(R.id.fragment_payment_content_diff_menu, fragment, fragment.toString());
 
-        // Add fragment one in back stack.So it will not be destroyed. Press back menu can pop it up from the stack.
-        fragmentTransaction.addToBackStack(fragment.toString());
+        // add fragment one in back stack.So it will not be destroyed. Press back menu can pop it up from the stack.
+        fragmentTransaction.addToBackStack(/*fragment.toString()*/null);
 
         // commit
         fragmentTransaction.commit();

@@ -11,18 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
-import com.team.lezomadetana.api.ExampleUseOfAPI;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.receive.Wallet;
 
@@ -39,7 +36,7 @@ import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
  * Created by RaThierry on 11/09/2018.
  **/
 
-public class FragmentPayment extends BaseFragment implements View.OnClickListener {
+public class FragmentPayment extends BaseFragment {
 
     // ===========================================================
     // Constants
@@ -54,14 +51,14 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
     private UserCredentialResponse user;
 
     private TextView textViewMadCoin;
-    private RelativeLayout layout_payment_charge;
-    private RelativeLayout layout_payment_give_money;
-    private RelativeLayout layout_payment_send_money;
-    private RelativeLayout layout_payment_get_money;
 
     // ===========================================================
     // Constructors
     // ===========================================================
+
+    public FragmentPayment() {
+        // Required empty public constructor
+    }
 
     // ===========================================================
     // Getter & Setter
@@ -92,20 +89,9 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
 
         // set view
         textViewMadCoin = (TextView) rootView.findViewById(R.id.mad_coin_text);
-        layout_payment_charge = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_charge);
-        layout_payment_give_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_give_money);
-        layout_payment_send_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_send_money);
-        layout_payment_get_money = (RelativeLayout) rootView.findViewById(R.id.fragment_payment_get_money);
 
-        // event onClick
-        layout_payment_charge.setOnClickListener(this);
-        layout_payment_give_money.setOnClickListener(this);
-        layout_payment_send_money.setOnClickListener(this);
-        layout_payment_get_money.setOnClickListener(this);
-
-        //ExampleUseOfAPI.sendTransactionAr2Jt();
-
-
+        // switch to menu fragment
+        switchToMenuPaymentFragment(new FragmentPaymentMenu());
 
         // fetch user mad coin
         refreshMadCoin();
@@ -130,26 +116,6 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fragment_payment_charge:
-                switchToMenuPaymentFragment(new FragmentPaymentCharge());
-                break;
-            case R.id.fragment_payment_give_money:
-                switchToMenuPaymentFragment(new FragmentPaymentGiveMoney());
-                break;
-            case R.id.fragment_payment_send_money:
-                switchToMenuPaymentFragment(new FragmentPaymentSendMoney());
-                break;
-            case R.id.fragment_payment_get_money:
-                switchToMenuPaymentFragment(new FragmentPaymentGetMoney());
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
     }
@@ -166,6 +132,7 @@ public class FragmentPayment extends BaseFragment implements View.OnClickListene
     // Private Methods
     // ===========================================================
 
+    //  check user madCoin
     public void refreshMadCoin() {
         APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
 

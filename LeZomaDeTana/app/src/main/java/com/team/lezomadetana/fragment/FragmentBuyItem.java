@@ -1,5 +1,6 @@
 package com.team.lezomadetana.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -281,14 +282,18 @@ public class FragmentBuyItem extends BaseFragment implements
      */
     public int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
-        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", activity.getPackageName());
 
-        if (arrayId != 0) {
-            TypedArray colors = getResources().obtainTypedArray(arrayId);
-            int index = (int) (Math.random() * colors.length());
-            returnColor = colors.getColor(index, Color.GRAY);
-            colors.recycle();
+        Activity activity = getActivity();
+        if (activity != null) {
+            int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", activity.getPackageName());
+            if (arrayId != 0) {
+                TypedArray colors = getResources().obtainTypedArray(arrayId);
+                int index = (int) (Math.random() * colors.length());
+                returnColor = colors.getColor(index, Color.GRAY);
+                colors.recycle();
+            }
         }
+
         return returnColor;
     }
 

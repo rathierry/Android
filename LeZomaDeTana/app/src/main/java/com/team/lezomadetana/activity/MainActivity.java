@@ -194,7 +194,7 @@ public class MainActivity extends BaseActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                showLongToast(this, "tsy misy valiny");
+                showLongToast(this, "Scan QR Code annulé");
             } else {
                 if (baseFragment != null) {
                     FragmentPaymentSendMoney sendMoney = (FragmentPaymentSendMoney) baseFragment.getCurrentFragment();
