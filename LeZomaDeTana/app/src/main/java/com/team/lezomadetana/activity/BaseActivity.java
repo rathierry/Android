@@ -47,9 +47,13 @@ public class BaseActivity extends AppCompatActivity {
     // Constants
     // ===========================================================
 
-    // pref for user
+    // preferences
     public static final String PREFS_NAME = "PREFS";
     public static final String PREFS_KEY_USER = "KEY_USER";
+    public static final String PREFS_KEY_ID_USER_FROM_SCAN = "KEY_ID_USER_FROM_SCAN";
+
+    // shared pref
+    public SharedPreferences sharedPrefForPaymentSendMoney;
 
     // regex
     public String nameRegex = "^[a-zA-Z-\\s\\w]+$";
@@ -361,7 +365,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     public void disconnectUser() {
         // pref
-        SharedPreferences preferences = getSharedPreferences(BaseActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.commit();

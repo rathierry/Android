@@ -218,9 +218,6 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                                     "\nPhone: " + phoneNumberText +
                                     "\nPassword: " + passwordText);
 
-                    // reset input text
-                    resetAllInputText();
-
                     // show spinner
                     showLoadingView(getResources().getString(R.string.app_spinner));
 
@@ -260,6 +257,9 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.code() == 201) {
+                                // reset input text
+                                resetAllInputText();
+                                // hide spinner
                                 hideLoadingView();
                                 // // //
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -280,14 +280,14 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                                         .show();
                             } else {
                                 hideLoadingView();
-                                showLongToast(getContext(), "Misy tsy fihetezana");
+                                showAlertDialog("Famoahana Vola", R.drawable.ic_error_outline_black, "\"response.code\" : " + response.code());
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
                             hideLoadingView();
-                            showLongToast(getContext(), "Misy tsy fihetezana");
+                            showAlertDialog("Famoahana Vola", R.drawable.ic_error_outline_black, "Misy tsy fihetezana ilay \"commitTransactionAriary2Jeton\"");
                         }
                     });
                 }

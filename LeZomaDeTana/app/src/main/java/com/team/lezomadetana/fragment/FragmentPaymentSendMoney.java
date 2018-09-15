@@ -1,6 +1,8 @@
 package com.team.lezomadetana.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +33,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.team.lezomadetana.activity.BaseActivity.PREFS_KEY_ID_USER_FROM_SCAN;
+import static com.team.lezomadetana.activity.BaseActivity.PREFS_NAME;
 import static com.team.lezomadetana.activity.BaseActivity.ROOT_MDZ_USER_API;
 
 /**
@@ -133,6 +137,36 @@ public class FragmentPaymentSendMoney extends BaseFragment {
         itemMenuInfo.setVisible(false);
     }
 
+    @Override
+    public void onResume() {
+        // init pref key
+        activity.sharedPrefForPaymentSendMoney = activity.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        // check key
+        if (activity.sharedPrefForPaymentSendMoney.contains(PREFS_KEY_ID_USER_FROM_SCAN)) {
+            // get key value
+            onQrFindSomething(activity.sharedPrefForPaymentSendMoney.getString(PREFS_KEY_ID_USER_FROM_SCAN, ""));
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        // init pref key
+        activity.sharedPrefForPaymentSendMoney = activity.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        // check key
+        if (activity.sharedPrefForPaymentSendMoney.contains(PREFS_KEY_ID_USER_FROM_SCAN)) {
+            // remove key
+            SharedPreferences.Editor editor = activity.sharedPrefForPaymentSendMoney.edit();
+            editor.remove(PREFS_KEY_ID_USER_FROM_SCAN);
+            editor.commit();
+            // set image view default drawable
+            qrCodeTemplate.setImageDrawable(getResources().getDrawable(R.drawable.ic_qr_code));
+        }
+        super.onPause();
+    }
+
     // ===========================================================
     // Methods for Interfaces
     // ===========================================================
@@ -162,8 +196,10 @@ public class FragmentPaymentSendMoney extends BaseFragment {
 
                 // id
                 showLongToast(getContext(), "sendedId: " + sendedId);
+
+                // test
                 if (sendedId.isEmpty() || TextUtils.isEmpty(sendedId) || sendedId == null) {
-                    showLongToast(getContext(), "Tsy misy andefasana: " + sendedId);
+                    showAlertDialog("Fandefasana Vola", R.drawable.ic_warning_black, "Ataovy \"scan\" ny \"QR Code\" an\'ilay olona handefasana ny vola.");
                 }
                 // amount
                 else if (amountText.isEmpty() || TextUtils.isEmpty(amountText)) {
@@ -186,9 +222,6 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                             "Formatted amount value: " + editTextAmount.getText().toString() +
                                     "\nOriginal input amount: " + amountText +
                                     "\nPassword: " + passwordText);
-
-                    // reset input text
-                    resetAllInputText();
 
                     // show spinner
                     showLoadingView(getResources().getString(R.string.app_spinner));
@@ -219,6 +252,10 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
                                         if (response.code() == 201) {
+                                            // reset input text
+                                            sendedId = "";
+                                            resetAllInputText();
+                                            // hide spinner
                                             hideLoadingView();
                                             // // //
                                             new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -229,11 +266,9 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
                                                             dialog.dismiss();
-
-                                                            // TODO: implement here code to back on FragmentPayment.class
-                                                            MainActivity mainActivity = (MainActivity) getActivity();
-                                                            mainActivity.launchPaymentFragment();
-
+                                                            // back to payment fragment
+                                                            activity.navItemIndex = 3;
+                                                            mainActivity.onBackPressed();
                                                             // toast
                                                             showLongToast(activity, "- FragmentPayment / Handoha Vola -");
                                                         }
@@ -241,25 +276,25 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                                     .show();
                                         } else {
                                             hideLoadingView();
-                                            showLongToast(getContext(), "Misy tsy fihetezana");
+                                            showAlertDialog("Fandefasana Vola", R.drawable.ic_error_outline_black, "Misy tsy fihetezana ny \"TransactionSend\"");
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Void> call, Throwable t) {
-                                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                                        showAlertDialog(getResources().getString(R.string.user_login_error_title), R.drawable.ic_error_outline_black, getResources().getString(R.string.app_internet_error_message));
                                         hideLoadingView();
                                     }
                                 });
                             } else {
                                 hideLoadingView();
-                                showLongToast(getContext(), "Misy tsy fihetezana");
+                                showAlertDialog("Fandefasana Vola", R.drawable.ic_error_outline_black, "Misy tsy fihetezana ilay \"checkCredential\"");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                            showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                            showAlertDialog(getResources().getString(R.string.user_login_error_title), R.drawable.ic_error_outline_black, getResources().getString(R.string.app_internet_error_message));
                             hideLoadingView();
                         }
                     });
@@ -288,11 +323,14 @@ public class FragmentPaymentSendMoney extends BaseFragment {
      * Reset inputs text
      */
     private void resetAllInputText() {
+        qrCodeTemplate.setImageDrawable(getResources().getDrawable(R.drawable.ic_qr_code));
         editTextAmount.setText("");
         editTextPassword.setText("");
     }
 
-
+    /**
+     * Start scan QR
+     */
     public void scanQrCode() {
         IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
         intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
@@ -304,11 +342,12 @@ public class FragmentPaymentSendMoney extends BaseFragment {
         intentIntegrator.initiateScan();
     }
 
-
+    /**
+     * Find QR result
+     */
     public void onQrFindSomething(String response) {
         qrCodeTemplate.setImageDrawable(getResources().getDrawable(R.drawable.ic_valid));
         sendedId = response;
-
     }
 
 

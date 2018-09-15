@@ -216,9 +216,6 @@ public class FragmentPaymentCharge extends BaseFragment {
                                     "\nOriginal input amount: " + amountText +
                                     "\nPhone: " + phoneNumberText);
 
-                    // reset all input text
-                    resetAllInputText();
-
                     // show spinner
                     showLoadingView(getResources().getString(R.string.app_spinner));
 
@@ -258,6 +255,9 @@ public class FragmentPaymentCharge extends BaseFragment {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.code() == 201) {
+                                // reset all input text
+                                resetAllInputText();
+                                // hide spinner
                                 hideLoadingView();
                                 // // //
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))

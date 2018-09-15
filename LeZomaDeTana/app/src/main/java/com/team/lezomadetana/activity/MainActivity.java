@@ -2,9 +2,9 @@ package com.team.lezomadetana.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,13 +25,11 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.BaseFragment;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.fragment.FragmentPayment;
 import com.team.lezomadetana.fragment.FragmentPaymentCharge;
-import com.team.lezomadetana.fragment.FragmentPaymentSendMoney;
 import com.team.lezomadetana.fragment.FragmentSetting;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -57,7 +55,6 @@ public class MainActivity extends BaseActivity {
     private TextView textViewInfo;
     private ImageView imageViewBg;
     private ImageView imageViewProfile;
-    private BaseFragment baseFragment;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -190,16 +187,23 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        showLongToast(_context, "0) requestCode: " + requestCode +
+                "\nresultCode: " + resultCode + "\ndata: " + data);
+
+        // result
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        // verification
         if (result != null) {
             if (result.getContents() == null) {
-                showLongToast(this, "Scan QR Code annulé");
+                showLongToast(_context, "1) result.getContents(): " + result.getContents());
             } else {
-                if (baseFragment != null) {
-                    FragmentPaymentSendMoney sendMoney = (FragmentPaymentSendMoney) baseFragment.getCurrentFragment();
-                    sendMoney.onQrFindSomething(result.getContents());
-                }
+                showLongToast(_context, "2) result.getContents(): " + result.getContents());
+                // save user id
+                SharedPreferences.Editor editor = sharedPrefForPaymentSendMoney.edit();
+                editor.putString(PREFS_KEY_ID_USER_FROM_SCAN, result.getContents());
+                editor.commit();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -411,7 +415,6 @@ public class MainActivity extends BaseActivity {
                 return offer;
             case 2:
                 FragmentPayment payment = new FragmentPayment();
-                baseFragment = (BaseFragment) payment;
                 return payment;
             case 3:
                 FragmentPaymentCharge charge = new FragmentPaymentCharge();
