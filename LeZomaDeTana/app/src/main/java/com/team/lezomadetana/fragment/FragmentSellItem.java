@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -71,14 +73,16 @@ public class FragmentSellItem extends BaseFragment implements
     // ===========================================================
 
     private View rootView;
-    private String itemNameSelected;
-    private String itemIdSelected;
-    private String itemUnitTypeSelected;
+    private BottomNavigationView footerMenu;
     private SwipeRefreshLayout swipeRefreshItem;
     private List<Request> requestList = new ArrayList<Request>();
     private ListView listViewItem;
     private SELLAdapter sellAdapter;
     private List<ProductTemplate> listCategory = new ArrayList<ProductTemplate>();
+
+    private String itemNameSelected;
+    private String itemIdSelected;
+    private String itemUnitTypeSelected;
     private boolean startFragment = false;
 
     // ===========================================================
@@ -114,6 +118,10 @@ public class FragmentSellItem extends BaseFragment implements
                 showPostRequestPopup();
             }
         });
+
+        // footer menu navigation
+        footerMenu = (BottomNavigationView) rootView.findViewById(R.id.menu_footer_navigation);
+        footerMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // refresh
         swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
@@ -1102,6 +1110,29 @@ public class FragmentSellItem extends BaseFragment implements
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
+
+    /**
+     * Display footer menu navigation
+     */
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.navigation_add:
+                    showPostRequestPopup();
+                    return true;
+                case R.id.navigation_previous:
+                    showShortToast(getContext(), "menu previous clicked");
+                    return true;
+                case R.id.navigation_next:
+                    showShortToast(getContext(), "menu next clicked");
+                    return true;
+            }
+            return false;
+        }
+    };
 
     // ===========================================================
     // Inner Classes/Interfaces
