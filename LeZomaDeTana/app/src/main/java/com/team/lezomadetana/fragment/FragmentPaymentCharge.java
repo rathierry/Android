@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +23,6 @@ import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
-import com.team.lezomadetana.model.receive.Transaction;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -206,6 +204,7 @@ public class FragmentPaymentCharge extends BaseFragment {
                 }
                 // call api
                 else {
+                    // clear all error/focus
                     clearAllInputError();
                     clearAllInputFocus();
 
@@ -215,75 +214,79 @@ public class FragmentPaymentCharge extends BaseFragment {
                                     "\nOriginal input amount: " + amountText +
                                     "\nPhone: " + phoneNumberText);
 
-
+                    // reset all input text
                     resetAllInputText();
-                }
 
-                showLoadingView(getResources().getString(R.string.app_spinner));
+                    // show spinner
+                    showLoadingView(getResources().getString(R.string.app_spinner));
 
-                APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
-                BaseActivity activity = (BaseActivity) getActivity();
-                // create basic authentication
-                String auth = activity.BasicAuth();
+                    // create basic authentication
+                    String auth = activity.BasicAuth();
 
-                TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
-                transactionSend.setUserId(activity.getCurrentUser(getContext()).getId());
-                transactionSend.setPhone(phoneNumberText);
-                transactionSend.setAmount(Float.parseFloat(amountText));
+                    // api interface
+                    APIInterface api = APIClient.getClient(activity.ROOT_MDZ_USER_API).create(APIInterface.class);
 
-                TransactionAriaryJeton.Operator operator = null;
+                    // mapping model
+                    TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+                    transactionSend.setUserId(activity.getCurrentUser(getContext()).getId());
+                    transactionSend.setPhone(phoneNumberText);
+                    transactionSend.setAmount(Float.valueOf(amountText));
 
-                if(codeOperatorText == "032"){
-                    operator = TransactionAriaryJeton.Operator.ORANGE;
-                }
-                else  if(codeOperatorText == "033"){
-                    operator = TransactionAriaryJeton.Operator.AIRTEL;
-                }
-                else  if(codeOperatorText == "034"){
-                    operator = TransactionAriaryJeton.Operator.TELMA;
-                }
+                    // model operator
+                    TransactionAriaryJeton.Operator operator = null;
 
-                transactionSend.setOperator(operator);
+                    // check operator code
+                    if (codeOperatorText == "032") {
+                        operator = TransactionAriaryJeton.Operator.ORANGE;
+                    } else if (codeOperatorText == "033") {
+                        operator = TransactionAriaryJeton.Operator.AIRTEL;
+                    } else if (codeOperatorText == "034") {
+                        operator = TransactionAriaryJeton.Operator.TELMA;
+                    }
 
-                transactionSend.setType(TransactionAriaryJeton.Type.DEPOSIT);
-                // send query
-                Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+                    // set value and type
+                    transactionSend.setOperator(operator);
+                    transactionSend.setType(TransactionAriaryJeton.Type.DEPOSIT);
 
-                // request
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response)
-                    {
-                        if(response.code() == 201)
-                        {
+                    // send query
+                    Call<Void> call = api.commitTransactionAriary2Jeton(auth, transactionSend);
 
-                            hideLoadingView();
-                            new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                    .setIcon(android.R.drawable.ic_dialog_info)
-                                    .setTitle("Hameno vola")
-                                    .setMessage("Vita tompoko")
-                                    .setCancelable(false)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            dialog.dismiss();
+                    // request
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.code() == 201) {
+                                hideLoadingView();
+                                // // //
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(android.R.drawable.ic_dialog_info)
+                                        .setTitle("Hameno vola")
+                                        .setMessage("Vita tompoko")
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
 
-                                            MainActivity mainActivity = (MainActivity) getActivity();
-                                            mainActivity.launchPaymentFragment();
+                                                // TODO: implement here code to back on FragmentPayment.class
+                                                MainActivity mainActivity = (MainActivity) getActivity();
+                                                mainActivity.launchPaymentFragment();
 
-                                            showLongToast(getContext(),"TSY TONGA ATO");
-                                        }
-                                    })
-                                    .show();
+                                                // toast
+                                                showLongToast(getContext(), "TSY TONGA ATO");
+                                            }
+                                        })
+                                        .show();
+                            }
+
                         }
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
-                        hideLoadingView();
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                            hideLoadingView();
+                        }
+                    });
+                }
             }
         });
     }

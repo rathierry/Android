@@ -140,6 +140,9 @@
     <string name="fragment_buy_search_request_product_hint">Apetrao ny hafatrao</string>
     <string name="fragment_buy_btn_answer_request_text">Hamaly</string>
     <string name="fragment_buy_btn_get_request_text">Alaina</string>
+    <string name="fragment_buy_footer_menu_add_text">Hanampy</string>
+    <string name="fragment_buy_footer_menu_previous_text">Teo aloha</string>
+    <string name="fragment_buy_footer_menu_next_ext">Manaraka</string>
 
     <!-- screen: fragment-list-offer -->
     <string name="fragment_list_offer_toolbar_title">Lisitra</string>

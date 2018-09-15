@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/color_light_green">
+                android:background="@color/md_blue_grey_50">
 
                 <ImageView
                     android:id="@+id/fragment_payment_icon_charge"
@@ -57,7 +57,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="?listPreferredItemPaddingLeft"
-                    android:src="@drawable/ic_money" />
+                    android:src="@drawable/ic_up" />
 
                 <TextView
                     android:id="@+id/fragment_payment_text_charge"
@@ -69,7 +69,7 @@
                     android:paddingLeft="?listPreferredItemPaddingLeft"
                     android:text="@string/fragment_payment_menu_charge_text"
                     android:textAllCaps="true"
-                    android:textColor="@color/color_white" />
+                    android:textColor="@color/color_black" />
 
             </RelativeLayout>
 
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/color_green">
+                android:background="@color/md_blue_grey_100">
 
                 <ImageView
                     android:id="@+id/fragment_payment_icon_give_money"
@@ -87,7 +87,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="?listPreferredItemPaddingLeft"
-                    android:src="@drawable/ic_money" />
+                    android:src="@drawable/ic_down" />
 
                 <TextView
                     android:id="@+id/fragment_payment_text_give_money"
@@ -99,7 +99,7 @@
                     android:paddingLeft="?listPreferredItemPaddingLeft"
                     android:text="@string/fragment_payment_menu_give_money_text"
                     android:textAllCaps="true"
-                    android:textColor="@color/color_white" />
+                    android:textColor="@color/color_black" />
 
             </RelativeLayout>
 
@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/color_light_green">
+                android:background="@color/md_blue_grey_50">
 
                 <ImageView
                     android:id="@+id/fragment_payment_icon_send_money"
@@ -117,7 +117,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="?listPreferredItemPaddingLeft"
-                    android:src="@drawable/ic_money" />
+                    android:src="@drawable/ic_money_gift" />
 
                 <TextView
                     android:id="@+id/fragment_payment_text_send_money"
@@ -129,7 +129,7 @@
                     android:paddingLeft="?listPreferredItemPaddingLeft"
                     android:text="@string/fragment_payment_menu_send_money_text"
                     android:textAllCaps="true"
-                    android:textColor="@color/color_white" />
+                    android:textColor="@color/color_black" />
 
             </RelativeLayout>
 
@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/color_green">
+                android:background="@color/md_blue_grey_100">
 
                 <ImageView
                     android:id="@+id/fragment_payment_icon_get_money"
@@ -147,7 +147,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="?listPreferredItemPaddingLeft"
-                    android:src="@drawable/ic_money" />
+                    android:src="@drawable/ic_money_gift" />
 
                 <TextView
                     android:id="@+id/fragment_payment_text_get_money"
@@ -159,7 +159,7 @@
                     android:paddingLeft="?listPreferredItemPaddingLeft"
                     android:text="@string/fragment_payment_menu_get_money_text"
                     android:textAllCaps="true"
-                    android:textColor="@color/color_white" />
+                    android:textColor="@color/color_black" />
 
             </RelativeLayout>
 

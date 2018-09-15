@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
@@ -207,6 +205,7 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                 }
                 // call api
                 else {
+                    // clear all error/focus
                     clearAllInputError();
                     clearAllInputFocus();
 
@@ -217,80 +216,80 @@ public class FragmentPaymentGiveMoney extends BaseFragment {
                                     "\nPhone: " + phoneNumberText +
                                     "\nPassword: " + passwordText);
 
-
+                    // reset input text
                     resetAllInputText();
-                }
 
-                BaseActivity baseActivity = (BaseActivity) getActivity();
-                final String auth = baseActivity.BasicAuth();
+                    // show spinner
+                    showLoadingView(getResources().getString(R.string.app_spinner));
 
+                    // basic authentication
+                    final String auth = activity.BasicAuth();
 
-                APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+                    // api interface
+                    APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
 
-                // create basic authentication
+                    // mapping model
+                    TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
+                    transactionSend.setUserId(activity.getCurrentUser(getContext()).getId());
+                    transactionSend.setPhone("phoneNumberText");
+                    transactionSend.setAmount(Float.valueOf(amountText));
 
+                    // model operator
+                    TransactionAriaryJeton.Operator operator = null;
 
-                TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();
-                transactionSend.setUserId(baseActivity.getCurrentUser(getContext()).getId());
-                transactionSend.setPhone("phoneNumberText");
-                transactionSend.setAmount(Float.parseFloat(amountText));
+                    // check operator code
+                    if (codeOperatorText == "032") {
+                        operator = TransactionAriaryJeton.Operator.ORANGE;
+                    } else if (codeOperatorText == "033") {
+                        operator = TransactionAriaryJeton.Operator.AIRTEL;
+                    } else if (codeOperatorText == "034") {
+                        operator = TransactionAriaryJeton.Operator.TELMA;
+                    }
 
+                    // set value and type
+                    transactionSend.setOperator(operator);
+                    transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
 
-                TransactionAriaryJeton.Operator operator = null;
+                    // send query
+                    Call<Void> call = api.commitTransactionAriary2Jeton(auth, transactionSend);
 
-                if(codeOperatorText == "032"){
-                    operator = TransactionAriaryJeton.Operator.ORANGE;
-                }
-                else  if(codeOperatorText == "033"){
-                    operator = TransactionAriaryJeton.Operator.AIRTEL;
-                }
-                else  if(codeOperatorText == "034"){
-                    operator = TransactionAriaryJeton.Operator.TELMA;
-                }
-                transactionSend.setOperator(operator);
+                    // request
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.code() == 201) {
+                                hideLoadingView();
+                                // // //
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(android.R.drawable.ic_dialog_info)
+                                        .setTitle("Fanomezana")
+                                        .setMessage("Vita tompoko")
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
 
-                transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
-                // send query
-                Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+                                                // TODO: implement here code to back on FragmentPayment.class
+                                                MainActivity mainActivity = (MainActivity) getActivity();
+                                                mainActivity.launchPaymentFragment();
 
-                // request
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response)
-                    {
-                        if(response.code() == 201)
-                        {
-
-                            hideLoadingView();
-                            new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                    .setIcon(android.R.drawable.ic_dialog_info)
-                                    .setTitle("Fanomezana")
-                                    .setMessage("Vita tompoko")
-                                    .setCancelable(false)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            dialog.dismiss();
-
-                                            MainActivity mainActivity = (MainActivity) getActivity();
-                                            mainActivity.launchPaymentFragment();
-
-                                            showLongToast(getContext(),"TSY TONGA ATO");
-                                        }
-                                    })
-                                    .show();
-                        }else{
-                            hideLoadingView();
-                            showLongToast(getContext(),"Misy tsy fihetezana");
+                                                showLongToast(getContext(), "TSY TONGA ATO");
+                                            }
+                                        })
+                                        .show();
+                            } else {
+                                hideLoadingView();
+                                showLongToast(getContext(), "Misy tsy fihetezana");
+                            }
                         }
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        hideLoadingView();
-                        showLongToast(getContext(),"Misy tsy fihetezana");
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            hideLoadingView();
+                            showLongToast(getContext(), "Misy tsy fihetezana");
+                        }
+                    });
+                }
             }
         });
     }

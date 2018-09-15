@@ -56,9 +56,9 @@ public class FragmentPaymentSendMoney extends BaseFragment {
 
     private String amountText;
     private String passwordText;
-    private String sendedId;
+    private String sendedId = "";
 
-    APIInterface api;
+    private APIInterface api;
 
     // ===========================================================
     // Constructors
@@ -157,10 +157,11 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                 // set values
                 amountText = editTextAmount.getText().toString().replaceAll(",", "");
                 passwordText = editTextPassword.getText().toString();
-                // id
-                if (sendedId.isEmpty() || TextUtils.isEmpty(sendedId)) {
-                    showLongToast(getContext(), "Tsy misy andefasana: " + sendedId);
 
+                // id
+                showLongToast(getContext(), "sendedId: " + sendedId);
+                if (sendedId.isEmpty() || TextUtils.isEmpty(sendedId) || sendedId == null) {
+                    showLongToast(getContext(), "Tsy misy andefasana: " + sendedId);
                 }
                 // amount
                 else if (amountText.isEmpty() || TextUtils.isEmpty(amountText)) {
@@ -174,6 +175,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                 }
                 // call api
                 else {
+                    // clear error/focus
                     clearAllInputError();
                     clearAllInputFocus();
 
@@ -183,88 +185,82 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                     "\nOriginal input amount: " + amountText +
                                     "\nPassword: " + passwordText);
 
+                    // reset input text
                     resetAllInputText();
-                }
-                // show spinner
-                showLoadingView(getResources().getString(R.string.app_spinner));
 
-                BaseActivity baseActivity = (BaseActivity) getActivity();
+                    // show spinner
+                    showLoadingView(getResources().getString(R.string.app_spinner));
 
-                final UserCredentialResponse user = baseActivity.getCurrentUser(getContext());
+                    // user credential
+                    final UserCredentialResponse user = activity.getCurrentUser(getContext());
 
-                // user credential
-                UserCheckCredential userResponse = new UserCheckCredential(user.getUsername(), passwordText);
+                    // user response credential
+                    UserCheckCredential userResponse = new UserCheckCredential(user.getUsername(), passwordText);
 
+                    // create basic authentication
+                    final String auth = activity.BasicAuth();
 
-                // create basic authentication
-                final String auth = baseActivity.BasicAuth();
+                    // send query
+                    Call<UserCredentialResponse> call = api.checkCredential(auth, userResponse);
 
-                // send query
-                Call<UserCredentialResponse> call = api.checkCredential(auth, userResponse);
+                    // request
+                    call.enqueue(new Callback<UserCredentialResponse>() {
+                        @Override
+                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
+                            if (response.raw().code() == 200) {
+                                // mapping model
+                                TransactionSend transaction = new TransactionSend(user.getId(), sendedId, Float.parseFloat(amountText), "", TransactionSend.Status.PENDING);
 
-                // request
-                call.enqueue(new Callback<UserCredentialResponse>() {
-                    @Override
-                    public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
-                        if (response.raw().code() == 200) {
-                            TransactionSend transaction = new TransactionSend(user.getId(), sendedId, Float.parseFloat(amountText), "", TransactionSend.Status.PENDING);
-                            // send query
-                            Call<Void> call2 = api.commitTransaction(auth, transaction);
+                                // send query
+                                Call<Void> call2 = api.commitTransaction(auth, transaction);
+                                call2.enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        if (response.code() == 201) {
+                                            hideLoadingView();
+                                            // // //
+                                            new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                                    .setIcon(android.R.drawable.ic_dialog_info)
+                                                    .setTitle("Qr Code")
+                                                    .setMessage("Vita tompoko")
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                                            dialog.dismiss();
 
-                            // request
-                            call2.enqueue(new Callback<Void>() {
-                                @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) {
-                                    if (response.code() == 201) {
-                                        hideLoadingView();
-                                        new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                                .setIcon(android.R.drawable.ic_dialog_info)
-                                                .setTitle("Qr Code")
-                                                .setMessage("Vita tompoko")
-                                                .setCancelable(false)
-                                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                                        dialog.dismiss();
+                                                            // TODO: implement here code to back on FragmentPayment.class
+                                                            MainActivity mainActivity = (MainActivity) getActivity();
+                                                            mainActivity.launchPaymentFragment();
 
-                                                        MainActivity mainActivity = (MainActivity) getActivity();
-                                                        mainActivity.launchPaymentFragment();
-
-                                                        showLongToast(getContext(),"TSY TONGA ATO");
-                                                    }
-                                                })
-                                                .show();
+                                                            showLongToast(getContext(), "TSY TONGA ATO");
+                                                        }
+                                                    })
+                                                    .show();
+                                        } else {
+                                            hideLoadingView();
+                                            showLongToast(getContext(), "Misy tsy fihetezana");
+                                        }
                                     }
-                                    else {
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
                                         hideLoadingView();
-                                        showLongToast(getContext(),"Misy tsy fihetezana");
                                     }
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<Void> call, Throwable t) {
-                                    showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
-                                    hideLoadingView();
-                                }
-                            });
-
+                                });
+                            } else {
+                                hideLoadingView();
+                                showLongToast(getContext(), "Misy tsy fihetezana");
+                            }
                         }
-                        else{
+
+                        @Override
+                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                            showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
                             hideLoadingView();
-                            showLongToast(getContext(),"Misy tsy fihetezana");
-
                         }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                        showAlertDialog(getResources().getString(R.string.user_login_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
-                        hideLoadingView();
-                    }
-                });
-
-
+                    });
+                }
             }
         });
     }

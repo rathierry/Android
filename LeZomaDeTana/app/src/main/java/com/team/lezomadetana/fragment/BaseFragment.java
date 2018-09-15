@@ -178,7 +178,7 @@ public class BaseFragment extends Fragment {
     /**
      * Get payment fragment
      */
-    public BaseFragment getCurrentFragment(){
+    public BaseFragment getCurrentFragment() {
         return activeFragment;
     }
 

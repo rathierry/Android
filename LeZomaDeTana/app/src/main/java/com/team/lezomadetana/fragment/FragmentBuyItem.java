@@ -4,6 +4,9 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +18,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +38,7 @@ import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.BUYAdapter;
 import com.team.lezomadetana.api.APIClient;
 import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.helper.BottomNavigationBehavior;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
@@ -117,6 +120,14 @@ public class FragmentBuyItem extends BaseFragment implements
             }
         });
 
+        // footer menu navigation
+        BottomNavigationView footerMenu = (BottomNavigationView) rootView.findViewById(R.id.menu_footer_navigation);
+        footerMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        // attaching bottom sheet behaviour - hide / show on scroll
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) footerMenu.getLayoutParams();
+        layoutParams.setBehavior(new BottomNavigationBehavior());
+
         // refresh
         swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
         swipeRefreshItem.setColorSchemeResources(android.R.color.holo_red_light,
@@ -182,6 +193,7 @@ public class FragmentBuyItem extends BaseFragment implements
             if (!startFragment) {
                 swipeRefreshItem.setRefreshing(false);
                 showLoadingView(getResources().getString(R.string.app_spinner));
+                // TODO implement placeholder animation here
                 startFragment = true;
             } else {
                 swipeRefreshItem.setRefreshing(true);
@@ -1092,6 +1104,29 @@ public class FragmentBuyItem extends BaseFragment implements
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
+
+    /**
+     * Display footer menu navigation
+     */
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.navigation_add:
+                    showPostRequestPopup();
+                    return true;
+                case R.id.navigation_previous:
+                    showShortToast(getContext(), "menu previous clicked");
+                    return true;
+                case R.id.navigation_next:
+                    showShortToast(getContext(), "menu next clicked");
+                    return true;
+            }
+            return false;
+        }
+    };
 
     // ===========================================================
     // Inner Classes/Interfaces
