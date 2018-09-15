@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 
@@ -257,6 +258,22 @@ public class BaseFragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         };
+    }
+
+    /**
+     * Enable Shimmer Animation
+     */
+    public void showShimmerAnimation(ShimmerFrameLayout shimmerFrameLayout) {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmerAnimation();
+    }
+
+    /**
+     * Disable Shimmer Animation
+     */
+    public void hideShimmerAnimation(ShimmerFrameLayout shimmerFrameLayout) {
+        shimmerFrameLayout.stopShimmerAnimation();
+        shimmerFrameLayout.setVisibility(View.INVISIBLE);
     }
 
     // ===========================================================
