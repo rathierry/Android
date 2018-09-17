@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.Client;
@@ -24,9 +25,6 @@ import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,7 +33,7 @@ import retrofit2.Response;
  * Created by team on 28/08/2018.
  **/
 
-public class UserLoginActivity extends BaseActivity {
+public class UserLoginActivity extends BaseActivity implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -45,15 +43,12 @@ public class UserLoginActivity extends BaseActivity {
     // Fields
     // ===========================================================
 
-    //@BindString(R.string.login_error) String loginErrorMessage;
-    @BindView(R.id.user_login_relativeLayout)
-    RelativeLayout _layout;
-    @BindView(R.id.user_login_input_phone)
-    EditText _phoneText;
-    @BindView(R.id.user_login_input_password)
-    EditText _passwordText;
-    @BindView(R.id.user_login_btn_validate)
-    Button _btnLogIn;
+    private RelativeLayout _layout;
+    private EditText _phoneText;
+    private EditText _passwordText;
+    private TextView _forgotPaswwordText;
+    private Button _btnLogIn;
+    private Button _btnRegister;
 
     // ===========================================================
     // Constructors
@@ -75,14 +70,21 @@ public class UserLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
 
-        // initialize
-        ButterKnife.bind(this);
+        // ini view
+        _layout = (RelativeLayout) findViewById(R.id.user_login_relativeLayout);
+        _phoneText = (EditText) findViewById(R.id.user_login_input_phone);
+        _passwordText = (EditText) findViewById(R.id.user_login_input_password);
+        _forgotPaswwordText = (TextView) findViewById(R.id.user_login_textView_forgot_password);
+        _btnLogIn = (Button) findViewById(R.id.user_login_btn_validate);
+        _btnRegister = (Button) findViewById(R.id.user_login_btn_register);
+
+        // event listener
+        _forgotPaswwordText.setOnClickListener(this);
+        _btnLogIn.setOnClickListener(this);
+        _btnRegister.setOnClickListener(this);
+
         // getSimCardInfo();
         phoneNumberTextChangedListener();
-
-
-        //ExampleUseOfAPI.getSearchRequest();
-
     }
 
     /**
@@ -105,11 +107,37 @@ public class UserLoginActivity extends BaseActivity {
         moveTaskToBack(false);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.user_login_textView_forgot_password:
+                showUserForgotPasswordActivity();
+                break;
+            case R.id.user_login_btn_validate:
+                submit();
+                break;
+            case R.id.user_login_btn_register:
+                showUserRegisterActivity();
+                break;
+        }
+    }
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
     /**
      * Event onClick on validate button
      */
-    @OnClick(R.id.user_login_btn_validate)
-    void submit() {
+    private void submit() {
         // validate form
         if (!validate()) {
             onLoginFailed();
@@ -179,20 +207,9 @@ public class UserLoginActivity extends BaseActivity {
     }
 
     /**
-     * Event onClick on register button
-     */
-    @OnClick(R.id.user_login_btn_register)
-    void showUserRegisterActivity() {
-        // start the SignUp activity
-        startActivity(new Intent(getApplicationContext(), UserRegisterActivity.class));
-        overridePendingTransitionEnter();
-    }
-
-    /**
      * Event onClick on forgot password textView
      */
-    @OnClick(R.id.user_login_textView_forgot_password)
-    void showUserForgotPasswordActivity() {
+    private void showUserForgotPasswordActivity() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(UserLoginActivity.this);
         final View mView = layoutInflaterAndroid.inflate(R.layout.user_login_forgot_password, null);
@@ -292,17 +309,14 @@ public class UserLoginActivity extends BaseActivity {
         dialog.show();
     }
 
-    // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
-    // ===========================================================
-
-    // ===========================================================
-    // Private Methods
-    // ===========================================================
+    /**
+     * Event onClick on register button
+     */
+    private void showUserRegisterActivity() {
+        // start the SignUp activity
+        startActivity(new Intent(getApplicationContext(), UserRegisterActivity.class));
+        overridePendingTransitionEnter();
+    }
 
     /**
      * Change listener on phone number's text

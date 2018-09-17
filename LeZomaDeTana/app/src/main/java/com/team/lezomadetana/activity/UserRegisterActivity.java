@@ -42,9 +42,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,7 +51,7 @@ import retrofit2.Response;
  * Created by team on 28/08/2018.
  **/
 
-public class UserRegisterActivity extends BaseActivity {
+public class UserRegisterActivity extends BaseActivity implements View.OnClickListener {
 
     // ===========================================================
     // Constants
@@ -64,27 +61,16 @@ public class UserRegisterActivity extends BaseActivity {
     // Fields
     // ===========================================================
 
-    //@BindString(R.string.register_error) String registerErrorMessage;
-    @BindView(R.id.user_register_relativeLayout)
-    RelativeLayout _layout;
-    @BindView(R.id.user_register_imageView_logo)
-    UrlImageView _avatarImage;
-    @BindView(R.id.user_register_input_name)
-    EditText _nameText;
-    @BindView(R.id.user_register_input_firstname)
-    EditText _firstNameText;
-    @BindView(R.id.user_register_input_phone)
-    EditText _phoneText;
-    @BindView(R.id.user_register_material_design_spinner_region)
-    MaterialBetterSpinner _regionSpinner;
-    @BindView(R.id.user_regitser_input_address)
-    EditText _addressText;
-    @BindView(R.id.user_register_input_password)
-    EditText _passwordText;
-    @BindView(R.id.user_register_input_re_password)
-    EditText _rePasswordText;
-    @BindView(R.id.user_register_btn_validate)
-    Button _btnSignUp;
+    private RelativeLayout _layout;
+    private UrlImageView _avatarImage;
+    private EditText _nameText;
+    private EditText _firstNameText;
+    private EditText _phoneText;
+    private MaterialBetterSpinner _regionSpinner;
+    private EditText _addressText;
+    private EditText _passwordText;
+    private EditText _rePasswordText;
+    private Button _btnSignUp;
 
     // input values
     private String name;
@@ -116,14 +102,29 @@ public class UserRegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
 
-        // initialize
-        ButterKnife.bind(this);
+        // init view
+        _layout = (RelativeLayout) findViewById(R.id.user_register_relativeLayout);
+        _avatarImage = (UrlImageView) findViewById(R.id.user_register_imageView_logo);
+        _nameText = (EditText) findViewById(R.id.user_register_input_name);
+        _firstNameText = (EditText) findViewById(R.id.user_register_input_firstname);
+        _phoneText = (EditText) findViewById(R.id.user_register_input_phone);
+        _regionSpinner = (MaterialBetterSpinner) findViewById(R.id.user_register_material_design_spinner_region);
+        _addressText = (EditText) findViewById(R.id.user_regitser_input_address);
+        _passwordText = (EditText) findViewById(R.id.user_register_input_password);
+        _rePasswordText = (EditText) findViewById(R.id.user_register_input_re_password);
+        _btnSignUp = (Button) findViewById(R.id.user_register_btn_validate);
+
+        // init function
         phoneNumberTextChangedListener();
         initSpinnerForRegion();
         passwordOnFocusChange();
 
         // set image avatar to rounded
         _avatarImage.useRoundedBitmap = true;
+
+        // event listener
+        _avatarImage.setOnClickListener(this);
+        _btnSignUp.setOnClickListener(this);
 
         // restoring storage image path from saved instance state
         // otherwise the path will be null on device rotation
@@ -154,6 +155,18 @@ public class UserRegisterActivity extends BaseActivity {
         super.onBackPressed();
         finish();
         overridePendingTransitionExit();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.user_register_imageView_logo:
+                getUserAvatar();
+                break;
+            case R.id.user_register_btn_validate:
+                submit();
+                break;
+        }
     }
 
     // store the file url as it will be null after returning from camera app
@@ -221,11 +234,22 @@ public class UserRegisterActivity extends BaseActivity {
         }
     }
 
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
+
     /**
      * Event onClick on avatar image
      */
-    @OnClick(R.id.user_register_imageView_logo)
-    void getUserAvatar() {
+    private void getUserAvatar() {
         new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
                 .setTitle(getResources().getString(R.string.user_register_camera_title))
                 .setIcon(ContextCompat.getDrawable(UserRegisterActivity.this, R.drawable.ic_photo_camera_black))
@@ -245,117 +269,6 @@ public class UserRegisterActivity extends BaseActivity {
     }
 
     /**
-     * Event onClick on validate button
-     */
-    @OnClick(R.id.user_register_btn_validate)
-    void submit() {
-        // validate form
-        if (!validate()) {
-            onRegisterFailed();
-            return;
-        }
-
-        // disable login button
-        _btnSignUp.setEnabled(false);
-
-        // show spinner
-        showLoadingView(getResources().getString(R.string.app_spinner));
-
-        // set user values
-        UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
-
-        // set retrofit api
-        Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
-
-        // create basic authentication
-        String auth = BasicAuth();
-
-        // send query
-        Call<ResponseBody> call = api.userRegisterJSON(auth, user);
-
-        // request
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 201) {
-                    // user credential
-                    UserCheckCredential user = new UserCheckCredential(phone, password);
-
-                    // set retrofit api
-                    Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
-
-                    // create basic authentication
-                    String auth = BasicAuth();
-
-                    // send query
-                    Call<UserCredentialResponse> call2 = api.checkCredential(auth, user);
-
-                    // request
-                    call2.enqueue(new Callback<UserCredentialResponse>() {
-                        @Override
-                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
-                            if (response.raw().code() != 200) {
-                                _btnSignUp.setEnabled(true);
-                                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_licence));
-                            } else {
-                                if (response.body().getSuccess()) {
-                                    // save user in cache
-                                    saveCurrentUser(UserRegisterActivity.this, response.body());
-
-                                    // push user phone number
-                                    Intent intent = new Intent(UserRegisterActivity.this, MainActivity.class);
-                                    intent.putExtra("PHONE", phone);
-
-                                    // on complete call either onRegisterSuccess or onRegisterFailed
-                                    onRegisterSuccess();
-
-                                    // start activity
-                                    startActivity(intent);
-                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                    finish();
-                                } else {
-                                    _btnSignUp.setEnabled(true);
-                                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_request));
-                                }
-                            }
-                            hideLoadingView();
-                        }
-
-                        @Override
-                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                            _btnSignUp.setEnabled(true);
-                            showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
-                            hideLoadingView();
-                        }
-                    });
-                } else {
-                    _btnSignUp.setEnabled(true);
-                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                _btnSignUp.setEnabled(true);
-                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
-                hideLoadingView();
-            }
-        });
-    }
-
-    // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
-    // ===========================================================
-
-    // ===========================================================
-    // Private Methods
-    // ===========================================================
-
-    /**
      * Camera type : camera
      */
     private void imageTypeCamera() {
@@ -372,7 +285,7 @@ public class UserRegisterActivity extends BaseActivity {
     }
 
     /**
-     * Camera type : galerie
+     * Camera type : galery
      */
     private void imageTypeFile() {
         Intent intent = new Intent();
@@ -483,18 +396,18 @@ public class UserRegisterActivity extends BaseActivity {
      */
     private void showPermissionsAlert() {
         new AlertDialog.Builder(new ContextThemeWrapper(UserRegisterActivity.this, R.style.AlertDialogCustom))
-            .setTitle(getResources().getString(R.string.user_register_camera_title))
-            .setMessage(getResources().getString(R.string.user_register_camera_error_to_permission))
-            .setPositiveButton(getResources().getString(R.string.user_register_camera_btn_ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    CameraUtils.openSettings(UserRegisterActivity.this);
-                }
-            })
-            .setNegativeButton(getResources().getString(R.string.user_register_camera_btn_cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+                .setTitle(getResources().getString(R.string.user_register_camera_title))
+                .setMessage(getResources().getString(R.string.user_register_camera_error_to_permission))
+                .setPositiveButton(getResources().getString(R.string.user_register_camera_btn_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        CameraUtils.openSettings(UserRegisterActivity.this);
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.user_register_camera_btn_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                }
-            }).show();
+                    }
+                }).show();
     }
 
     /**
@@ -600,6 +513,104 @@ public class UserRegisterActivity extends BaseActivity {
                         }
                     }
                 }
+            }
+        });
+    }
+
+    /**
+     * Event onClick on validate button
+     */
+    private void submit() {
+        // validate form
+        if (!validate()) {
+            onRegisterFailed();
+            return;
+        }
+
+        // disable login button
+        _btnSignUp.setEnabled(false);
+
+        // show spinner
+        showLoadingView(getResources().getString(R.string.app_spinner));
+
+        // set user values
+        UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
+
+        // set retrofit api
+        Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // send query
+        Call<ResponseBody> call = api.userRegisterJSON(auth, user);
+
+        // request
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 201) {
+                    // user credential
+                    UserCheckCredential user = new UserCheckCredential(phone, password);
+
+                    // set retrofit api
+                    Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
+
+                    // create basic authentication
+                    String auth = BasicAuth();
+
+                    // send query
+                    Call<UserCredentialResponse> call2 = api.checkCredential(auth, user);
+
+                    // request
+                    call2.enqueue(new Callback<UserCredentialResponse>() {
+                        @Override
+                        public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
+                            if (response.raw().code() != 200) {
+                                _btnSignUp.setEnabled(true);
+                                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_licence));
+                            } else {
+                                if (response.body().getSuccess()) {
+                                    // save user in cache
+                                    saveCurrentUser(UserRegisterActivity.this, response.body());
+
+                                    // push user phone number
+                                    Intent intent = new Intent(UserRegisterActivity.this, MainActivity.class);
+                                    intent.putExtra("PHONE", phone);
+
+                                    // on complete call either onRegisterSuccess or onRegisterFailed
+                                    onRegisterSuccess();
+
+                                    // start activity
+                                    startActivity(intent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
+                                } else {
+                                    _btnSignUp.setEnabled(true);
+                                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.user_register_error_request));
+                                }
+                            }
+                            hideLoadingView();
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
+                            _btnSignUp.setEnabled(true);
+                            showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                            hideLoadingView();
+                        }
+                    });
+                } else {
+                    _btnSignUp.setEnabled(true);
+                    showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, "You need license for this app, contact your provider");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                _btnSignUp.setEnabled(true);
+                showAlertDialog(getResources().getString(R.string.user_register_error_title), android.R.drawable.ic_dialog_alert, getResources().getString(R.string.app_internet_error_message));
+                hideLoadingView();
             }
         });
     }

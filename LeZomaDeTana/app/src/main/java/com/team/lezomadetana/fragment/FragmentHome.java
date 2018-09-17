@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,10 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.adapter.TabsPagerAdapter;
+
+/**
+ * Created by RaThierry on 01/09/2018.
+ **/
 
 public class FragmentHome extends BaseFragment {
 
@@ -63,9 +66,7 @@ public class FragmentHome extends BaseFragment {
 
         // toolBar title
         baseActivity.getSupportActionBar().setTitle(getResources().getString(R.string.fragment_buy_toolBar_title));
-
-        // toolBar back icon
-        // ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //baseActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // init view
         appBarLayout = (AppBarLayout) rootView.findViewById(R.id.appbar);

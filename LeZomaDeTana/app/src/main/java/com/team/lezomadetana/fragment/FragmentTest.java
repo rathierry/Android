@@ -3,6 +3,7 @@ package com.team.lezomadetana.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,10 +13,10 @@ import android.view.ViewGroup;
 import com.team.lezomadetana.R;
 
 /**
- * Created by RaThierry on 28/08/2018.
+ * Created by RaThierry on 18/09/2018.
  **/
 
-public class FragmentSetting extends BaseFragment {
+public class FragmentTest extends BaseFragment {
 
     // ===========================================================
     // Constants
@@ -46,7 +47,7 @@ public class FragmentSetting extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+        return inflater.inflate(R.layout.fragment_test, container, false);
     }
 
     @Override
