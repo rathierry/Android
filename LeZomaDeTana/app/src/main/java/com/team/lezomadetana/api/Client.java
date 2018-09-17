@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by RaThierry on 29/08/2018.
  **/
 
-public class APIClient {
+public class Client {
 
     // ===========================================================
     // Constants

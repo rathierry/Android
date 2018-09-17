@@ -1,30 +1,23 @@
 package com.team.lezomadetana.api;
 
-import android.os.Debug;
 import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
-import com.team.lezomadetana.model.receive.Transaction;
-import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.team.lezomadetana.model.send.TransactionSend;
 
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +28,7 @@ public class ExampleUseOfAPI
     // FETCH
     public static void getAllRequest(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -80,7 +73,7 @@ public class ExampleUseOfAPI
 
     public static void getSearchRequest(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -128,7 +121,7 @@ public class ExampleUseOfAPI
     // TEMPLATE
     public static void getAllProductTemplate(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -177,7 +170,7 @@ public class ExampleUseOfAPI
     // POST item
     public static void sendRequest(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -220,7 +213,7 @@ public class ExampleUseOfAPI
     // ecran Handefa vola
     public static void sendTransaction(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -265,7 +258,7 @@ public class ExampleUseOfAPI
     // ecran Hampiditra vola
     public static void sendTransactionAr2Jt(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -309,7 +302,7 @@ public class ExampleUseOfAPI
     // Hamoaka vola
     public static void sendTransactionJt2Ar(){
 
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();

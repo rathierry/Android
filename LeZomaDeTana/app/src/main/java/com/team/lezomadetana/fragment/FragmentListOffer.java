@@ -32,8 +32,8 @@ import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.adapter.ListOfferAdapter;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.Offer;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
@@ -294,7 +294,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
      */
     private void fetchAllOfferData() {
         // set retrofit api
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -455,7 +455,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
                         String auth = BasicAuth();

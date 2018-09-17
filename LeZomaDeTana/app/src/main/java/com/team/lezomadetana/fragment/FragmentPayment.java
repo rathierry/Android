@@ -18,8 +18,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.receive.Wallet;
 
@@ -134,7 +134,7 @@ public class FragmentPayment extends BaseFragment {
 
     //  check user madCoin
     public void refreshMadCoin() {
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();

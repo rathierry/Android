@@ -21,8 +21,8 @@ import android.widget.EditText;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -223,7 +223,7 @@ public class FragmentPaymentCharge extends BaseFragment {
                     String auth = activity.BasicAuth();
 
                     // api interface
-                    APIInterface api = APIClient.getClient(activity.ROOT_MDZ_USER_API).create(APIInterface.class);
+                    Service api = Client.getClient(activity.ROOT_MDZ_USER_API).create(Service.class);
 
                     // mapping model
                     TransactionAriaryJeton transactionSend = new TransactionAriaryJeton();

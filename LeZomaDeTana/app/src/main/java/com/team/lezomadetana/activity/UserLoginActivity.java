@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +19,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
-import com.team.lezomadetana.api.ExampleUseOfAPI;
-import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 
@@ -133,7 +130,7 @@ public class UserLoginActivity extends BaseActivity {
         UserCheckCredential user = new UserCheckCredential(phone, password);
 
         // set retrofit api
-        APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();

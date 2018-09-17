@@ -25,7 +25,7 @@ import retrofit2.http.QueryMap;
  * Created by team on 29/08/2018.
  **/
 
-public interface APIInterface {
+public interface Service {
 
     // ===========================================================
     // Constants

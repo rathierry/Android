@@ -41,8 +41,8 @@ import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.SELLAdapter;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.helper.BottomNavigationBehavior;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
@@ -319,7 +319,7 @@ public class FragmentSellItem extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // set retrofit api
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BaseActivity.BasicAuth();
@@ -444,7 +444,7 @@ public class FragmentSellItem extends BaseFragment implements
      */
     private void fetchAllCategory() {
         // set retrofit api
-        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -659,7 +659,7 @@ public class FragmentSellItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
                         String auth = BasicAuth();
@@ -815,7 +815,7 @@ public class FragmentSellItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
                         String auth = BasicAuth();
@@ -997,7 +997,7 @@ public class FragmentSellItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        APIInterface api = APIClient.getClient(BaseActivity.ROOT_MDZ_API).create(APIInterface.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
                         String auth = BasicAuth();

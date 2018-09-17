@@ -23,8 +23,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.TransactionSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
@@ -63,7 +63,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
     private String passwordText;
     private String sendedId = "";
 
-    private APIInterface api;
+    private Service api;
 
     // ===========================================================
     // Constructors
@@ -116,7 +116,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
         initializeListenerAndEvent();
 
         // set retrofit api
-        api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
+        api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
 
         return rootView;
     }

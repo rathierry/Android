@@ -29,8 +29,8 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.api.APIClient;
-import com.team.lezomadetana.api.APIInterface;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
@@ -265,7 +265,7 @@ public class UserRegisterActivity extends BaseActivity {
         UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
 
         // set retrofit api
-        APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
+        Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
@@ -282,7 +282,7 @@ public class UserRegisterActivity extends BaseActivity {
                     UserCheckCredential user = new UserCheckCredential(phone, password);
 
                     // set retrofit api
-                    APIInterface api = APIClient.getClient(ROOT_MDZ_USER_API).create(APIInterface.class);
+                    Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
 
                     // create basic authentication
                     String auth = BasicAuth();
