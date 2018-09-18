@@ -85,7 +85,7 @@ public class UserLoginActivity extends BaseActivity implements View.OnClickListe
         _btnRegister.setOnClickListener(this);
 
         // getSimCardInfo();
-        ExampleUseOfAPI.getAllRequestWithPage();
+        //ExampleUseOfAPI.getAllRequestWithPage();
         phoneNumberTextChangedListener();
     }
 

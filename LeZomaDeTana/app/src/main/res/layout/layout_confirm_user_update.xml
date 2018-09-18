@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="@color/color_white"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingRight="?listPreferredItemPaddingRight">
+
+    <!-- Info -->
+
+    <TextView
+
+        style="@style/ediTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:text="Tena anova marina ve?"
+        android:textSize="20sp"
+        android:typeface="monospace" />
+
+
+    <!-- product -->
+    <android.support.design.widget.TextInputLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center">
+
+        <EditText
+            android:id="@+id/confirm_user_update_password"
+            style="@style/ediTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="teny miafina ankehitriny"
+            android:textSize="20sp"
+            android:inputType="textPassword"
+            android:typeface="monospace" />
+    </android.support.design.widget.TextInputLayout>
+
+
+
+</LinearLayout>

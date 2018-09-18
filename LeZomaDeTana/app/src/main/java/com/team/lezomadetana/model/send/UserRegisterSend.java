@@ -19,6 +19,7 @@ public class UserRegisterSend {
     private String password;
     private String region;
 
+
     // ===========================================================
     // Constructors
     // ===========================================================

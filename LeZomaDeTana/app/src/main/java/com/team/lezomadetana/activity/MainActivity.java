@@ -12,6 +12,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,17 +23,27 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.fragment.FragmentChat;
 import com.team.lezomadetana.fragment.FragmentHome;
 import com.team.lezomadetana.fragment.FragmentListOffer;
 import com.team.lezomadetana.fragment.FragmentPayment;
 import com.team.lezomadetana.fragment.FragmentPaymentCharge;
 import com.team.lezomadetana.fragment.FragmentSetting;
+import com.team.lezomadetana.model.receive.User;
+import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.utils.CircleTransform;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by RaThierry on 28/08/2018.
@@ -112,12 +124,59 @@ public class MainActivity extends BaseActivity {
         // initializing navigation menu
         initNavigationMenu();
 
+        // show user image
+        showAvatarImage();
+
         // instance'state
         if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_BUSINESS;
             loadDefaultFragment();
         }
+
+
+    }
+
+
+    private void showAvatarImage(){
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+
+
+
+        // send query
+
+        final UserCredentialResponse cUser = getCurrentUser(this);
+        Call<JsonObject> call = api.getUserById(auth,cUser.getId());
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
+            {
+                if(response.code() == 200)
+                {
+                    JsonObject jUser = response.body().getAsJsonObject();
+                    User user = new Gson().fromJson(jUser,User.class);
+                    Log.d("pouaaa",user.toString());
+
+
+                    if(user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())){
+                        applyProfilePicture(imageViewProfile,user.getProfileImageUrl());
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

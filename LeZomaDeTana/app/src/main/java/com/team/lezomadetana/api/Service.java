@@ -2,6 +2,9 @@ package com.team.lezomadetana.api;
 
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.model.receive.Message;
+
+import com.team.lezomadetana.model.receive.Transaction;
+import com.team.lezomadetana.model.receive.User;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
@@ -86,6 +89,9 @@ public interface Service {
     // user: register
     @POST("rest/users/")
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
+
+    @POST("rest/users/")
+    Call<JsonObject> userUpdateJSON(@Header("Authorization") String auth, @Body User user);
 
     // list request
     @GET("rest/requests")

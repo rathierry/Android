@@ -19,10 +19,14 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -32,6 +36,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
+import com.team.lezomadetana.utils.CircleTransform;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -124,6 +129,8 @@ public class BaseActivity extends AppCompatActivity {
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
+
+
 
     @Override
     public void setContentView(int layoutResID) {
@@ -420,6 +427,28 @@ public class BaseActivity extends AppCompatActivity {
 
         return bitmap;
     }
+
+    protected void applyProfilePicture(ImageView imgProfile, String url) {
+        // verification
+        if (!TextUtils.isEmpty(url)) {
+            Glide.with(this)
+                    .load(url)
+                    .thumbnail(0.5f)
+                    .crossFade()
+                    .transform(new CircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.mipmap.ic_launcher_round)
+                    .into(imgProfile);
+            imgProfile.setColorFilter(null);
+
+        } else {
+            imgProfile.setImageResource(R.drawable.bg_circle);
+
+
+        }
+    }
+
+
 
     // ===========================================================
     // Inner Classes/Interfaces
