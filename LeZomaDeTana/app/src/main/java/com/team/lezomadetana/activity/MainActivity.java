@@ -96,6 +96,13 @@ public class MainActivity extends BaseActivity {
         imageViewBg = (ImageView) navView.findViewById(R.id.img_header_bg);
         imageViewProfile = (ImageView) navView.findViewById(R.id.img_profile);
 
+        imageViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,UserUpdateInfoActivity.class));
+            }
+        });
+
         // set toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 

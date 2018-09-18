@@ -21,6 +21,7 @@ public class User {
     private String name;
     private String region;
     private String profileImageUrl;
+    private String password;
 
     // ===========================================================
     // Constructors
@@ -99,6 +100,13 @@ public class User {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     // ===========================================================
     // Methods from SuperClass

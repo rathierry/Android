@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_update_relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_white"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <ScrollView
+        style="@style/scrollbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <com.team.lezomadetana.view.UrlImageView
+                android:id="@+id/user_update_imageView_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/activity_user_login_imageView_layout_height"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/activity_user_login_imageView_layout_marginTop"
+                android:gravity="center_horizontal|center_vertical"
+                android:src="@drawable/ic_user_black" />
+
+            <!-- Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/user_update_input_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_register_input_hint_name"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/color_black"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- First Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_firstname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+
+                <EditText
+                    android:id="@+id/user_update_input_firstname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_register_input_hint_firstName"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/color_black"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Phone Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/user_update_input_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_login_input_hint_phone"
+                    android:inputType="number"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_black"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Region Text Label -->
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/user_update_material_design_spinner_region"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="monospace"
+                android:hint="@string/user_register_input_hint_region"
+                android:text="@string/user_register_input_text_region"
+                android:textColor="@color/color_black"
+                android:textColorHighlight="@color/color_black"
+                android:textColorHint="@color/color_black"
+                android:textSize="20sp"
+                android:visibility="visible"
+                app:met_floatingLabel="highlight" />
+
+            <!-- Address Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/user_update_input_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_register_input_hint_address"
+                    android:inputType="textPostalAddress"
+                    android:textColor="@color/color_black"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <!--  Email Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/user_update_input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Mailaka"
+                    android:inputType="textEmailAddress"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Password Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/color_black">
+
+                <EditText
+                    android:id="@+id/user_update_input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_login_input_hint_password"
+                    android:inputType="textPassword"
+                    android:textColor="@color/color_black"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Password Re-enter Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_update_text_input_layout_re_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/color_black">
+
+                <EditText
+                    android:id="@+id/user_update_input_re_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/user_register_input_hint_re_password"
+                    android:inputType="textPassword"
+                    android:textColor="@color/color_black"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- SignUp Button -->
+            <Button
+                android:id="@+id/user_update_btn_validate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/colorPrimary"
+                android:fontFamily="serif-monospace"
+                android:text="@string/user_register_btn_submit"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/activity_user_login_btn_submit_text_size"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

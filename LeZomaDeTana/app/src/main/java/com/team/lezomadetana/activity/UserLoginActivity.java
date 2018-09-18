@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.Client;
+import com.team.lezomadetana.api.ExampleUseOfAPI;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
@@ -84,6 +85,7 @@ public class UserLoginActivity extends BaseActivity implements View.OnClickListe
         _btnRegister.setOnClickListener(this);
 
         // getSimCardInfo();
+        ExampleUseOfAPI.getAllRequestWithPage();
         phoneNumberTextChangedListener();
     }
 

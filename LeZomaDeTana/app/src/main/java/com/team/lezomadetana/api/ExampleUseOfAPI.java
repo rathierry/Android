@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.model.receive.Page;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.RequestSend;
@@ -68,6 +69,64 @@ public class ExampleUseOfAPI
             }
         });
     }
+
+
+
+    public static void getAllRequestWithPage(){
+
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        Map map = new HashMap<>();
+        //get first page of 10 element
+        //get 10 element
+        map.put("size",10);
+        //first page is always begin by 0
+        map.put("page",0);
+
+        // send query
+        Call<JsonObject> call = api.getAllRequest(auth,map);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
+            {
+                if(response.code() == 200)
+                {
+                    final Page pageInfo;
+                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(),Page.class);
+                    Log.d("REQUESTS Page Info",""+pageInfo);
+
+
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+                    List<Request> requests = null;
+
+                    if(filter.size()>0){
+                        requests = new ArrayList<Request>();
+                        for(int i=0;i<filter.size();i++){
+                            Request request = new Gson().fromJson(filter.get(i),Request.class);
+                            requests.add(request);
+
+                        }
+                        Log.d("REQUESTS",""+requests);
+
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     // SEARCH
 
