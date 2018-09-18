@@ -102,7 +102,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
         }
     }
 
-
     public MessagesAdapter(Context mContext, List<Message> messages, MessageAdapterListener listener) {
         this.mContext = mContext;
         this.messages = messages;

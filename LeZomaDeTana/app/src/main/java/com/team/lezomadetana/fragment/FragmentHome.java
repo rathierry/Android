@@ -84,7 +84,7 @@ public class FragmentHome extends BaseFragment {
             @Override
             public void run() {
                 // set tab
-                viewPagerAdapter.addFragment(new FragmentBuyItem(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
+                viewPagerAdapter.addFragment(new BlankFragment(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
                 viewPagerAdapter.addFragment(new FragmentSellItem(), getResources().getString(R.string.fragment_buy_tab_layout_available_item));
 
                 // set adapter
