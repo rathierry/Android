@@ -40,7 +40,7 @@ dependencies {
     // glide image
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     // recycler view
-    // noinspection GradleCompatible
+    //noinspection GradleCompatible
     implementation 'com.android.support:recyclerview-v7:24.2.1'
     // shimmer (content-placeholder-animation-like-facebook)
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
