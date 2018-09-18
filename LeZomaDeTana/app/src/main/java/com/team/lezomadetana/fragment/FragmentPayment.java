@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -159,9 +160,16 @@ public class FragmentPayment extends BaseFragment {
                         }
 
                         for (int i = 0; i < wallets.size(); i++) {
-                            if (wallets.get(i).getUserId().equals(user.getId())) {
-                                textViewMadCoin.setText(getResources().getString(R.string.fragment_payment_solde_compte_text) + " " + wallets.get(i).getBalance() + " " + getResources().getString(R.string.app_payment_symbole_type_ariary_text));
-                                break;
+                            String idUserWallets = TextUtils.equals(wallets.get(i).getUserId(), "null") ? "null" : wallets.get(i).getUserId();
+                            String idUser = TextUtils.equals(user.getId(), "null") ? "null" : user.getId();
+                            // log all values
+                            showLongToast(getContext(), "idUser: " + idUser + "\n\nidUserWallets: " + idUserWallets);
+                            // compare values
+                            if (idUserWallets != null && idUser != null) {
+                                if (idUserWallets.equals(idUser)) {
+                                    textViewMadCoin.setText(getResources().getString(R.string.fragment_payment_solde_compte_text) + " " + wallets.get(i).getBalance() + " " + getResources().getString(R.string.app_payment_symbole_type_ariary_text));
+                                    break;
+                                }
                             }
                         }
                     }

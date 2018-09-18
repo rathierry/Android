@@ -92,7 +92,7 @@ public class FragmentHome extends BaseFragment {
                 tabLayout.setupWithViewPager(viewPager);
 
                 // equal all tab rows width
-                EqualWidthTabRows();
+                equalTabRowsWidth();
 
                 // turn appBarLayout to visible
                 appBarLayout.setVisibility(View.VISIBLE);
@@ -101,7 +101,7 @@ public class FragmentHome extends BaseFragment {
                 mShimmerViewContainer.stopShimmerAnimation();
                 mShimmerViewContainer.setVisibility(View.INVISIBLE);
             }
-        }, 1000);
+        }, 500);
 
         // return current view
         return rootView;
@@ -154,7 +154,7 @@ public class FragmentHome extends BaseFragment {
     /**
      * To allow equal width for each tab, while (TabLayout.MODE_SCROLLABLE)
      */
-    private void EqualWidthTabRows() {
+    private void equalTabRowsWidth() {
         ViewGroup slidingTabStrip = (ViewGroup) tabLayout.getChildAt(0);
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             View tab = slidingTabStrip.getChildAt(i);
