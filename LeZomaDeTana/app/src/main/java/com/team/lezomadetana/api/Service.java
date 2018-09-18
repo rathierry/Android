@@ -1,7 +1,7 @@
 package com.team.lezomadetana.api;
 
 import com.google.gson.JsonObject;
-import com.team.lezomadetana.model.receive.Transaction;
+import com.team.lezomadetana.model.receive.Message;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
@@ -10,6 +10,7 @@ import com.team.lezomadetana.model.send.TransactionSend;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -120,13 +121,15 @@ public interface Service {
 
     //transaction jeton jeton
     @POST("/rest/transactionRequests")
-    Call<Void> commitTransaction(@Header("Authorization")String auth,@Body TransactionSend transactionSend);
+    Call<Void> commitTransaction(@Header("Authorization") String auth, @Body TransactionSend transactionSend);
 
 
     //transaction ariary jeton
     @POST("/rest/mobileBankingRequests")
-    Call<Void> commitTransactionAriary2Jeton(@Header("Authorization")String auth,@Body TransactionAriaryJeton transactionSend);
+    Call<Void> commitTransactionAriary2Jeton(@Header("Authorization") String auth, @Body TransactionAriaryJeton transactionSend);
 
+    @GET("inbox.json")
+    Call<List<Message>> getInbox();
 
     // ===========================================================
     // Public Methods

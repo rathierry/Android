@@ -99,6 +99,7 @@ public class BaseActivity extends AppCompatActivity {
     // url
     public static String ROOT_MDZ_USER_API = "http://user-api.madawin.mg";
     public static String ROOT_MDZ_API = "http://api.madawin.mg";
+    public static String ROOT_TEST_API = "https://api.androidhive.info/json/";
     public static String APP_USER_NAME = "app";
     public static String APP_PASSWORD = "app-password";
 
