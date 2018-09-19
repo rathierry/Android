@@ -37,7 +37,7 @@ import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.adapter.BUYAdapter;
+import com.team.lezomadetana.adapter.ZBuyAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.helper.BottomNavigationBehavior;
@@ -60,8 +60,8 @@ import retrofit2.Response;
  * Created by RaThierry on 04/09/2018.
  **/
 
-public class FragmentBuyItem extends BaseFragment implements
-        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, BUYAdapter.RequestAdapterListener {
+public class ZBuyFragment extends BaseFragment implements
+        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ZBuyAdapter.RequestAdapterListener {
 
     // ===========================================================
     // Constants
@@ -80,7 +80,7 @@ public class FragmentBuyItem extends BaseFragment implements
     private List<Request> requestList = new ArrayList<Request>();
     private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
     private ListView listViewItem;
-    private BUYAdapter buyAdapter;
+    private ZBuyAdapter ZBuyAdapter;
 
     private String itemNameSelected;
     private String itemIdSelected;
@@ -146,8 +146,8 @@ public class FragmentBuyItem extends BaseFragment implements
 
         // list view and adapter
         listViewItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
-        buyAdapter = new BUYAdapter(getActivity(), requestList, this, this);
-        listViewItem.setAdapter(buyAdapter);
+        ZBuyAdapter = new ZBuyAdapter(getActivity(), requestList, this, this);
+        listViewItem.setAdapter(ZBuyAdapter);
 
         // return current view
         return rootView;
@@ -235,7 +235,7 @@ public class FragmentBuyItem extends BaseFragment implements
         /*Request request = requestList.get(position);
         request.setRead(true);
         requestList.set(position, request);
-        buyAdapter.notifyDataSetChanged();*/
+        ZBuyAdapter.notifyDataSetChanged();*/
         // // //
         // Toast.makeText(getContext(), "onMessageRowClicked: START", Toast.LENGTH_SHORT).show();
         startPaymentFragment(request);
@@ -399,7 +399,7 @@ public class FragmentBuyItem extends BaseFragment implements
 
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        buyAdapter.notifyDataSetChanged();
+                        ZBuyAdapter.notifyDataSetChanged();
                     }
 
                     // call list category api
@@ -1103,7 +1103,7 @@ public class FragmentBuyItem extends BaseFragment implements
 
                                                 // notifying list adapter about data changes
                                                 // so that it renders the list view with updated data
-                                                buyAdapter.notifyDataSetChanged();
+                                                ZBuyAdapter.notifyDataSetChanged();
                                             }
 
                                         }

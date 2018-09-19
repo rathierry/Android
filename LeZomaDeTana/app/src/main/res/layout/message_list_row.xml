@@ -100,6 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:text="Sep 19"
         android:textColor="@color/timestamp"
         android:textSize="@dimen/timestamp"
         android:textStyle="bold" />
@@ -110,6 +111,7 @@
         android:layout_height="@dimen/icon_star"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:tint="@color/icon_tint_normal" />
+        android:tint="@color/icon_tint_normal"
+        android:src="@drawable/ic_android_white"/>
 
 </RelativeLayout>

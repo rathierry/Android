@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by RaThierry on 04/09/2018.
  */
-public class TabsPagerAdapter extends FragmentPagerAdapter {
+public class HomeFragmentTabsAdapter extends FragmentPagerAdapter {
 
     // ===========================================================
     // Constants
@@ -27,7 +27,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     // Constructors
     // ===========================================================
 
-    public TabsPagerAdapter(FragmentManager manager) {
+    public HomeFragmentTabsAdapter(FragmentManager manager) {
         super(manager);
     }
 

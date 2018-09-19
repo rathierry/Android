@@ -29,7 +29,7 @@ import java.util.List;
  * Created by RaThierry on 18/09/2018.
  */
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyViewHolder> {
+public class YMessagesAdapter extends RecyclerView.Adapter<YMessagesAdapter.MyViewHolder> {
 
     // ===========================================================
     // Constants
@@ -56,6 +56,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
     // Constructors
     // ===========================================================
 
+    public YMessagesAdapter(Context mContext, List<Message> messages, MessageAdapterListener listener) {
+        this.mContext = mContext;
+        this.messages = messages;
+        this.listener = listener;
+        selectedItems = new SparseBooleanArray();
+        animationItemsIndex = new SparseBooleanArray();
+    }
+
     // ===========================================================
     // Getter & Setter
     // ===========================================================
@@ -63,52 +71,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
-
-    // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
-    // ===========================================================
-
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
-        public TextView from, subject, message, iconText, timestamp;
-        public ImageView iconImp, imgProfile;
-        public LinearLayout messageContainer;
-        public RelativeLayout iconContainer, iconBack, iconFront;
-
-        public MyViewHolder(View view) {
-            super(view);
-            from = (TextView) view.findViewById(R.id.from);
-            subject = (TextView) view.findViewById(R.id.txt_primary);
-            message = (TextView) view.findViewById(R.id.txt_secondary);
-            iconText = (TextView) view.findViewById(R.id.icon_text);
-            timestamp = (TextView) view.findViewById(R.id.timestamp);
-            iconBack = (RelativeLayout) view.findViewById(R.id.icon_back);
-            iconFront = (RelativeLayout) view.findViewById(R.id.icon_front);
-            iconImp = (ImageView) view.findViewById(R.id.icon_star);
-            imgProfile = (ImageView) view.findViewById(R.id.icon_profile);
-            messageContainer = (LinearLayout) view.findViewById(R.id.message_container);
-            iconContainer = (RelativeLayout) view.findViewById(R.id.icon_container);
-            view.setOnLongClickListener(this);
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            listener.onRowLongClicked(getAdapterPosition());
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            return true;
-        }
-    }
-
-    public MessagesAdapter(Context mContext, List<Message> messages, MessageAdapterListener listener) {
-        this.mContext = mContext;
-        this.messages = messages;
-        this.listener = listener;
-        selectedItems = new SparseBooleanArray();
-        animationItemsIndex = new SparseBooleanArray();
-    }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -149,6 +111,34 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
         // apply click events
         applyClickEvents(holder, position);
     }
+
+    @Override
+    public int getItemCount() {
+        return messages.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return messages.get(position).getId();
+    }
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    public interface MessageAdapterListener {
+        void onIconClicked(int position);
+
+        void onIconImportantClicked(int position);
+
+        void onMessageRowClicked(int position);
+
+        void onRowLongClicked(int position);
+    }
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 
     // ===========================================================
     // Private Methods
@@ -239,11 +229,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
         animationItemsIndex.clear();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return messages.get(position).getId();
-    }
-
     private void applyImportant(MyViewHolder holder, Message message) {
         if (message.isImportant()) {
             holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_valid));
@@ -266,11 +251,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
             holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
             holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return messages.size();
     }
 
     public void toggleSelection(int pos) {
@@ -313,17 +293,37 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MyView
         currentSelectedIndex = -1;
     }
 
-    public interface MessageAdapterListener {
-        void onIconClicked(int position);
-
-        void onIconImportantClicked(int position);
-
-        void onMessageRowClicked(int position);
-
-        void onRowLongClicked(int position);
-    }
-
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+        public TextView from, subject, message, iconText, timestamp;
+        public ImageView iconImp, imgProfile;
+        public LinearLayout messageContainer;
+        public RelativeLayout iconContainer, iconBack, iconFront;
+
+        public MyViewHolder(View view) {
+            super(view);
+            from = (TextView) view.findViewById(R.id.from);
+            subject = (TextView) view.findViewById(R.id.txt_primary);
+            message = (TextView) view.findViewById(R.id.txt_secondary);
+            iconText = (TextView) view.findViewById(R.id.icon_text);
+            timestamp = (TextView) view.findViewById(R.id.timestamp);
+            iconBack = (RelativeLayout) view.findViewById(R.id.icon_back);
+            iconFront = (RelativeLayout) view.findViewById(R.id.icon_front);
+            iconImp = (ImageView) view.findViewById(R.id.icon_star);
+            imgProfile = (ImageView) view.findViewById(R.id.icon_profile);
+            messageContainer = (LinearLayout) view.findViewById(R.id.message_container);
+            iconContainer = (RelativeLayout) view.findViewById(R.id.icon_container);
+            view.setOnLongClickListener(this);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            listener.onRowLongClicked(getAdapterPosition());
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            return true;
+        }
+    }
 }

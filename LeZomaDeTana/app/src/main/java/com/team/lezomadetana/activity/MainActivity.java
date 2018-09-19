@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity {
         imageViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,UserUpdateInfoActivity.class));
+                startActivity(new Intent(MainActivity.this, UserUpdateInfoActivity.class));
             }
         });
 
@@ -137,44 +137,35 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
-    private void showAvatarImage(){
+    private void showAvatarImage() {
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
 
-
-
+        // get user
+        final UserCredentialResponse cUser = getCurrentUser(this);
 
         // send query
-
-        final UserCredentialResponse cUser = getCurrentUser(this);
-        Call<JsonObject> call = api.getUserById(auth,cUser.getId());
+        Call<JsonObject> call = api.getUserById(auth, cUser.getId());
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     JsonObject jUser = response.body().getAsJsonObject();
-                    User user = new Gson().fromJson(jUser,User.class);
-                    Log.d("pouaaa",user.toString());
+                    User user = new Gson().fromJson(jUser, User.class);
+                    Log.d("pouaaa", user.toString());
 
-
-                    if(user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())){
-                        applyProfilePicture(imageViewProfile,user.getProfileImageUrl());
+                    if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())) {
+                        applyProfilePicture(imageViewProfile, user.getProfileImageUrl());
                     }
-
-
                 }
-
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
+                //
             }
         });
     }
@@ -373,7 +364,7 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_logOut:
                         drawerLayout.closeDrawers();
                         logoutUser();
-                        break;
+                        return true;
                     default:
                         navItemIndex = 0;
                 }

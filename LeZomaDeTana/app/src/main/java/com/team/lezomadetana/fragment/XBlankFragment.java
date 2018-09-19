@@ -1,5 +1,6 @@
 package com.team.lezomadetana.fragment;
 
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -7,21 +8,18 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,19 +29,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
-import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.adapter.SellAdapter;
+import com.team.lezomadetana.adapter.XRequestsAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
-import com.team.lezomadetana.helper.BottomNavigationBehavior;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
@@ -51,22 +46,18 @@ import com.team.lezomadetana.model.send.RequestSend;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
-
 /**
- * Created by RaThierry on 04/09/2018.
- **/
+ * Created by RaThierry on 18/09/2018.
+ */
 
-public class FragmentSellItem extends BaseFragment implements
-        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SellAdapter.RequestAdapterListener {
+public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+        XRequestsAdapter.RequestAdapterListener {
 
     // ===========================================================
     // Constants
@@ -76,21 +67,18 @@ public class FragmentSellItem extends BaseFragment implements
     // Fields
     // ===========================================================
 
-    private BaseActivity activity;
+    private BaseActivity baseActivity;
     private MainActivity mainActivity;
     private View rootView;
-    private ShimmerFrameLayout mShimmerViewContainer;
-    private BottomNavigationView footerMenu;
-    private SwipeRefreshLayout swipeRefreshItem;
-    private List<Request> requestList = new ArrayList<Request>();
-    private ListView listViewItem;
-    private SellAdapter sellAdapter;
-    private List<ProductTemplate> listCategory = new ArrayList<ProductTemplate>();
+    private List<Request> requests = new ArrayList<>();
+    private List<ProductTemplate> templates = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private XRequestsAdapter mAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private String itemNameSelected;
     private String itemIdSelected;
     private String itemUnitTypeSelected;
-    private boolean startFragment = false;
 
     // ===========================================================
     // Constructors
@@ -105,57 +93,57 @@ public class FragmentSellItem extends BaseFragment implements
     // ===========================================================
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_list_sell_item, container, false);
+                inflater.inflate(R.layout.fragment_blank, container, false);
 
         // current activity
-        activity = ((BaseActivity) getActivity());
+        baseActivity = ((BaseActivity) getActivity());
         mainActivity = ((MainActivity) getActivity());
 
-        // floating btn to add new item
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_available_item_fab);
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // open post popup
-                showPostRequestPopup();
+                addNewRequest();
             }
         });
 
-        // footer menu navigation
-        footerMenu = (BottomNavigationView) rootView.findViewById(R.id.menu_footer_navigation);
-        footerMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        // shimmer frame layout
-        mShimmerViewContainer = (ShimmerFrameLayout) rootView.findViewById(R.id.shimmer_view_container);
-
-        // attaching bottom sheet behaviour - hide / show on scroll
-        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) footerMenu.getLayoutParams();
-        layoutParams.setBehavior(new BottomNavigationBehavior());
-
-        // refresh
-        swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
-        swipeRefreshItem.setColorSchemeResources(android.R.color.holo_red_light,
+        // init view
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_s);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_green_light);
-        swipeRefreshItem.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-        // list view and adapter
-        listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
+        // adapter
+        mAdapter = new XRequestsAdapter(getContext(), requests, this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(mAdapter);
 
-        sellAdapter = new SellAdapter(getActivity(), requestList, this, this);
-        listViewItem.setAdapter(sellAdapter);
+        // show loader and fetch messages
+        swipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getAllRequests();
+                    }
+                }
+        );
 
-        // return current view
         return rootView;
     }
 
@@ -180,11 +168,10 @@ public class FragmentSellItem extends BaseFragment implements
         // handle item selection
         switch (item.getItemId()) {
             case R.id.action_search:
-                showSearchRequestPopup();
+                searchRequest();
                 break;
             case R.id.action_payment:
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.drawerLayout.openDrawer(Gravity.LEFT);
+                mainActivity.launchPaymentFragment();
                 break;
         }
 
@@ -192,95 +179,35 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && rootView != null) {
-            onResume();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getUserVisibleHint()) {
-            if (!startFragment) {
-                swipeRefreshItem.setRefreshing(false);
-                footerMenu.setVisibility(View.INVISIBLE);
-                showShimmerAnimation(mShimmerViewContainer);
-                // // //
-                startFragment = true;
-            } else {
-                swipeRefreshItem.setRefreshing(true);
-            }
-            fetchAllRequests();
-            return;
-        }
-    }
-
-    @Override
     public void onRefresh() {
-        swipeRefreshItem.setRefreshing(true);
-        footerMenu.setVisibility(View.INVISIBLE);
-        fetchAllRequests();
+        // swipe refresh is performed, fetch the messages again
+        getAllRequests();
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            /*case ...:
-                break;*/
-        }
-    }
-
-    @Override
-    public void onIconClicked(int position) {
-        // TODO
+    public void onIconClicked(int position, Request request) {
+        showLongToast(getContext(), "Nalefan\'i " + request.getUser().getName());
     }
 
     @Override
     public void onMessageRowClicked(int position, Request request) {
-        // read the "message" which removes bold from the row
-        /*Request request = requestList.get(position);
-        request.setRead(true);
-        requestList.set(position, request);
-        buyAdapter.notifyDataSetChanged();*/
-        // // //
-        // Toast.makeText(getContext(), "onMessageRowClicked: START", Toast.LENGTH_SHORT).show();
-        startPaymentFragment(request);
-        // Toast.makeText(getContext(), "onMessageRowClicked: END", Toast.LENGTH_SHORT).show();
+        // go to list offer fragment
+        switchToListOfferFragment(new FragmentListOffer(), request);
     }
 
     @Override
-    public void replaceFragment(Fragment fragment, Request request) {
-        // use bundle to pass data
-        Bundle args = new Bundle();
-
-        // put string, int, etc in bundle with a key value
-        args.putSerializable("request", request);
-
-        // manager
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-        // set argument bundle to fragment
-        fragment.setArguments(args);
-
-        // transaction
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
-
-        // back stack
-        fragmentTransaction.addToBackStack(fragment.toString());
-
-        // commit
-        fragmentTransaction.commit();
+    public void onButtonAnswerClicked(int position, Request request) {
+        // show answer popup
+        answerRequest(request.getId());
     }
 
-    /**
-     * Replace fragment by "FragmentListOffer"
-     */
-    public void startPaymentFragment(Request request) {
-        replaceFragment(new FragmentListOffer(), request);
-    }
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
 
     /**
      * chooses a random color from array.xml
@@ -303,26 +230,20 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
-    // ===========================================================
-
-    // ===========================================================
     // Private Methods
     // ===========================================================
 
     /**
      * Fetch all requests
      */
-    private void fetchAllRequests() {
+    private void getAllRequests() {
+        swipeRefreshLayout.setRefreshing(true);
+
         // set retrofit api
-        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
-        String auth = BaseActivity.BasicAuth();
+        String auth = baseActivity.BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllRequest(auth);
@@ -335,22 +256,22 @@ public class FragmentSellItem extends BaseFragment implements
                 if (response.body() == null) {
                     showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
-                    // sort using result(s)
+                    // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
                         showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
                     } else {
-                        // clear list request
-                        requestList.clear();
+                        // clear the inbox
+                        requests.clear();
 
                         // parsing gson
                         for (int i = 0; i < filter.size(); i++) {
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                            // // // Request.Type.valueOf("SELL").ordinal()
-                            if (request.getType() == Request.Type.SELL) {
+                            // // // Request.Type.valueOf("BUY").ordinal()
+                            if (request.getType() == Request.Type.BUY) {
                                 // new class model to set all values
                                 Request req = new Request();
 
@@ -395,43 +316,36 @@ public class FragmentSellItem extends BaseFragment implements
                                 req.setType(request.getType());
 
                                 // generate a random color
-                                req.setColor(getRandomMaterialColor("500"));
+                                req.setColor(getRandomMaterialColor("400"));
 
                                 // adding request to requests array
-                                requestList.add(req);
+                                requests.add(req);
                             }
                         }
 
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        sellAdapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
                     }
 
-                    // stopping swipe refresh / loading
-                    swipeRefreshItem.setRefreshing(false);
-
-                    // call list category api
-                    fetchAllCategory();
+                    // get category list
+                    getAllCategory();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                swipeRefreshItem.setRefreshing(false);
-                hideLoadingView();
-                hideShimmerAnimation(mShimmerViewContainer);
-
+                swipeRefreshLayout.setRefreshing(false);
                 // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                        .setMessage("Unable to fetch json: " + t.getMessage())
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
-                                showLoadingView(getResources().getString(R.string.app_spinner));
-                                fetchAllRequests();
+                                getAllRequests();
                             }
                         })
                         .show();
@@ -442,12 +356,12 @@ public class FragmentSellItem extends BaseFragment implements
     /**
      * Load all category list
      */
-    private void fetchAllCategory() {
+    private void getAllCategory() {
         // set retrofit api
-        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
-        String auth = BasicAuth();
+        String auth = baseActivity.BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllProductTemplate(auth);
@@ -479,26 +393,18 @@ public class FragmentSellItem extends BaseFragment implements
                         }
 
                         // init spinner
-                        listCategory = productTemplates;
+                        templates = productTemplates;
 
-                        // verification in LOG
-                        Log.d("REQUESTS", "" + productTemplates);
-
-                        swipeRefreshItem.setRefreshing(false);
-                        hideLoadingView();
-                        hideShimmerAnimation(mShimmerViewContainer);
-
-                        // show footer menu
-                        footerMenu.setVisibility(View.VISIBLE);
+                        // hide swipeRefresh
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                swipeRefreshItem.setRefreshing(false);
-                hideLoadingView();
-                hideShimmerAnimation(mShimmerViewContainer);
+                // hide swipeRefresh
+                swipeRefreshLayout.setRefreshing(false);
 
                 // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -508,9 +414,12 @@ public class FragmentSellItem extends BaseFragment implements
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                // hide dialog
                                 dialog.dismiss();
-                                showLoadingView(getResources().getString(R.string.app_spinner));
-                                fetchAllCategory();
+                                // show swipe refresh
+                                swipeRefreshLayout.setRefreshing(false);
+                                // get category list
+                                getAllCategory();
                             }
                         })
                         .show();
@@ -519,9 +428,9 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     /**
-     * Display post item popup
+     * Display popup post new item
      */
-    private void showPostRequestPopup() {
+    private void addNewRequest() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_request, null);
@@ -542,9 +451,9 @@ public class FragmentSellItem extends BaseFragment implements
         // drop down element
         List<String> itemsName = new ArrayList<>();
         final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < listCategory.size(); i++) {
-            itemsName.add(listCategory.get(i).getName());
-            itemsId.add(listCategory.get(i).getId());
+        for (int i = 0; i < templates.size(); i++) {
+            itemsName.add(templates.get(i).getName());
+            itemsId.add(templates.get(i).getId());
         }
         itemsName.add(getResources().getString(R.string.app_other_category));
 
@@ -574,7 +483,7 @@ public class FragmentSellItem extends BaseFragment implements
 
 
         // drop down unit element
-        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+        String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
 
 
         // set adapter for spinner
@@ -593,13 +502,13 @@ public class FragmentSellItem extends BaseFragment implements
 
 
                 // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+                showShortToast(parent.getContext(), "Item: " + itemUnitTypeSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
             }
         });
 
         // set dialog message
         builder
-                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -659,19 +568,16 @@ public class FragmentSellItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+                        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
-                        String auth = BasicAuth();
+                        String auth = baseActivity.BasicAuth();
 
-                        //
-                        BaseActivity baseActivity = (BaseActivity) getActivity();
-
-                        //
-                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.SELL, itemIdSelected, true);
+                        // request
+                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
 
                         // send query
-                        Call<Void> call = api.sendRequest(auth, request);
+                        Call<Void> call = api.sendRequest(auth, postRequest);
 
                         // request
                         call.enqueue(new Callback<Void>() {
@@ -679,15 +585,8 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.code() == 201) {
                                     dialog.dismiss();
-
-                                    swipeRefreshItem.setRefreshing(false);
+                                    requests.clear();
                                     hideLoadingView();
-                                    hideShimmerAnimation(mShimmerViewContainer);
-
-                                    // clear list request
-                                    requestList.clear();
-
-                                    // refresh list
                                     onRefresh();
                                 }
 
@@ -695,9 +594,8 @@ public class FragmentSellItem extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                swipeRefreshItem.setRefreshing(false);
+                                // hide spinner
                                 hideLoadingView();
-                                hideShimmerAnimation(mShimmerViewContainer);
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -734,9 +632,17 @@ public class FragmentSellItem extends BaseFragment implements
     }
 
     /**
-     * Popup to write new sell answer
+     * Display popup search request
      */
-    public void showAnswerOfferPopup(final String requestId) {
+    private void searchRequest() {
+        // TODO
+        showLongToast(getContext(), "searchRequest");
+    }
+
+    /**
+     * Display popup post new offer
+     */
+    private void answerRequest(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
@@ -752,7 +658,7 @@ public class FragmentSellItem extends BaseFragment implements
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
 
         // drop down unit element
-        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+        String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
@@ -775,7 +681,7 @@ public class FragmentSellItem extends BaseFragment implements
 
         // set dialog message
         builder
-                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -815,13 +721,10 @@ public class FragmentSellItem extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+                        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
-                        String auth = BasicAuth();
-
-                        //
-                        BaseActivity baseActivity = (BaseActivity) getActivity();
+                        String auth = baseActivity.BasicAuth();
 
                         showShortToast(baseActivity, "requestId : " + requestId);
 
@@ -836,20 +739,12 @@ public class FragmentSellItem extends BaseFragment implements
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.code() == 201) {
                                     dialog.dismiss();
-                                    requestList.clear();
-
-                                    swipeRefreshItem.setRefreshing(false);
+                                    requests.clear();
                                     hideLoadingView();
-                                    hideShimmerAnimation(mShimmerViewContainer);
-
-                                    // refresh list
                                     onRefresh();
                                 } else {
                                     dialog.dismiss();
-
-                                    swipeRefreshItem.setRefreshing(false);
                                     hideLoadingView();
-                                    hideShimmerAnimation(mShimmerViewContainer);
 
                                     // alert
                                     new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -868,9 +763,8 @@ public class FragmentSellItem extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                swipeRefreshItem.setRefreshing(false);
+                                // hide spinner
                                 hideLoadingView();
-                                hideShimmerAnimation(mShimmerViewContainer);
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -905,288 +799,9 @@ public class FragmentSellItem extends BaseFragment implements
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
     }
-
-    /**
-     * Display popup search request
-     */
-    private void showSearchRequestPopup() {
-        // get prompts xml view
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
-
-        // create alert builder and cast view
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-
-        // set prompts xml to alert dialog builder
-        builder.setView(mView);
-
-        // init view
-        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.search_category);
-        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
-
-        // drop down element
-        List<String> itemsName = new ArrayList<>();
-        final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < listCategory.size(); i++) {
-            itemsName.add(listCategory.get(i).getName());
-            itemsId.add(listCategory.get(i).getId());
-        }
-        itemsName.add(getResources().getString(R.string.app_other_category));
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinnerCategory.setAdapter(arrayAdapter);
-
-        // event onClick
-        spinnerCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemNameSelected = parent.getItemAtPosition(position).toString();
-
-                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
-                    // item'clicked position
-                    itemIdSelected = itemsId.get(position);
-
-                    // showing clicked spinner item name and position
-                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid: " + itemIdSelected);
-                }
-            }
-        });
-
-
-        // set dialog message
-        builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
-                .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
-                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
-                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
-
-        // create alert dialog
-        final android.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-
-                // validate
-                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
-                buttonOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // values
-                        String category = spinnerCategory.getText().toString();
-
-                        String product = editTextProduct.getText().toString();
-                        // product
-
-                        // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
-                            spinnerCategory.requestFocus();
-                            return;
-                        }
-
-
-                        // show spinner
-                        showLoadingView(getResources().getString(R.string.app_spinner));
-
-                        //
-                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
-
-                        // create basic authentication
-                        String auth = BasicAuth();
-
-                        Map<String, String> map = new HashMap<>();
-                        map.put("type", "SELL");
-                        if (category != getResources().getString(R.string.app_other_category)) {
-                            String id = "";
-
-                            for (int i = 0; i < listCategory.size(); i++) {
-                                if (listCategory.get(i).equals(category)) {
-                                    id = listCategory.get(i).getId();
-                                    break;
-                                }
-                            }
-
-                            map.put("templateId", id);
-                        }
-
-                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
-                            map.put("product", product);
-                        }
-
-                        // send query
-                        Call<JsonObject> call = api.searchRequest(auth, map);
-
-                        // request
-                        call.enqueue(new Callback<JsonObject>() {
-                            @Override
-                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                if (response.code() == 200) {
-                                    dialog.dismiss();
-
-                                    // verification
-                                    if (response.body() == null) {
-                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
-                                    } else {
-                                        // array filter
-                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
-
-                                        if (filter == null || (filter.size() == 0)) {
-                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
-                                        } else {
-                                            // clear list request
-                                            requestList.clear();
-
-                                            // parsing gson
-                                            for (int i = 0; i < filter.size(); i++) {
-                                                // class model to mapping gson
-                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
-
-                                                // // // Request.Type.valueOf("SELL").ordinal()
-                                                if (request.getType().name() == "SELL") {
-                                                    // new class model to set all values
-                                                    Request req = new Request();
-
-                                                    // verify server's response
-                                                    String _id = TextUtils.equals(request.getId(), "null") ? "null" : request.getId();
-                                                    String _userId = TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId();
-                                                    String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
-                                                    String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice()));
-                                                    String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
-                                                    String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
-
-                                                    // set values
-                                                    req.setId(_id);
-                                                    req.setUserId(_userId);
-                                                    req.setProduct(_productName);
-                                                    req.setQuantity(Integer.valueOf(_quantity));
-                                                    req.setUnitType(request.getUnitType());
-                                                    req.setPrice(Float.valueOf(_price));
-                                                    req.setType(request.getType());
-                                                    req.setTemplateId(_templateId);
-
-                                                    // assetUrls is json array
-                                                    JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
-                                                    ArrayList<String> assetUrl = new ArrayList<String>();
-                                                    for (int j = 0; j < assetArray.size(); j++) {
-                                                        assetUrl.add(String.valueOf(assetArray.get(j)));
-                                                    }
-                                                    req.setAssetUrls(assetUrl);
-
-                                                    // offer
-                                                    if (request.getOffers() == null) {
-                                                        req.setOffers(null);
-                                                    } else {
-                                                        req.setOffers(request.getOffers());
-                                                    }
-
-                                                    // generate a random color
-                                                    req.setColor(getRandomMaterialColor("400"));
-
-                                                    // clear list request
-                                                    requestList.clear();
-
-                                                    // adding request to requests array
-                                                    requestList.add(req);
-
-                                                    showLongToast(getContext(), "requestList = " + requestList.size());
-                                                }
-                                            }
-
-                                            // alert info
-                                            if (requestList.size() == 0) {
-                                                onRefresh();
-                                                // message
-                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
-
-                                            } else {
-                                                // message
-                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + requestList.size());
-
-                                                // notifying list adapter about data changes
-                                                // so that it renders the list view with updated data
-                                                sellAdapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    }
-                                    swipeRefreshItem.setRefreshing(false);
-                                    hideLoadingView();
-                                    hideShimmerAnimation(mShimmerViewContainer);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<JsonObject> call, Throwable t) {
-                                swipeRefreshItem.setRefreshing(false);
-                                hideLoadingView();
-                                hideShimmerAnimation(mShimmerViewContainer);
-
-                                // alert
-                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
-
-                    }
-                });
-
-                // cancel
-                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                buttonCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        // change the alert dialog background color
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
-        dialog.show();
-    }
-
-    /**
-     * Display footer menu navigation
-     */
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment;
-            switch (item.getItemId()) {
-                case R.id.navigation_add:
-                    showPostRequestPopup();
-                    return true;
-                case R.id.navigation_previous:
-                    showShortToast(getContext(), "menu previous clicked");
-                    return true;
-                case R.id.navigation_next:
-                    showShortToast(getContext(), "menu next clicked");
-                    return true;
-            }
-            return false;
-        }
-    };
 
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================
+
 }

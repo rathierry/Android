@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
-import com.team.lezomadetana.adapter.TabsPagerAdapter;
+import com.team.lezomadetana.adapter.HomeFragmentTabsAdapter;
 
 /**
  * Created by RaThierry on 01/09/2018.
@@ -35,7 +35,7 @@ public class FragmentHome extends BaseFragment {
     private TabLayout tabLayout;
     private ShimmerFrameLayout mShimmerViewContainer;
     private ViewPager viewPager;
-    private TabsPagerAdapter viewPagerAdapter;
+    private HomeFragmentTabsAdapter viewPagerAdapter;
 
     // ===========================================================
     // Constructors
@@ -73,18 +73,17 @@ public class FragmentHome extends BaseFragment {
         tabLayout = (TabLayout) rootView.findViewById(R.id.result_tabs);
         mShimmerViewContainer = (ShimmerFrameLayout) rootView.findViewById(R.id.shimmer_view_container);
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        viewPagerAdapter = new TabsPagerAdapter(getChildFragmentManager());
+        viewPagerAdapter = new HomeFragmentTabsAdapter(getChildFragmentManager());
 
         // start placeholder animation
-        mShimmerViewContainer.setVisibility(View.VISIBLE);
-        mShimmerViewContainer.startShimmerAnimation();
+        showShimmerAnimation(mShimmerViewContainer);
 
         // wait few second
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 // set tab
-                viewPagerAdapter.addFragment(new BlankFragment(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
+                viewPagerAdapter.addFragment(new XBlankFragment(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
                 viewPagerAdapter.addFragment(new FragmentSellItem(), getResources().getString(R.string.fragment_buy_tab_layout_available_item));
 
                 // set adapter
@@ -94,12 +93,11 @@ public class FragmentHome extends BaseFragment {
                 // equal all tab rows width
                 equalTabRowsWidth();
 
+                // hide placeholder animation
+                hideShimmerAnimation(mShimmerViewContainer);
+
                 // turn appBarLayout to visible
                 appBarLayout.setVisibility(View.VISIBLE);
-
-                // hide placeholder animation
-                mShimmerViewContainer.stopShimmerAnimation();
-                mShimmerViewContainer.setVisibility(View.INVISIBLE);
             }
         }, 500);
 
@@ -121,21 +119,19 @@ public class FragmentHome extends BaseFragment {
         if (!getUserVisibleHint()) {
             return;
         }
-        mShimmerViewContainer.setVisibility(View.VISIBLE);
-        mShimmerViewContainer.startShimmerAnimation();
+        showShimmerAnimation(mShimmerViewContainer);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 appBarLayout.setVisibility(View.VISIBLE);
             }
-        }, 1000);
+        }, 500);
     }
 
     @Override
     public void onPause() {
         appBarLayout.setVisibility(View.INVISIBLE);
-        mShimmerViewContainer.stopShimmerAnimation();
-        mShimmerViewContainer.setVisibility(View.INVISIBLE);
+        hideShimmerAnimation(mShimmerViewContainer);
         super.onPause();
     }
 

@@ -2,6 +2,7 @@ package com.team.lezomadetana.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.team.lezomadetana.BuildConfig;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.model.receive.Request;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -174,6 +176,36 @@ public class BaseFragment extends Fragment {
 
         // set current fragment
         activeFragment = (BaseFragment) fragment;
+    }
+
+    /**
+     * Switch to list offer fragment
+     */
+    public void switchToListOfferFragment(Fragment fragment, Request request) {
+        // use bundle to pass data
+        Bundle args = new Bundle();
+
+        // put string, int, etc in bundle with a key value
+        args.putSerializable("request", request);
+
+        // manager
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // set argument bundle to fragment
+        fragment.setArguments(args);
+
+        // transaction
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
+
+        // back stack
+        fragmentTransaction.addToBackStack(fragment.toString());
+
+        // hide current fragment
+        // fragmentTransaction.hide(current_fragment_tiana_ho_hide);
+
+        // commit
+        fragmentTransaction.commit();
     }
 
     /**

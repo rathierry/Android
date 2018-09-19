@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
-import com.team.lezomadetana.adapter.MessagesAdapter;
+import com.team.lezomadetana.adapter.YMessagesAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.Message;
@@ -39,7 +39,7 @@ import retrofit2.Response;
  * Created by RaThierry on 28/08/2018.
  **/
 
-public class FragmentTesta extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.MessageAdapterListener {
+public class YMessageFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, YMessagesAdapter.MessageAdapterListener {
 
     // ===========================================================
     // Constants
@@ -53,7 +53,7 @@ public class FragmentTesta extends BaseFragment implements SwipeRefreshLayout.On
 
     private List<Message> messages = new ArrayList<>();
     private RecyclerView recyclerView;
-    private MessagesAdapter mAdapter;
+    private YMessagesAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionModeCallback actionModeCallback;
     private ActionMode actionMode;
@@ -96,7 +96,7 @@ public class FragmentTesta extends BaseFragment implements SwipeRefreshLayout.On
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new MessagesAdapter(getContext(), messages, this);
+        mAdapter = new YMessagesAdapter(getContext(), messages, this);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -268,7 +268,6 @@ public class FragmentTesta extends BaseFragment implements SwipeRefreshLayout.On
             actionMode.invalidate();
         }
     }
-
 
     private class ActionModeCallback implements ActionMode.Callback {
         @Override

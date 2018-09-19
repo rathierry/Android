@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.FragmentBuyItem;
+import com.team.lezomadetana.fragment.ZBuyFragment;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class BUYAdapter extends BaseAdapter {
+public class ZBuyAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -44,23 +44,23 @@ public class BUYAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater layoutInflater;
     private List<Request> requestList;
-    private BUYAdapter.RequestAdapterListener listener;
-    private FragmentBuyItem fragmentBuyItem;
+    private ZBuyAdapter.RequestAdapterListener listener;
+    private ZBuyFragment zBuyFragment;
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    public BUYAdapter(Activity activity, List<Request> requestList) {
+    public ZBuyAdapter(Activity activity, List<Request> requestList) {
         this.activity = activity;
         this.requestList = requestList;
     }
 
-    public BUYAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener, FragmentBuyItem fragmentBuyItem) {
+    public ZBuyAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener, ZBuyFragment zBuyFragment) {
         this.activity = activity;
         this.requestList = requestList;
         this.listener = listener;
-        this.fragmentBuyItem = fragmentBuyItem;
+        this.zBuyFragment = zBuyFragment;
     }
 
     // ===========================================================
@@ -145,7 +145,7 @@ public class BUYAdapter extends BaseAdapter {
                 btnSum.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        fragmentBuyItem.startPaymentFragment(req);
+                        zBuyFragment.startPaymentFragment(req);
                     }
                 });
             }
@@ -155,7 +155,7 @@ public class BUYAdapter extends BaseAdapter {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentBuyItem.showAnswerOfferPopup(req.getId());
+                zBuyFragment.showAnswerOfferPopup(req.getId());
             }
         });
 
@@ -219,7 +219,7 @@ public class BUYAdapter extends BaseAdapter {
             iconText.setVisibility(View.GONE);
         } else {
             imgProfile.setImageResource(R.drawable.bg_circle);
-            imgProfile.setColorFilter(fragmentBuyItem.getRandomMaterialColor("400"));
+            imgProfile.setColorFilter(zBuyFragment.getRandomMaterialColor("400"));
             iconText.setVisibility(View.VISIBLE);
         }
     }

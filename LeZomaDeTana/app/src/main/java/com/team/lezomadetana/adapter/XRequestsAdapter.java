@@ -26,7 +26,7 @@ import java.util.List;
  * Created by RaThierry on 18/09/2018.
  **/
 
-public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyViewHolder> {
+public class XRequestsAdapter extends RecyclerView.Adapter<XRequestsAdapter.MyViewHolder> {
 
     // ===========================================================
     // Constants
@@ -44,7 +44,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
     // Constructors
     // ===========================================================
 
-    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener) {
+    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
@@ -68,9 +68,9 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         // class model
-        Request request = requests.get(position);
+        final Request request = requests.get(position);
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(request.getProduct().substring(0, 1));
@@ -84,11 +84,24 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
             holder.message.setText("nalefan\'i ... . ...");
         }
 
+        // sum btn
+        if (request.getOffers() != null) {
+            holder.sum.setText(String.valueOf(request.getOffers().size()));
+            if (request.getOffers().size() != 0) {
+                holder.sum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onMessageRowClicked(position, request);
+                    }
+                });
+            }
+        }
+
         // display avatar image
         applyProfilePicture(holder, request);
 
         // apply click events
-        applyClickEvents(holder, position);
+        applyClickEvents(holder, position, request);
     }
 
     @Override
@@ -101,13 +114,11 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
     // ===========================================================
 
     public interface RequestAdapterListener {
-        void onIconClicked(int position);
+        void onIconClicked(int position, Request request);
 
-        void onMessageRowClicked(int position);
+        void onMessageRowClicked(int position, Request request);
 
-        void onRowClicked(int position);
-
-        void onButtonSumClicked(int position);
+        void onButtonAnswerClicked(int position, Request request);
     }
 
     // ===========================================================
@@ -140,32 +151,25 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
         }
     }
 
-    private void applyClickEvents(MyViewHolder holder, final int position) {
+    private void applyClickEvents(MyViewHolder holder, final int position, final Request request) {
         holder.iconContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onIconClicked(position);
+                listener.onIconClicked(position, request);
             }
         });
 
         holder.messageContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onMessageRowClicked(position);
+                listener.onMessageRowClicked(position, request);
             }
         });
 
-        holder.messageContainer.setOnClickListener(new View.OnClickListener() {
+        holder.answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onRowClicked(position);
-            }
-        });
-
-        holder.sum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onButtonSumClicked(position);
+                listener.onButtonAnswerClicked(position, request);
             }
         });
     }
@@ -174,7 +178,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
     // Inner Classes/Interfaces
     // ===========================================================
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgProfile;
         public TextView iconText, from, subject, message;
         public Button sum, answer;
@@ -192,12 +196,6 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.MyView
             answer = (Button) itemView.findViewById(R.id.answer_item);
             messageContainer = (LinearLayout) itemView.findViewById(R.id.message_container);
             iconContainer = (RelativeLayout) itemView.findViewById(R.id.icon_container);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            listener.onRowClicked(getAdapterPosition());
         }
     }
 }

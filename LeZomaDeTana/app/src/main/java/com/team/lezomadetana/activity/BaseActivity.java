@@ -440,11 +440,8 @@ public class BaseActivity extends AppCompatActivity {
                     .placeholder(R.mipmap.ic_launcher_round)
                     .into(imgProfile);
             imgProfile.setColorFilter(null);
-
         } else {
-            imgProfile.setImageResource(R.drawable.bg_circle);
-
-
+            imgProfile.setImageResource(R.mipmap.ic_launcher_round);
         }
     }
 

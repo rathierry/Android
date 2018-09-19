@@ -31,7 +31,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class SELLAdapter extends BaseAdapter {
+public class SellAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -44,25 +44,25 @@ public class SELLAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater layoutInflater;
     private List<Request> requestItems;
-    private SELLAdapter.RequestAdapterListener listener;
+    private SellAdapter.RequestAdapterListener listener;
     private FragmentSellItem fragmentSellItem;
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    public SELLAdapter(Activity activity, List<Request> requestItems) {
+    public SellAdapter(Activity activity, List<Request> requestItems) {
         this.activity = activity;
         this.requestItems = requestItems;
     }
 
-    public SELLAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener) {
+    public SellAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener) {
         this.activity = activity;
         this.requestItems = requestItems;
         this.listener = listener;
     }
 
-    public SELLAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener, FragmentSellItem fragmentSellItem) {
+    public SellAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener, FragmentSellItem fragmentSellItem) {
         this.activity = activity;
         this.requestItems = requestItems;
         this.listener = listener;
