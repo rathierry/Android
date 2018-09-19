@@ -255,12 +255,12 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
                 .setIcon(ContextCompat.getDrawable(UserRegisterActivity.this, R.drawable.ic_photo_camera_black))
                 .setMessage(getResources().getString(R.string.user_register_camera_message))
                 .setCancelable(true)
-                .setPositiveButton(getResources().getString(R.string.user_register_camera_app), new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.user_register_camera_galery), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeFile();
                     }
                 })
-                .setNegativeButton(getResources().getString(R.string.user_register_camera_galery), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.user_register_camera_app), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         imageTypeCamera();
                     }

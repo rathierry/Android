@@ -15,7 +15,6 @@ import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.team.lezomadetana.model.send.TransactionSend;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +25,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ExampleUseOfAPI
-{
+public class ExampleUseOfAPI {
     // FETCH
-    public static void getAllRequest(){
+    public static void getAllRequest() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
@@ -42,21 +40,19 @@ public class ExampleUseOfAPI
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
                     List<Request> requests = null;
 
-                    if(filter.size()>0){
+                    if (filter.size() > 0) {
                         requests = new ArrayList<Request>();
-                        for(int i=0;i<filter.size();i++){
-                            Request request = new Gson().fromJson(filter.get(i),Request.class);
+                        for (int i = 0; i < filter.size(); i++) {
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
                             requests.add(request);
 
                         }
-                        Log.d("REQUESTS",""+requests);
+                        Log.d("REQUESTS", "" + requests);
 
                     }
 
@@ -72,7 +68,7 @@ public class ExampleUseOfAPI
         });
     }
 
-    public static void updateUser(){
+    public static void updateUser() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
@@ -90,19 +86,16 @@ public class ExampleUseOfAPI
 
 
         // send query
-        Call<ResponseBody> call = api.userUpdateJSON(auth,user);
+        Call<ResponseBody> call = api.userUpdateJSON(auth, user);
 
         // request
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-            {
-                if(response.code() == 201)
-                {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 201) {
 
 
-
-                    Log.d("aaa",""+response.body());
+                    Log.d("aaa", "" + response.body());
 
                 }
 
@@ -115,13 +108,10 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
-
-    public static void getAllRequestWithPage(){
+    public static void getAllRequestWithPage() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
@@ -131,36 +121,34 @@ public class ExampleUseOfAPI
         Map map = new HashMap<>();
         //get first page of 10 element
         //get 10 element
-        map.put("size",10);
+        map.put("size", 10);
         //first page is always begin by 0
-        map.put("page",0);
+        map.put("page", 0);
 
         // send query
-        Call<JsonObject> call = api.getAllRequest(auth,map);
+        Call<JsonObject> call = api.getAllRequest(auth, map);
 
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     final Page pageInfo;
-                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(),Page.class);
-                    Log.d("REQUESTS Page Info",""+pageInfo);
+                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                    Log.d("REQUESTS Page Info", "" + pageInfo);
 
 
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
                     List<Request> requests = null;
 
-                    if(filter.size()>0){
+                    if (filter.size() > 0) {
                         requests = new ArrayList<Request>();
-                        for(int i=0;i<filter.size();i++){
-                            Request request = new Gson().fromJson(filter.get(i),Request.class);
+                        for (int i = 0; i < filter.size(); i++) {
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
                             requests.add(request);
 
                         }
-                        Log.d("REQUESTS",""+requests);
+                        Log.d("REQUESTS", "" + requests);
 
                     }
 
@@ -179,37 +167,35 @@ public class ExampleUseOfAPI
 
     // SEARCH
 
-    public static void getSearchRequest(){
+    public static void getSearchRequest() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
 
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String, String> map = new HashMap<String, String>();
 
-        map.put("product","ovy");
+        map.put("product", "ovy");
         // send query
-        Call<JsonObject> call = api.searchRequest(auth,map);
+        Call<JsonObject> call = api.searchRequest(auth, map);
 
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
                     List<Request> requests = null;
 
-                    if(filter.size()>0){
+                    if (filter.size() > 0) {
                         requests = new ArrayList<Request>();
-                        for(int i=0;i<filter.size();i++){
-                            Request request = new Gson().fromJson(filter.get(i),Request.class);
+                        for (int i = 0; i < filter.size(); i++) {
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
                             requests.add(request);
 
                         }
-                        Log.d("REQUESTS",""+requests);
+                        Log.d("REQUESTS", "" + requests);
 
                     }
 
@@ -227,7 +213,7 @@ public class ExampleUseOfAPI
 
 
     // TEMPLATE
-    public static void getAllProductTemplate(){
+    public static void getAllProductTemplate() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
@@ -240,21 +226,19 @@ public class ExampleUseOfAPI
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
                     List<ProductTemplate> productTemplates = null;
 
-                    if(filter.size()>0){
+                    if (filter.size() > 0) {
                         productTemplates = new ArrayList<ProductTemplate>();
-                        for(int i=0;i<filter.size();i++){
-                            ProductTemplate productTemplate = new Gson().fromJson(filter.get(i),ProductTemplate.class);
+                        for (int i = 0; i < filter.size(); i++) {
+                            ProductTemplate productTemplate = new Gson().fromJson(filter.get(i), ProductTemplate.class);
                             productTemplates.add(productTemplate);
 
                         }
-                        Log.d("REQUESTS",""+productTemplates);
+                        Log.d("REQUESTS", "" + productTemplates);
 
                     }
 
@@ -270,36 +254,32 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
     // POST item
-    public static void sendRequest(){
+    public static void sendRequest() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
         JsonObject req = new JsonObject();
-        req.addProperty("userId","a");
+        req.addProperty("userId", "a");
         Gson json = new Gson();
 
         //String req = "";
-        RequestSend request = new RequestSend( "819837c3-5ca5-4987-ba34-9855288a00f6","ovy", Request.UnitType.UNIT,5f,Request.Type.BUY,"64774d43-e303-4604-bd28-900a9bb0695a",true);
+        RequestSend request = new RequestSend("819837c3-5ca5-4987-ba34-9855288a00f6", "ovy", Request.UnitType.UNIT, 5f, Request.Type.BUY, "64774d43-e303-4604-bd28-900a9bb0695a", true);
 
         // send query
-        Call<Void> call = api.sendRequest(auth,request);
+        Call<Void> call = api.sendRequest(auth, request);
 
         // request
         call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response)
-            {
-                if(response.code() == 201)
-                {
-                    Log.d("aaa",""+response.body());
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 201) {
+                    Log.d("aaa", "" + response.body());
 
                 }
 
@@ -312,14 +292,12 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
     // Transation Jeton2Jegon
     // ecran Handefa vola
-    public static void sendTransaction(){
+    public static void sendTransaction() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
@@ -335,17 +313,15 @@ public class ExampleUseOfAPI
 
 
         // send query
-        Call<Void> call = api.commitTransaction(auth,transactionSend);
+        Call<Void> call = api.commitTransaction(auth, transactionSend);
 
         // request
         call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response)
-            {
-                if(response.code() == 201)
-                {
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 201) {
 
-                    Log.d("Payment","METY lesy dada");
+                    Log.d("Payment", "METY lesy dada");
                 }
 
             }
@@ -357,14 +333,12 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
     // Transation Ariary2Jegon
     // ecran Hampiditra vola
-    public static void sendTransactionAr2Jt(){
+    public static void sendTransactionAr2Jt() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
@@ -379,17 +353,15 @@ public class ExampleUseOfAPI
 
         transactionSend.setType(TransactionAriaryJeton.Type.DEPOSIT);
         // send query
-        Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+        Call<Void> call = api.commitTransactionAriary2Jeton(auth, transactionSend);
 
         // request
         call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response)
-            {
-                if(response.code() == 201)
-                {
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 201) {
 
-                    Log.d("Payment","METY lesy dada");
+                    Log.d("Payment", "METY lesy dada");
                 }
 
             }
@@ -401,14 +373,12 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
     // Transation Jegon2Ariary
     // Hamoaka vola
-    public static void sendTransactionJt2Ar(){
+    public static void sendTransactionJt2Ar() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
@@ -423,17 +393,15 @@ public class ExampleUseOfAPI
 
         transactionSend.setType(TransactionAriaryJeton.Type.WITHDRAWAL);
         // send query
-        Call<Void> call = api.commitTransactionAriary2Jeton(auth,transactionSend);
+        Call<Void> call = api.commitTransactionAriary2Jeton(auth, transactionSend);
 
         // request
         call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response)
-            {
-                if(response.code() == 201)
-                {
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 201) {
 
-                    Log.d("Payment","METY lesy dada");
+                    Log.d("Payment", "METY lesy dada");
                 }
 
             }
@@ -445,13 +413,10 @@ public class ExampleUseOfAPI
         });
 
 
-
-
     }
 
 
-    public void ExplicationEnum()
-    {
+    public void ExplicationEnum() {
         //variable du type enum UnitType
         Request.UnitType unitType;
 
@@ -460,7 +425,7 @@ public class ExampleUseOfAPI
 
         //si on veut avoir toutes les valeurs possible de UnitType dans un tableu de string
         // ito ilay ho affichena amin ilay select
-        String [] unityTypeValues = BaseActivity.getNames(Request.UnitType.class);
+        String[] unityTypeValues = BaseActivity.getNames(Request.UnitType.class);
 
         //affecter un enum par un string dans sa valeur possible
         unitType = Request.UnitType.valueOf("KG"); // mitovy amin oe unitType = UnitType.KG;
@@ -469,18 +434,12 @@ public class ExampleUseOfAPI
         unitType = Request.UnitType.values()[0]; // mitovy amin oe unitType = UnitType.KG satria ilay KG=0;
 
 
-
-
-
     }
 
 
-
-
-        public static String BasicAuth() {
-            return "Basic " + Base64.encodeToString((BaseActivity.APP_USER_NAME + ":" + BaseActivity.APP_PASSWORD).getBytes(), Base64.NO_WRAP);
-        }
-
+    public static String BasicAuth() {
+        return "Basic " + Base64.encodeToString((BaseActivity.APP_USER_NAME + ":" + BaseActivity.APP_PASSWORD).getBytes(), Base64.NO_WRAP);
+    }
 
 
 }

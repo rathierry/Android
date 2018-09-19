@@ -1,11 +1,11 @@
 package com.team.lezomadetana.fragment;
 
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -39,14 +41,18 @@ import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.adapter.XRequestsAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
+import com.team.lezomadetana.model.receive.Page;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
+import com.team.lezomadetana.utils.PaginationScrollListener;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +69,12 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // Constants
     // ===========================================================
 
+    private static final int PAGE_START = 0;
+    // limiting to 20 for this screen, since total pages in actual API is very large.
+    private int TOTAL_PAGES = 0;
+    private int PAGE_SIZE = 20;
+    private int currentPage = PAGE_START;
+
     // ===========================================================
     // Fields
     // ===========================================================
@@ -70,15 +82,21 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     private BaseActivity baseActivity;
     private MainActivity mainActivity;
     private View rootView;
+    private LinearLayoutManager mLayoutManager;
     private List<Request> requests = new ArrayList<>();
     private List<ProductTemplate> templates = new ArrayList<>();
     private RecyclerView recyclerView;
     private XRequestsAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private ProgressBar progressBar;
+
     private String itemNameSelected;
     private String itemIdSelected;
     private String itemUnitTypeSelected;
+
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
 
     // ===========================================================
     // Constructors
@@ -128,18 +146,50 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         // adapter
         mAdapter = new XRequestsAdapter(getContext(), requests, this);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+        // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
+        recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage += 1;
+
+                // mocking network delay for API call
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNextPage();
+                    }
+                }, 1000);
+            }
+
+            @Override
+            public int getTotalPageCount() {
+                return TOTAL_PAGES;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
 
         // show loader and fetch messages
         swipeRefreshLayout.post(
                 new Runnable() {
                     @Override
                     public void run() {
-                        getAllRequests();
+                        // getAllRequests();
+                        loadFirstPage();
                     }
                 }
         );
@@ -232,6 +282,156 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * Load first page
+     */
+    private void loadFirstPage() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        // set retrofit api
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
+
+        // create basic authentication
+        String auth = baseActivity.BasicAuth();
+
+        Map map = new HashMap<>();
+        // filter
+        map.put("type", "BUY");
+        // get first page of 10 element
+        map.put("size", "" + PAGE_SIZE);
+        // first page is always begin by 0
+        map.put("page", "" + currentPage);
+
+        // send query
+        Call<JsonObject> call = api.searchRequest(auth, map);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // verification
+                if (response.body() == null) {
+                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                } else if (response.code() == 200) {
+                    // info page
+                    final Page pageInfo;
+                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                    Log.d("REQUESTS Page Info", "" + pageInfo);
+
+                    TOTAL_PAGES = pageInfo.getTotalPages();
+
+                    // array filter
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                    if (filter == null || (filter.size() == 0)) {
+                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                    } else {
+                        // clear the inbox
+                        requests.clear();
+
+                        // parsing gson
+                        for (int i = 0; i < filter.size(); i++) {
+                            // class model to mapping gson
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                            // adding request to requests array
+                            requests.add(request);
+
+                            if (currentPage <= TOTAL_PAGES - 1) mAdapter.addLoadingFooter();
+                            else isLastPage = true;
+                        }
+
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        mAdapter.notifyDataSetChanged();
+
+                        // hide swipe refresh
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                // alert
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage("Unable to fetch json: " + t.getMessage())
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                // TODO :)
+                                //loadFirstPage();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
+    /**
+     * Load next page
+     */
+    private void loadNextPage() {
+        // TODO TODO TODO
+
+        // set retrofit api
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
+
+        // create basic authentication
+        String auth = baseActivity.BasicAuth();
+
+        Map map = new HashMap<>();
+        // get first page of 10 element
+        map.put("size", TOTAL_PAGES);
+        // first page is always begin by 0
+        map.put("page", currentPage);
+
+        // send query
+        Call<JsonObject> call = api.getAllRequest(auth, map);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // verification
+                if (response.body() == null) {
+                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                } else if (response.code() == 200) {
+                    // array filter
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                    if (filter == null || (filter.size() == 0)) {
+                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                    } else {
+                        // TODO TODO TODO
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                // alert
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage("Unable to fetch json: " + t.getMessage())
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                getAllRequests();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
 
     /**
      * Fetch all requests
