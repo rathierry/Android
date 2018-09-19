@@ -69,10 +69,10 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // Constants
     // ===========================================================
 
-    private static final int PAGE_START = 0;
+    private static int PAGE_START = 0;
     // limiting to 20 for this screen, since total pages in actual API is very large.
     private int TOTAL_PAGES = 0;
-    private int PAGE_SIZE = 20;
+    private int PAGE_SIZE = 21;
     private int currentPage = PAGE_START;
 
     // ===========================================================
@@ -164,7 +164,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                     public void run() {
                         loadNextPage();
                     }
-                }, 1000);
+                }, 500);
             }
 
             @Override
@@ -183,16 +183,8 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         });
 
-        // show loader and fetch messages
-        swipeRefreshLayout.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        // getAllRequests();
-                        loadFirstPage();
-                    }
-                }
-        );
+        // download all category
+        getAllCategory();
 
         return rootView;
     }
@@ -230,8 +222,15 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     @Override
     public void onRefresh() {
-        // swipe refresh is performed, fetch the messages again
-        getAllRequests();
+        resetPagination();
+        loadFirstPage();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetPagination();
+        loadFirstPage();
     }
 
     @Override
@@ -284,6 +283,16 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // ===========================================================
 
     /**
+     * Reset pagination
+     */
+    private void resetPagination() {
+        PAGE_START = 0;
+        TOTAL_PAGES = 0;
+        PAGE_SIZE = 21;
+        currentPage = 0;
+    }
+
+    /**
      * Load first page
      */
     private void loadFirstPage() {
@@ -295,16 +304,19 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         // create basic authentication
         String auth = baseActivity.BasicAuth();
 
+        // params
+        // http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
+        map.put("sort", "creationTime,desc");
         map.put("type", "BUY");
-        // get first page of 10 element
-        map.put("size", "" + PAGE_SIZE);
         // first page is always begin by 0
-        map.put("page", "" + currentPage);
+        map.put("page", String.valueOf(currentPage));
+        // get first page of 10 element
+        map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
-        Call<JsonObject> call = api.searchRequest(auth, map);
+        Call<JsonObject> call = api.getAllRequest(auth, map);
 
         // request
         call.enqueue(new Callback<JsonObject>() {
@@ -317,8 +329,9 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                     // info page
                     final Page pageInfo;
                     pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
-                    Log.d("REQUESTS Page Info", "" + pageInfo);
+                    Log.d("REQUESTS", "" + pageInfo);
 
+                    // set total pages value
                     TOTAL_PAGES = pageInfo.getTotalPages();
 
                     // array filter
@@ -335,11 +348,19 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
+                            // generate a random color
+                            request.setColor(getRandomMaterialColor("400"));
+
                             // adding request to requests array
                             requests.add(request);
+                            /*mAdapter.addAll(requests);*/
 
-                            if (currentPage <= TOTAL_PAGES - 1) mAdapter.addLoadingFooter();
-                            else isLastPage = true;
+                            // check last page
+                            if (currentPage <= TOTAL_PAGES - 1) {
+                                mAdapter.addLoadingFooter();
+                            } else {
+                                isLastPage = true;
+                            }
                         }
 
                         // notifying list adapter about data changes
@@ -377,8 +398,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
      * Load next page
      */
     private void loadNextPage() {
-        // TODO TODO TODO
-
         // set retrofit api
         Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
@@ -408,7 +427,20 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                     if (filter == null || (filter.size() == 0)) {
                         showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
                     } else {
+                        mAdapter.removeLoadingFooter();
+                        isLoading = false;
+
                         // TODO TODO TODO
+                        // TODO TODO TODO
+                        // TODO TODO TODO
+                        showLongToast(getContext(), "loadNextPage in UI");
+
+                        // check last page
+                        if (currentPage != TOTAL_PAGES) {
+                            mAdapter.addLoadingFooter();
+                        } else {
+                            isLastPage = true;
+                        }
                     }
                 }
             }
@@ -527,9 +559,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                         // so that it renders the list view with updated data
                         mAdapter.notifyDataSetChanged();
                     }
-
-                    // get category list
-                    getAllCategory();
                 }
             }
 
@@ -557,6 +586,9 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
      * Load all category list
      */
     private void getAllCategory() {
+        // show spinner
+        showLoadingView("Download Category ...");
+
         // set retrofit api
         Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
@@ -572,12 +604,14 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 // verification
                 if (response.body() == null) {
+                    hideLoadingView();
                     showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
+                        hideLoadingView();
                         showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // class model to mapping gson
@@ -595,8 +629,18 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                         // init spinner
                         templates = productTemplates;
 
-                        // hide swipeRefresh
-                        swipeRefreshLayout.setRefreshing(false);
+                        // hide spinner
+                        hideLoadingView();
+
+                        // show loader and fetch messages
+                        swipeRefreshLayout.post(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadFirstPage();
+                                    }
+                                }
+                        );
                     }
                 }
             }
@@ -614,11 +658,8 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                // hide dialog
                                 dialog.dismiss();
-                                // show swipe refresh
-                                swipeRefreshLayout.setRefreshing(false);
-                                // get category list
+                                hideLoadingView();
                                 getAllCategory();
                             }
                         })

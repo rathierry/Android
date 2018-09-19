@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -93,46 +94,54 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         RecyclerView.ViewHolder viewHolder;
         View v1 = inflater.inflate(R.layout.layout_request_row, parent, false);
-        viewHolder = new MovieVH(v1);
+        viewHolder = new RequestVH(v1);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        // class model
-        final Request request = requests.get(position);
-
         switch (getItemViewType(position)) {
             case ITEM:
-                final MovieVH movieVH = (MovieVH) holder;
+                // class model
+                final Request request = requests.get(position);
 
-                // verify server's response
-                String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
-                String _quantity = String.valueOf(TextUtils.equals(String.valueOf(request.getQuantity()), null) ? "null" : request.getQuantity());
+                // view holder
+                final RequestVH requestVH = (RequestVH) holder;
 
-                // displaying the first letter of From in icon text
-                // displaying text view data
-                movieVH.iconText.setText("T");
-                movieVH.from.setText(Html.fromHtml("<b>" + _productName + "</b>"));
+                // verification
+                String quantity = String.valueOf(TextUtils.equals(String.valueOf(request.getQuantity()), null) ? "" : request.getQuantity());
 
-                if (request.getUnitType() != null) {
-                    movieVH.subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + _quantity + "</b>" + request.getUnitType().name()));
+                // take the first letter of "From" in icon text
+                if (request.getProduct() == null) {
+                    requestVH.iconText.setText("?");
+                    requestVH.from.setText("");
                 } else {
-                    movieVH.subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + _quantity + "</b> xxx"));
+                    requestVH.iconText.setText(request.getProduct().substring(0, 1));
+                    requestVH.from.setText(Html.fromHtml("<b>" + request.getProduct() + "</b>"));
+                }
+
+                // set price and unitType
+                if (request.getUnitType() == null) {
+                    requestVH.subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + quantity + "</b> "));
+                } else {
+                    requestVH.subject.setText(Html.fromHtml("Lanjany/Isa: <b>" + quantity + "</b>" + request.getUnitType().name()));
                 }
 
                 // user name
-                if (request.getUser() != null) {
-                    movieVH.message.setText("nalefan\'i " + request.getUser().getName().toString());
+                if (request.getUser() == null) {
+                    requestVH.message.setText("nalefan\'i ");
                 } else {
-                    movieVH.message.setText("nalefan\'i ... . ...");
+                    requestVH.message.setText("nalefan\'i " + request.getUser().getName());
                 }
 
-                // sum btn
-                if (request.getOffers() != null) {
-                    movieVH.sum.setText(String.valueOf(request.getOffers().size()));
+                // total offers
+                if (request.getOffers() == null) {
+                    requestVH.sum.setText("0");
+                } else {
+                    requestVH.sum.setText(String.valueOf(request.getOffers().size()));
+                    // event of sum button
                     if (request.getOffers().size() != 0) {
-                        movieVH.sum.setOnClickListener(new View.OnClickListener() {
+                        requestVH.sum.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 listener.onMessageRowClicked(position, request);
@@ -142,10 +151,10 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
 
                 // display avatar image
-                applyProfilePicture(movieVH, request);
+                applyProfilePicture(requestVH, request);
 
                 // apply click events
-                applyClickEvents(movieVH, position, request);
+                applyClickEvents(requestVH, position, request);
                 break;
 
             case LOADING:
@@ -193,7 +202,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
    _________________________________________________________________________________________________
     */
 
-    public void add(Request r) {
+    /*public void add(Request r) {
         requests.add(r);
         notifyItemInserted(requests.size() - 1);
     }
@@ -202,7 +211,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         for (Request result : moveResults) {
             add(result);
         }
-    }
+    }*/
 
     public void remove(Request r) {
         int position = requests.indexOf(r);
@@ -223,10 +232,9 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return getItemCount() == 0;
     }
 
-
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Request());
+        /*add(new Request());*/
     }
 
     public void removeLoadingFooter() {
@@ -249,8 +257,8 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Private Methods
     // ===========================================================
 
-    private void applyProfilePicture(MovieVH holder, Request request) {
-        if (request.getAssetUrls() != null) {
+    private void applyProfilePicture(RequestVH holder, Request request) {
+        if (request.getAssetUrls() != null && request.getAssetUrls().size() != 0) {
             String itemUrl = request.getAssetUrls().get(0);
             itemUrl = itemUrl.replace("\"", "");
             // download
@@ -271,7 +279,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void applyClickEvents(MovieVH holder, final int position, final Request request) {
+    private void applyClickEvents(RequestVH holder, final int position, final Request request) {
         holder.iconContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,14 +306,14 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Inner Classes/Interfaces
     // ===========================================================
 
-    public class MovieVH extends RecyclerView.ViewHolder {
+    public class RequestVH extends RecyclerView.ViewHolder {
         public ImageView imgProfile;
         public TextView iconText, from, subject, message;
         public Button sum, answer;
         public LinearLayout messageContainer;
         public RelativeLayout iconContainer;
 
-        public MovieVH(View itemView) {
+        public RequestVH(View itemView) {
             super(itemView);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             iconText = (TextView) itemView.findViewById(R.id.icon_text);
