@@ -195,17 +195,12 @@ public class BaseFragment extends Fragment {
         fragment.setArguments(args);
 
         // transaction
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame, fragment, fragment.toString());
-
-        // back stack
-        fragmentTransaction.addToBackStack(fragment.toString());
-
-        // hide current fragment
-        // fragmentTransaction.hide(current_fragment_tiana_ho_hide);
-
-        // commit
-        fragmentTransaction.commit();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.hide(fragmentManager.findFragmentByTag("homeFragment"));
+        ft.add(R.id.fragment_home_content, fragment);
+        //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     /**

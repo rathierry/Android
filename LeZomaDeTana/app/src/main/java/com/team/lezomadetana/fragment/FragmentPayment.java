@@ -162,8 +162,10 @@ public class FragmentPayment extends BaseFragment {
                         for (int i = 0; i < wallets.size(); i++) {
                             String idUserWallets = TextUtils.equals(wallets.get(i).getUserId(), "null") ? "null" : wallets.get(i).getUserId();
                             String idUser = TextUtils.equals(user.getId(), "null") ? "null" : user.getId();
+
                             // log all values
-                            showLongToast(getContext(), "idUser: " + idUser + "\n\nidUserWallets: " + idUserWallets);
+                            //showLongToast(getContext(), "idUser: " + idUser + "\n\nidUserWallets: " + idUserWallets);
+
                             // compare values
                             if (idUserWallets != null && idUser != null) {
                                 if (idUserWallets.equals(idUser)) {

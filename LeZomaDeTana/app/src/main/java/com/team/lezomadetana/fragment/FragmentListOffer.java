@@ -100,7 +100,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
                 inflater.inflate(R.layout.fragment_list_offer, container, false);
 
         // toolBar title
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.fragment_list_offer_toolbar_title));
+        //((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.fragment_list_offer_toolbar_title));
 
         // initialize view
         ImageView imageView = (ImageView) rootView.findViewById(R.id.icon_profile);
