@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_centerInParent="true"
     android:background="@color/color_white"
     android:descendantFocusability="beforeDescendants"
@@ -25,15 +26,17 @@
 
     <!-- product -->
     <android.support.design.widget.TextInputLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/color_black">
+
 
         <EditText
-            android:id="@+id/confirm_user_update_password"
+            android:id="@+id/confirm_user_update_passworda"
             style="@style/ediTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

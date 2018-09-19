@@ -111,7 +111,10 @@ public class MainActivity extends BaseActivity {
         imageViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, UserUpdateInfoActivity.class));
+
+                startActivity(new Intent(MainActivity.this,UserUpdateInfoActivity.class));
+                drawerLayout.closeDrawers();
+
             }
         });
 

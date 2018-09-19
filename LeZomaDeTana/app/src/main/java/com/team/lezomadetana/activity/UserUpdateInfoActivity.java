@@ -120,6 +120,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
         // set image avatar to rounded
         _avatarImage.useRoundedBitmap = true;
 
+        /*((BaseActivity)activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
+
         _avatarImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +145,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
                     if(IsUserInfoChange()){
                         showConfirmPopup();
+                    }
+                    else {
+                        showLongToast(context,"Tsy nisy niova");
                     }
 
                 }
@@ -508,7 +514,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         boolean isChanged = true;
 
 
-        if(defaultUser.getName() == changedUser.getName() && defaultUser.getUsername() == changedUser.getUsername() && defaultUser.getRegion() == changedUser.getRegion() && defaultUser.getPassword() == changedUser.getPassword()){
+        if(defaultUser.getName().equals(changedUser.getName()) && defaultUser.getUsername().equals(changedUser.getUsername()) && defaultUser.getRegion().equals(changedUser.getRegion()) && defaultUser.getPassword().equals(changedUser.getPassword())){
             isChanged = false;
         }
 
@@ -638,7 +644,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
         // init view
 
-        final EditText passwordEditText = (EditText) mView.findViewById(R.id.confirm_user_update_password);
+        final EditText passEdit = (EditText) mView.findViewById(R.id.confirm_user_update_passworda);
 
         // drop down element
 
@@ -668,22 +674,20 @@ public class UserUpdateInfoActivity extends BaseActivity {
                         // values
 
 
-                        String password = passwordEditText.getText().toString();
+                        String pass = passEdit.getText().toString();
                         // product
 
                         // category
                         if (password.isEmpty() || TextUtils.isEmpty(password)) {
-                            passwordEditText.setError("tsy mety");
+                            passEdit.setError("tsy mety");
                             return;
                         }
-
 
                         // show spinner
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-
-                        BaseActivity baseActivity = (BaseActivity) activity;
+                        final BaseActivity baseActivity = (BaseActivity) activity;
                         Service api = Client.getClient(baseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
                         // create basic authentication
@@ -692,9 +696,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                         UserCredentialResponse userCredentialResponse = baseActivity.getCurrentUser(context);
                         UserCheckCredential userCredential = new UserCheckCredential();
                         userCredential.setUsername(userCredentialResponse.getUsername());
-                        userCredential.setPassword(password);
-
-
+                        userCredential.setPassword(pass);
 
                         Call<UserCredentialResponse> call = api.checkCredential(auth,userCredential);
 
@@ -704,16 +706,13 @@ public class UserUpdateInfoActivity extends BaseActivity {
                             public void onResponse(Call<UserCredentialResponse> call, Response<UserCredentialResponse> response) {
                                 if (response.raw().code() == 200) {
 
-
-
                                     // set retrofit api
                                     Service api2 = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
 
                                     // create basic authentication
                                     String auth = BasicAuth();
 
-
-
+                                    final UserCredentialResponse urep = response.body();
 
                                     // send query
                                     Call<ResponseBody> call2 = api2.userUpdateJSON(auth, changedUser);
@@ -723,8 +722,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                             if (response.code() == 201) {
-                                                
 
+                                                baseActivity.saveCurrentUser(context,urep);
+                                                baseActivity.onBackPressed();
                                             }
                                             else
                                                 {
