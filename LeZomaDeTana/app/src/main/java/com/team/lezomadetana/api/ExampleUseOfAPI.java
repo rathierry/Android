@@ -10,6 +10,7 @@ import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.model.receive.Page;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
+import com.team.lezomadetana.model.receive.User;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
 import com.team.lezomadetana.model.send.TransactionSend;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,6 +70,53 @@ public class ExampleUseOfAPI
 
             }
         });
+    }
+
+    public static void updateUser(){
+
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+
+        //String req = "";
+        User user = new User();
+        user.setUsername("0346655762");
+        user.setName("Orita");
+        user.setPassword("hery-password");
+        user.setRegion("ANALAMANGA");
+        user.setId("ce91ea8a-e18b-467f-82a1-7fc041d7535b");
+
+
+        // send query
+        Call<ResponseBody> call = api.userUpdateJSON(auth,user);
+
+        // request
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                if(response.code() == 201)
+                {
+
+
+
+                    Log.d("aaa",""+response.body());
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+
+
+
+
     }
 
 

@@ -716,13 +716,14 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
 
                                     // send query
-                                    Call<JsonObject> call2 = api2.userUpdateJSON(auth, changedUser);
+                                    Call<ResponseBody> call2 = api2.userUpdateJSON(auth, changedUser);
 
                                     // request
-                                    call2.enqueue(new Callback<JsonObject>() {
+                                    call2.enqueue(new Callback<ResponseBody>() {
                                         @Override
-                                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                             if (response.code() == 201) {
+                                                
 
                                             }
                                             else
@@ -743,7 +744,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                                         }
 
                                         @Override
-                                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
                                             hideLoadingView();
 
                                             // alert

@@ -91,7 +91,7 @@ public interface Service {
     Call<ResponseBody> userRegisterJSON(@Header("Authorization") String auth, @Body UserRegisterSend user);
 
     @POST("rest/users/")
-    Call<JsonObject> userUpdateJSON(@Header("Authorization") String auth, @Body User user);
+    Call<ResponseBody> userUpdateJSON(@Header("Authorization") String auth, @Body User user);
 
     // list request
     @GET("rest/requests")
