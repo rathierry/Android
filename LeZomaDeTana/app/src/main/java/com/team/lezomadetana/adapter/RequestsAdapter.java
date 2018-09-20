@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.fragment.FragmentRequestBuy;
+import com.team.lezomadetana.fragment.FragmentRequestsSell;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -44,8 +45,10 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<Request> requests;
     private RequestAdapterListener listener;
     private FragmentRequestBuy fragmentRequestBuy;
+    private FragmentRequestsSell fragmentRequestSell;
 
     private boolean isLoadingAdded = false;
+    private boolean fromRequestBuyFragment = false;
 
     // ===========================================================
     // Constructors
@@ -56,6 +59,15 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.requests = requests;
         this.listener = listener;
         this.fragmentRequestBuy = fragmentRequestBuy;
+        this.fromRequestBuyFragment = true;
+    }
+
+    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestsSell fragmentRequestSell) {
+        this.mContext = mContext;
+        this.requests = requests;
+        this.listener = listener;
+        this.fragmentRequestSell = fragmentRequestSell;
+        this.fromRequestBuyFragment = false;
     }
 
     // ===========================================================
@@ -153,7 +165,12 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             case VIEW_LOADING:
                 // show next page
-                fragmentRequestBuy.loadNextPage();
+                if (fromRequestBuyFragment) {
+                    fragmentRequestBuy.loadNextPage();
+                } else {
+                    // TODO
+                    //fragmentRequestSell.loadNextPage();
+                }
                 break;
         }
     }

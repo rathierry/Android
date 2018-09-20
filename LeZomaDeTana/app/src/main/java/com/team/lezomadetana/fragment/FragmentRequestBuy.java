@@ -267,7 +267,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     // ===========================================================
 
     /**
-     * Sroll in recycle view
+     * Scroll in recycle view
      */
     private void onScrollRecyclerView() {
         recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
