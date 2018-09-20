@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -34,8 +33,8 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Constants
     // ===========================================================
 
-    private static final int ITEM = 0;
-    private static final int LOADING = 1;
+    private static final int VIEW_ITEM = 0;
+    private static final int VIEW_LOADING = 1;
 
     // ===========================================================
     // Fields
@@ -44,7 +43,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context mContext;
     private List<Request> requests;
     private RequestAdapterListener listener;
-    private XBlankFragment myfrag;
+    private XBlankFragment xBlankFragment;
 
     private boolean isLoadingAdded = false;
 
@@ -52,11 +51,11 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Constructors
     // ===========================================================
 
-    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, XBlankFragment frag) {
+    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, XBlankFragment xBlankFragment) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
-        this.myfrag = frag;
+        this.xBlankFragment = xBlankFragment;
     }
 
     // ===========================================================
@@ -73,10 +72,10 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         switch (viewType) {
-            case ITEM:
+            case VIEW_ITEM:
                 viewHolder = getViewHolder(parent, inflater);
                 break;
-            case LOADING:
+            case VIEW_LOADING:
                 View v2 = inflater.inflate(R.layout.item_progress, parent, false);
                 viewHolder = new LoadingVH(v2);
 
@@ -96,7 +95,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         switch (getItemViewType(position)) {
-            case ITEM:
+            case VIEW_ITEM:
                 // class model
                 final Request request = requests.get(position);
 
@@ -152,10 +151,9 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 applyClickEvents(requestVH, position, request);
                 break;
 
-            case LOADING:
-                // Do nothing
-                myfrag.loadNextPage();
-                Toast.makeText(mContext, "Do nothing", Toast.LENGTH_SHORT).show();
+            case VIEW_LOADING:
+                // show next page
+                xBlankFragment.loadNextPage();
                 break;
         }
     }
@@ -167,7 +165,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        return (position == requests.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == requests.size() - 1 && isLoadingAdded) ? VIEW_LOADING : VIEW_ITEM;
     }
 
     // ===========================================================
@@ -186,29 +184,10 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Public Methods
     // ===========================================================
 
-    public void addListItemToAdapter(List<Request> list) {
-        // add list to current array list of data
-        requests.addAll(list);
-
-        // notify UI
-        this.notifyDataSetChanged();
-    }
-
      /*
    Helpers
    _________________________________________________________________________________________________
     */
-
-    /*public void add(Request r) {
-        requests.add(r);
-        notifyItemInserted(requests.size() - 1);
-    }
-
-    public void addAll(List<Request> moveResults) {
-        for (Request result : moveResults) {
-            add(result);
-        }
-    }*/
 
     public void remove(Request r) {
         int position = requests.indexOf(r);
@@ -231,19 +210,10 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        /*add(new Request());*/
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
-
-        /*int position = requests.size() - 1;
-        Request result = getItem(position);
-
-        if (result != null) {
-            requests.remove(position);
-            notifyItemRemoved(position);
-        }*/
     }
 
     public Request getItem(int position) {

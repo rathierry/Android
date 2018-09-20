@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -70,9 +68,10 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // ===========================================================
 
     private static int PAGE_START = 0;
+    private static int PAGE_ELEM = 6;
     // limiting to 20 for this screen, since total pages in actual API is very large.
     private int TOTAL_PAGES = 0;
-    private int PAGE_SIZE = 21;
+    private int PAGE_SIZE = PAGE_ELEM;
     private int currentPage = PAGE_START;
 
     // ===========================================================
@@ -88,8 +87,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     private RecyclerView recyclerView;
     private XRequestsAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-
-    private ProgressBar progressBar;
 
     private String itemNameSelected;
     private String itemIdSelected;
@@ -145,7 +142,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         swipeRefreshLayout.setOnRefreshListener(this);
 
         // adapter
-        mAdapter = new XRequestsAdapter(getContext(), requests, this,this);
+        mAdapter = new XRequestsAdapter(getContext(), requests, this, this);
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -155,6 +152,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
         // scroll recycler
         onScrollRecyclerView();
+
         // download all category
         getAllCategory();
 
@@ -193,15 +191,28 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void onRefresh() {
-        resetPagination();
-        loadFirstPage();
-
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && rootView != null) {
+            onResume();
+            showShortToast(getContext(), "- setUserVisibleHint -");
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (getUserVisibleHint()) {
+            onRefresh();
+            showShortToast(getContext(), "- onResume -");
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        resetPagination();
+        loadFirstPage();
+        showShortToast(getContext(), "- onRefresh -");
     }
 
     @Override
@@ -253,20 +264,14 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // Private Methods
     // ===========================================================
 
+    /**
+     * Sroll in recycle view
+     */
     private void onScrollRecyclerView() {
         recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
             @Override
             protected void loadMoreItems() {
-                /*isLoading = true;
-                currentPage += 1;
-
-                // mocking network delay for API call
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadNextPage();
-                    }
-                }, 500);*/
+                //
             }
 
             @Override
@@ -377,9 +382,9 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
      */
     private void resetPagination() {
         showLongToast(getContext(), "- PAGE_SIZE = " + PAGE_SIZE +
-        "\n- TOTAL_PAGES = " + TOTAL_PAGES +
-        "\n- currentPage = " + currentPage);
-        PAGE_SIZE = 21;
+                "\n- TOTAL_PAGES = " + TOTAL_PAGES +
+                "\n- currentPage = " + currentPage);
+        PAGE_SIZE = PAGE_ELEM;
         currentPage = 0;
     }
 
@@ -396,7 +401,8 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         String auth = baseActivity.BasicAuth();
 
         // params
-        showShortToast(getContext(), "1) currentPage = " + currentPage);
+        showShortToast(getContext(), "[FIRST] page\ncurrentPage = " + currentPage);
+
         // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
@@ -426,7 +432,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
                     // set total pages value
                     TOTAL_PAGES = pageInfo.getTotalPages();
-                    //showShortToast(getContext(), "1) TOTAL_PAGES = " + TOTAL_PAGES);
 
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
@@ -479,7 +484,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
      * Load next page
      */
     public void loadNextPage() {
-
+        // specific values for the next page
         isLoading = true;
         currentPage += 1;
 
@@ -490,7 +495,8 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         String auth = baseActivity.BasicAuth();
 
         // params
-        showShortToast(getContext(), "2) currentPage = " + currentPage);
+        showShortToast(getContext(), "[NEXT] page\ncurrentPage = " + currentPage);
+
         // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
@@ -520,11 +526,11 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
                     // set total pages value
                     TOTAL_PAGES = pageInfo.getTotalPages();
-                    //showShortToast(getContext(), "2) TOTAL_PAGES = " + TOTAL_PAGES);
 
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
+                    // verification
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
                         showAlertDialog("Entana", R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
@@ -542,7 +548,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
                             // adding request to requests array
                             requests.add(request);
-                            /*mAdapter.addAll(requests);*/
 
                             // check last page
                             if (currentPage == TOTAL_PAGES - 1) {
@@ -566,123 +571,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
                 showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, "Unable to fetch json: " + t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * Fetch all requests
-     */
-    private void getAllRequests() {
-        swipeRefreshLayout.setRefreshing(true);
-
-        // set retrofit api
-        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
-
-        // create basic authentication
-        String auth = baseActivity.BasicAuth();
-
-        // send query
-        Call<JsonObject> call = api.getAllRequest(auth);
-
-        // request
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                // verification
-                if (response.body() == null) {
-                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
-                } else if (response.code() == 200) {
-                    // array filter
-                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
-
-                    if (filter == null || (filter.size() == 0)) {
-                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
-                    } else {
-                        // clear the inbox
-                        requests.clear();
-
-                        // parsing gson
-                        for (int i = 0; i < filter.size(); i++) {
-                            // class model to mapping gson
-                            Request request = new Gson().fromJson(filter.get(i), Request.class);
-
-                            // // // Request.Type.valueOf("BUY").ordinal()
-                            if (request.getType() == Request.Type.BUY) {
-                                // new class model to set all values
-                                Request req = new Request();
-
-                                // verify server's response
-                                String _id = TextUtils.equals(request.getId(), "null") ? "null" : request.getId();
-                                String _userId = TextUtils.equals(request.getUserId(), "null") ? "null" : request.getUserId();
-                                String _productName = TextUtils.equals(request.getProduct(), "null") ? "null" : request.getProduct();
-                                String _price = String.valueOf((TextUtils.equals(request.getPrice().toString(), "null") ? "null" : request.getPrice()));
-                                String _quantity = String.valueOf((TextUtils.equals(request.getQuantity().toString(), "null") ? "null" : request.getQuantity()));
-                                String _templateId = TextUtils.equals(request.getTemplateId(), "null") ? "null" : request.getTemplateId();
-
-                                // offer
-                                if (request.getOffers() == null) {
-                                    req.setOffers(null);
-                                } else {
-                                    req.setOffers(request.getOffers());
-                                }
-
-                                // set user who create request item
-                                if (request.getUser() == null) {
-                                    req.setUser(null);
-                                } else {
-                                    req.setUser(request.getUser());
-                                }
-
-                                // assetUrls is json array
-                                JsonArray assetArray = filter.get(i).getAsJsonObject().get("assetUrls").getAsJsonArray();
-                                ArrayList<String> assetUrl = new ArrayList<String>();
-                                for (int j = 0; j < assetArray.size(); j++) {
-                                    assetUrl.add(String.valueOf(assetArray.get(j)));
-                                }
-                                req.setAssetUrls(assetUrl);
-
-                                // set values
-                                req.setUnitType(request.getUnitType());
-                                req.setPrice(Float.valueOf(_price));
-                                req.setUserId(_userId);
-                                req.setProduct(_productName);
-                                req.setTemplateId(_templateId);
-                                req.setQuantity(Integer.valueOf(_quantity));
-                                req.setId(_id);
-                                req.setType(request.getType());
-
-                                // generate a random color
-                                req.setColor(getRandomMaterialColor("400"));
-
-                                // adding request to requests array
-                                requests.add(req);
-                            }
-                        }
-
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                // alert
-                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                        .setMessage("Unable to fetch json: " + t.getMessage())
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                getAllRequests();
-                            }
-                        })
-                        .show();
             }
         });
     }
