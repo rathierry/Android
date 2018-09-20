@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
+import com.team.lezomadetana.fragment.XBlankFragment;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -43,6 +44,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context mContext;
     private List<Request> requests;
     private RequestAdapterListener listener;
+    private XBlankFragment myfrag;
 
     private boolean isLoadingAdded = false;
 
@@ -50,10 +52,11 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Constructors
     // ===========================================================
 
-    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener) {
+    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, XBlankFragment frag) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
+        this.myfrag = frag;
     }
 
     // ===========================================================
@@ -76,6 +79,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case LOADING:
                 View v2 = inflater.inflate(R.layout.item_progress, parent, false);
                 viewHolder = new LoadingVH(v2);
+
                 break;
         }
         return viewHolder;
@@ -150,6 +154,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case LOADING:
                 // Do nothing
+                myfrag.loadNextPage();
                 Toast.makeText(mContext, "Do nothing", Toast.LENGTH_SHORT).show();
                 break;
         }

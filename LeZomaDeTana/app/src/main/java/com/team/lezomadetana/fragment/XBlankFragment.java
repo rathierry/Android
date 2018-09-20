@@ -145,7 +145,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         swipeRefreshLayout.setOnRefreshListener(this);
 
         // adapter
-        mAdapter = new XRequestsAdapter(getContext(), requests, this);
+        mAdapter = new XRequestsAdapter(getContext(), requests, this,this);
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -196,6 +196,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     public void onRefresh() {
         resetPagination();
         loadFirstPage();
+
     }
 
     @Override
@@ -256,7 +257,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
             @Override
             protected void loadMoreItems() {
-                isLoading = true;
+                /*isLoading = true;
                 currentPage += 1;
 
                 // mocking network delay for API call
@@ -265,7 +266,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                     public void run() {
                         loadNextPage();
                     }
-                }, 500);
+                }, 500);*/
             }
 
             @Override
@@ -477,7 +478,11 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     /**
      * Load next page
      */
-    private void loadNextPage() {
+    public void loadNextPage() {
+
+        isLoading = true;
+        currentPage += 1;
+
         // set retrofit api
         Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 

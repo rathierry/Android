@@ -235,11 +235,11 @@ public class FragmentPaymentCharge extends BaseFragment {
                     TransactionAriaryJeton.Operator operator = null;
 
                     // check operator code
-                    if (codeOperatorText == "032") {
+                    if (codeOperatorText.equals("032")) {
                         operator = TransactionAriaryJeton.Operator.ORANGE;
-                    } else if (codeOperatorText == "033") {
+                    } else if (codeOperatorText.equals("033")) {
                         operator = TransactionAriaryJeton.Operator.AIRTEL;
-                    } else if (codeOperatorText == "034") {
+                    } else if (codeOperatorText.equals("034")) {
                         operator = TransactionAriaryJeton.Operator.TELMA;
                     }
 
