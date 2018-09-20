@@ -60,15 +60,6 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Getter & Setter
     // ===========================================================
 
-    public List<Request> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<Request> requests) {
-        this.requests = requests;
-    }
-
-
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
@@ -159,6 +150,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case LOADING:
                 // Do nothing
+                Toast.makeText(mContext, "Do nothing", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -240,13 +232,13 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = requests.size() - 1;
+        /*int position = requests.size() - 1;
         Request result = getItem(position);
 
         if (result != null) {
             requests.remove(position);
             notifyItemRemoved(position);
-        }
+        }*/
     }
 
     public Request getItem(int position) {

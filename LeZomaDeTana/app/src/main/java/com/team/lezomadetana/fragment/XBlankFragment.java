@@ -152,37 +152,9 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
-        recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
-            @Override
-            protected void loadMoreItems() {
-                isLoading = true;
-                currentPage += 1;
 
-                // mocking network delay for API call
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadNextPage();
-                    }
-                }, 500);
-            }
-
-            @Override
-            public int getTotalPageCount() {
-                return TOTAL_PAGES;
-            }
-
-            @Override
-            public boolean isLastPage() {
-                return isLastPage;
-            }
-
-            @Override
-            public boolean isLoading() {
-                return isLoading;
-            }
-        });
-
+        // scroll recycler
+        onScrollRecyclerView();
         // download all category
         getAllCategory();
 
@@ -229,8 +201,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public void onResume() {
         super.onResume();
-        resetPagination();
-        loadFirstPage();
     }
 
     @Override
@@ -282,12 +252,132 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     // Private Methods
     // ===========================================================
 
+    private void onScrollRecyclerView() {
+        recyclerView.addOnScrollListener(new PaginationScrollListener(mLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage += 1;
+
+                // mocking network delay for API call
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNextPage();
+                    }
+                }, 500);
+            }
+
+            @Override
+            public int getTotalPageCount() {
+                return TOTAL_PAGES;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
+    }
+
+    /**
+     * Load all category list
+     */
+    private void getAllCategory() {
+        // show spinner
+        showLoadingView("Download Category ...");
+
+        // set retrofit api
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
+
+        // create basic authentication
+        String auth = baseActivity.BasicAuth();
+
+        // send query
+        Call<JsonObject> call = api.getAllProductTemplate(auth);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // verification
+                if (response.body() == null) {
+                    hideLoadingView();
+                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                } else if (response.code() == 200) {
+                    // sort using result(s)
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
+
+                    if (filter == null || (filter.size() == 0)) {
+                        hideLoadingView();
+                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                    } else {
+                        // class model to mapping gson
+                        List<ProductTemplate> productTemplates = null;
+
+                        // new class model to set all values
+                        productTemplates = new ArrayList<ProductTemplate>();
+
+                        // boucle
+                        for (int i = 0; i < filter.size(); i++) {
+                            ProductTemplate productTemplate = new Gson().fromJson(filter.get(i), ProductTemplate.class);
+                            productTemplates.add(productTemplate);
+                        }
+
+                        // init spinner
+                        templates = productTemplates;
+
+                        // hide spinner
+                        hideLoadingView();
+
+                        // show loader and fetch messages
+                        swipeRefreshLayout.post(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadFirstPage();
+                                    }
+                                }
+                        );
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                // hide swipeRefresh
+                swipeRefreshLayout.setRefreshing(false);
+
+                // alert
+                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                hideLoadingView();
+                                getAllCategory();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
     /**
      * Reset pagination
      */
     private void resetPagination() {
-        PAGE_START = 0;
-        TOTAL_PAGES = 0;
+        showLongToast(getContext(), "- PAGE_SIZE = " + PAGE_SIZE +
+        "\n- TOTAL_PAGES = " + TOTAL_PAGES +
+        "\n- currentPage = " + currentPage);
         PAGE_SIZE = 21;
         currentPage = 0;
     }
@@ -305,14 +395,15 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         String auth = baseActivity.BasicAuth();
 
         // params
-        // http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
+        showShortToast(getContext(), "1) currentPage = " + currentPage);
+        // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
         map.put("sort", "creationTime,desc");
         map.put("type", "BUY");
         // first page is always begin by 0
         map.put("page", String.valueOf(currentPage));
-        // get first page of 10 element
+        // get first page of 21 element
         map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
@@ -324,7 +415,8 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 // verification
                 if (response.body() == null) {
-                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                    swipeRefreshLayout.setRefreshing(false);
+                    showAlertDialog("Entana", R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // info page
                     final Page pageInfo;
@@ -333,12 +425,14 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
                     // set total pages value
                     TOTAL_PAGES = pageInfo.getTotalPages();
+                    //showShortToast(getContext(), "1) TOTAL_PAGES = " + TOTAL_PAGES);
 
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
-                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                        hideLoadingView();
+                        showAlertDialog("Entana", R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // clear the inbox
                         requests.clear();
@@ -353,7 +447,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
                             // adding request to requests array
                             requests.add(request);
-                            /*mAdapter.addAll(requests);*/
 
                             // check last page
                             if (currentPage <= TOTAL_PAGES - 1) {
@@ -376,20 +469,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
-                // alert
-                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                        .setMessage("Unable to fetch json: " + t.getMessage())
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                // TODO :)
-                                //loadFirstPage();
-                            }
-                        })
-                        .show();
+                showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, "Unable to fetch json: " + t.getMessage());
             }
         });
     }
@@ -404,11 +484,17 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         // create basic authentication
         String auth = baseActivity.BasicAuth();
 
+        // params
+        showShortToast(getContext(), "2) currentPage = " + currentPage);
+        // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
-        // get first page of 10 element
-        map.put("size", TOTAL_PAGES);
-        // first page is always begin by 0
-        map.put("page", currentPage);
+        // filter
+        map.put("sort", "creationTime,desc");
+        map.put("type", "BUY");
+        // then page is begin by 1
+        map.put("page", String.valueOf(currentPage));
+        // get first page of 21 element
+        map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
         Call<JsonObject> call = api.getAllRequest(auth, map);
@@ -419,28 +505,54 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 // verification
                 if (response.body() == null) {
-                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                    hideLoadingView();
+                    showAlertDialog("Entana", R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
+                    // info page
+                    final Page pageInfo;
+                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                    Log.d("REQUESTS", "" + pageInfo);
+
+                    // set total pages value
+                    TOTAL_PAGES = pageInfo.getTotalPages();
+                    //showShortToast(getContext(), "2) TOTAL_PAGES = " + TOTAL_PAGES);
+
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
-                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                        hideLoadingView();
+                        showAlertDialog("Entana", R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         mAdapter.removeLoadingFooter();
                         isLoading = false;
 
-                        // TODO TODO TODO
-                        // TODO TODO TODO
-                        // TODO TODO TODO
-                        showLongToast(getContext(), "loadNextPage in UI");
+                        // parsing gson
+                        for (int i = 0; i < filter.size(); i++) {
+                            // class model to mapping gson
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                        // check last page
-                        if (currentPage != TOTAL_PAGES) {
-                            mAdapter.addLoadingFooter();
-                        } else {
-                            isLastPage = true;
+                            // generate a random color
+                            request.setColor(getRandomMaterialColor("400"));
+
+                            // adding request to requests array
+                            requests.add(request);
+                            /*mAdapter.addAll(requests);*/
+
+                            // check last page
+                            if (currentPage == TOTAL_PAGES - 1) {
+                                isLastPage = true;
+                            } else {
+                                mAdapter.addLoadingFooter();
+                            }
                         }
+
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        mAdapter.notifyDataSetChanged();
+
+                        // hide swipe refresh
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             }
@@ -448,19 +560,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
-                // alert
-                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                        .setMessage("Unable to fetch json: " + t.getMessage())
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                getAllRequests();
-                            }
-                        })
-                        .show();
+                showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, "Unable to fetch json: " + t.getMessage());
             }
         });
     }
@@ -575,92 +675,6 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();
                                 getAllRequests();
-                            }
-                        })
-                        .show();
-            }
-        });
-    }
-
-    /**
-     * Load all category list
-     */
-    private void getAllCategory() {
-        // show spinner
-        showLoadingView("Download Category ...");
-
-        // set retrofit api
-        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
-
-        // create basic authentication
-        String auth = baseActivity.BasicAuth();
-
-        // send query
-        Call<JsonObject> call = api.getAllProductTemplate(auth);
-
-        // request
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                // verification
-                if (response.body() == null) {
-                    hideLoadingView();
-                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
-                } else if (response.code() == 200) {
-                    // sort using result(s)
-                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
-
-                    if (filter == null || (filter.size() == 0)) {
-                        hideLoadingView();
-                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
-                    } else {
-                        // class model to mapping gson
-                        List<ProductTemplate> productTemplates = null;
-
-                        // new class model to set all values
-                        productTemplates = new ArrayList<ProductTemplate>();
-
-                        // boucle
-                        for (int i = 0; i < filter.size(); i++) {
-                            ProductTemplate productTemplate = new Gson().fromJson(filter.get(i), ProductTemplate.class);
-                            productTemplates.add(productTemplate);
-                        }
-
-                        // init spinner
-                        templates = productTemplates;
-
-                        // hide spinner
-                        hideLoadingView();
-
-                        // show loader and fetch messages
-                        swipeRefreshLayout.post(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        loadFirstPage();
-                                    }
-                                }
-                        );
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                // hide swipeRefresh
-                swipeRefreshLayout.setRefreshing(false);
-
-                // alert
-                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                hideLoadingView();
-                                getAllCategory();
                             }
                         })
                         .show();
