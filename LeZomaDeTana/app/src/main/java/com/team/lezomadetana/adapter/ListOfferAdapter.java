@@ -83,7 +83,7 @@ public class ListOfferAdapter extends BaseAdapter {
             layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null)
-            convertView = layoutInflater.inflate(R.layout.list_offer_row, null);
+            convertView = layoutInflater.inflate(R.layout.row_for_offer, null);
 
         // initialize view
         ImageView imageView = (ImageView) convertView.findViewById(R.id.icon_profile);

@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.ZBuyFragment;
+import com.team.lezomadetana.fragment.ZSellFragment;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * Created by RaThierry on 06/09/2018.
  **/
 
-public class ZBuyAdapter extends BaseAdapter {
+public class ZSellAdapter extends BaseAdapter {
 
     // ===========================================================
     // Constants
@@ -43,24 +43,30 @@ public class ZBuyAdapter extends BaseAdapter {
 
     private Activity activity;
     private LayoutInflater layoutInflater;
-    private List<Request> requestList;
-    private ZBuyAdapter.RequestAdapterListener listener;
-    private ZBuyFragment zBuyFragment;
+    private List<Request> requestItems;
+    private ZSellAdapter.RequestAdapterListener listener;
+    private ZSellFragment zSellFragment;
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    public ZBuyAdapter(Activity activity, List<Request> requestList) {
+    public ZSellAdapter(Activity activity, List<Request> requestItems) {
         this.activity = activity;
-        this.requestList = requestList;
+        this.requestItems = requestItems;
     }
 
-    public ZBuyAdapter(Activity activity, List<Request> requestList, RequestAdapterListener listener, ZBuyFragment zBuyFragment) {
+    public ZSellAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener) {
         this.activity = activity;
-        this.requestList = requestList;
+        this.requestItems = requestItems;
         this.listener = listener;
-        this.zBuyFragment = zBuyFragment;
+    }
+
+    public ZSellAdapter(Activity activity, List<Request> requestItems, RequestAdapterListener listener, ZSellFragment zSellFragment) {
+        this.activity = activity;
+        this.requestItems = requestItems;
+        this.listener = listener;
+        this.zSellFragment = zSellFragment;
     }
 
     // ===========================================================
@@ -73,12 +79,12 @@ public class ZBuyAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return requestList.size();
+        return requestItems.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return requestList.get(location);
+        return requestItems.get(location);
     }
 
     @Override
@@ -92,7 +98,7 @@ public class ZBuyAdapter extends BaseAdapter {
             layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null)
-            convertView = layoutInflater.inflate(R.layout.layout_request_row, null);
+            convertView = layoutInflater.inflate(R.layout.row_for_request, null);
 
         TextView from = (TextView) convertView.findViewById(R.id.from);
         TextView subject = (TextView) convertView.findViewById(R.id.txt_primary);
@@ -108,7 +114,7 @@ public class ZBuyAdapter extends BaseAdapter {
         RelativeLayout iconContainer = (RelativeLayout) convertView.findViewById(R.id.icon_container);
 
         // getting request data for the row
-        final Request req = requestList.get(position);
+        final Request req = requestItems.get(position);
 
         // display profile image
         if (req.getAssetUrls() != null) {
@@ -145,7 +151,7 @@ public class ZBuyAdapter extends BaseAdapter {
                 btnSum.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        zBuyFragment.startPaymentFragment(req);
+                        zSellFragment.startPaymentFragment(req);
                     }
                 });
             }
@@ -155,7 +161,7 @@ public class ZBuyAdapter extends BaseAdapter {
         btnAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                zBuyFragment.showAnswerOfferPopup(req.getId());
+                zSellFragment.showAnswerOfferPopup(req.getId());
             }
         });
 
@@ -163,7 +169,7 @@ public class ZBuyAdapter extends BaseAdapter {
         applyReadStatus(from, subject, req);
 
         // apply click events
-        applyClickEvents(iconContainer, messageContainer, position, req);
+        applyClickEvents(iconContainer, convertView, messageContainer, position, req);
 
         return convertView;
     }
@@ -207,8 +213,7 @@ public class ZBuyAdapter extends BaseAdapter {
     private void applyProfilePicture(ImageView imgProfile, TextView iconText, String url) {
         // verification
         if (!TextUtils.isEmpty(url)) {
-            Glide.with(activity)
-                    .load(url)
+            Glide.with(activity).load(url)
                     .thumbnail(0.5f)
                     .crossFade()
                     .transform(new CircleTransform(activity))
@@ -219,12 +224,12 @@ public class ZBuyAdapter extends BaseAdapter {
             iconText.setVisibility(View.GONE);
         } else {
             imgProfile.setImageResource(R.drawable.bg_circle);
-            imgProfile.setColorFilter(zBuyFragment.getRandomMaterialColor("400"));
+            imgProfile.setColorFilter(zSellFragment.getRandomMaterialColor("500"));
             iconText.setVisibility(View.VISIBLE);
         }
     }
 
-    private void applyClickEvents(RelativeLayout iconContainer, LinearLayout messageContainer, final int position, final Request request) {
+    private void applyClickEvents(RelativeLayout iconContainer, View itemView, LinearLayout messageContainer, final int position, final Request request) {
         iconContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,7 +19,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +40,7 @@ import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.adapter.ZBuyAdapter;
+import com.team.lezomadetana.adapter.ZSellAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.helper.BottomNavigationBehavior;
@@ -56,12 +59,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
+
 /**
  * Created by RaThierry on 04/09/2018.
  **/
 
-public class ZBuyFragment extends BaseFragment implements
-        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ZBuyAdapter.RequestAdapterListener {
+public class ZSellFragment extends BaseFragment implements
+        View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ZSellAdapter.RequestAdapterListener {
 
     // ===========================================================
     // Constants
@@ -78,9 +83,9 @@ public class ZBuyFragment extends BaseFragment implements
     private BottomNavigationView footerMenu;
     private SwipeRefreshLayout swipeRefreshItem;
     private List<Request> requestList = new ArrayList<Request>();
-    private List<ProductTemplate> _categoryList = new ArrayList<ProductTemplate>();
     private ListView listViewItem;
-    private ZBuyAdapter ZBuyAdapter;
+    private ZSellAdapter ZSellAdapter;
+    private List<ProductTemplate> listCategory = new ArrayList<ProductTemplate>();
 
     private String itemNameSelected;
     private String itemIdSelected;
@@ -100,9 +105,8 @@ public class ZBuyFragment extends BaseFragment implements
     // ===========================================================
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -110,17 +114,18 @@ public class ZBuyFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_list_buy_item, container, false);
+                inflater.inflate(R.layout.z_fragment_sell, container, false);
 
         // current activity
         activity = ((BaseActivity) getActivity());
         mainActivity = ((MainActivity) getActivity());
 
         // floating btn to add new item
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_search_item_fab);
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fragment_available_item_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // open post popup
                 showPostRequestPopup();
             }
         });
@@ -137,7 +142,7 @@ public class ZBuyFragment extends BaseFragment implements
         layoutParams.setBehavior(new BottomNavigationBehavior());
 
         // refresh
-        swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_search_item_swipe_refresh_layout_post);
+        swipeRefreshItem = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_available_item_swipe_refresh_layout_post);
         swipeRefreshItem.setColorSchemeResources(android.R.color.holo_red_light,
                 android.R.color.holo_blue_light,
                 android.R.color.holo_orange_light,
@@ -145,9 +150,10 @@ public class ZBuyFragment extends BaseFragment implements
         swipeRefreshItem.setOnRefreshListener(this);
 
         // list view and adapter
-        listViewItem = (ListView) rootView.findViewById(R.id.fragment_search_item_list_view_item);
-        ZBuyAdapter = new ZBuyAdapter(getActivity(), requestList, this, this);
-        listViewItem.setAdapter(ZBuyAdapter);
+        listViewItem = (ListView) rootView.findViewById(R.id.fragment_available_item_list_view_item);
+
+        ZSellAdapter = new ZSellAdapter(getActivity(), requestList, this, this);
+        listViewItem.setAdapter(ZSellAdapter);
 
         // return current view
         return rootView;
@@ -175,11 +181,10 @@ public class ZBuyFragment extends BaseFragment implements
         switch (item.getItemId()) {
             case R.id.action_search:
                 showSearchRequestPopup();
-                return true;
+                break;
             case R.id.action_payment:
-                /*MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.drawerLayout.openDrawer(Gravity.LEFT);*/
-                mainActivity.launchPaymentFragment();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.drawerLayout.openDrawer(Gravity.LEFT);
                 break;
         }
 
@@ -221,7 +226,10 @@ public class ZBuyFragment extends BaseFragment implements
 
     @Override
     public void onClick(View v) {
-        //
+        switch (v.getId()) {
+            /*case ...:
+                break;*/
+        }
     }
 
     @Override
@@ -235,7 +243,7 @@ public class ZBuyFragment extends BaseFragment implements
         /*Request request = requestList.get(position);
         request.setRead(true);
         requestList.set(position, request);
-        ZBuyAdapter.notifyDataSetChanged();*/
+        buyAdapter.notifyDataSetChanged();*/
         // // //
         // Toast.makeText(getContext(), "onMessageRowClicked: START", Toast.LENGTH_SHORT).show();
         startPaymentFragment(request);
@@ -262,9 +270,6 @@ public class ZBuyFragment extends BaseFragment implements
 
         // back stack
         fragmentTransaction.addToBackStack(fragment.toString());
-
-        // hide current fragment
-        // fragmentTransaction.hide(current_fragment_tiana_ho_hide);
 
         // commit
         fragmentTransaction.commit();
@@ -314,10 +319,10 @@ public class ZBuyFragment extends BaseFragment implements
      */
     private void fetchAllRequests() {
         // set retrofit api
-        Service api = Client.getClient(activity.ROOT_MDZ_API).create(Service.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
-        String auth = activity.BasicAuth();
+        String auth = BaseActivity.BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllRequest(auth);
@@ -330,7 +335,7 @@ public class ZBuyFragment extends BaseFragment implements
                 if (response.body() == null) {
                     showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
-                    // array filter
+                    // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
@@ -344,8 +349,8 @@ public class ZBuyFragment extends BaseFragment implements
                             // class model to mapping gson
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                            // // // Request.Type.valueOf("BUY").ordinal()
-                            if (request.getType() == Request.Type.BUY) {
+                            // // // Request.Type.valueOf("SELL").ordinal()
+                            if (request.getType() == Request.Type.SELL) {
                                 // new class model to set all values
                                 Request req = new Request();
 
@@ -390,7 +395,7 @@ public class ZBuyFragment extends BaseFragment implements
                                 req.setType(request.getType());
 
                                 // generate a random color
-                                req.setColor(getRandomMaterialColor("400"));
+                                req.setColor(getRandomMaterialColor("500"));
 
                                 // adding request to requests array
                                 requestList.add(req);
@@ -399,8 +404,11 @@ public class ZBuyFragment extends BaseFragment implements
 
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
-                        ZBuyAdapter.notifyDataSetChanged();
+                        ZSellAdapter.notifyDataSetChanged();
                     }
+
+                    // stopping swipe refresh / loading
+                    swipeRefreshItem.setRefreshing(false);
 
                     // call list category api
                     fetchAllCategory();
@@ -436,10 +444,10 @@ public class ZBuyFragment extends BaseFragment implements
      */
     private void fetchAllCategory() {
         // set retrofit api
-        Service api = Client.getClient(activity.ROOT_MDZ_API).create(Service.class);
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
-        String auth = activity.BasicAuth();
+        String auth = BasicAuth();
 
         // send query
         Call<JsonObject> call = api.getAllProductTemplate(auth);
@@ -471,12 +479,14 @@ public class ZBuyFragment extends BaseFragment implements
                         }
 
                         // init spinner
-                        _categoryList = productTemplates;
+                        listCategory = productTemplates;
 
-                        // hide swipeRefresh / shimmerAnim / spinner
+                        // verification in LOG
+                        Log.d("REQUESTS", "" + productTemplates);
+
                         swipeRefreshItem.setRefreshing(false);
-                        hideShimmerAnimation(mShimmerViewContainer);
                         hideLoadingView();
+                        hideShimmerAnimation(mShimmerViewContainer);
 
                         // show footer menu
                         footerMenu.setVisibility(View.VISIBLE);
@@ -486,10 +496,9 @@ public class ZBuyFragment extends BaseFragment implements
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                // hide swipeRefresh / shimmerAnim / spinner
                 swipeRefreshItem.setRefreshing(false);
-                hideShimmerAnimation(mShimmerViewContainer);
                 hideLoadingView();
+                hideShimmerAnimation(mShimmerViewContainer);
 
                 // alert
                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -510,12 +519,12 @@ public class ZBuyFragment extends BaseFragment implements
     }
 
     /**
-     * Display popup post new item
+     * Display post item popup
      */
     private void showPostRequestPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_request, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -533,9 +542,9 @@ public class ZBuyFragment extends BaseFragment implements
         // drop down element
         List<String> itemsName = new ArrayList<>();
         final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < _categoryList.size(); i++) {
-            itemsName.add(_categoryList.get(i).getName());
-            itemsId.add(_categoryList.get(i).getId());
+        for (int i = 0; i < listCategory.size(); i++) {
+            itemsName.add(listCategory.get(i).getName());
+            itemsId.add(listCategory.get(i).getId());
         }
         itemsName.add(getResources().getString(R.string.app_other_category));
 
@@ -565,7 +574,7 @@ public class ZBuyFragment extends BaseFragment implements
 
 
         // drop down unit element
-        String[] unitTypeName = activity.getNames(Request.UnitType.class);
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
 
 
         // set adapter for spinner
@@ -584,13 +593,13 @@ public class ZBuyFragment extends BaseFragment implements
 
 
                 // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item: " + itemUnitTypeSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
             }
         });
 
         // set dialog message
         builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -650,16 +659,19 @@ public class ZBuyFragment extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        Service api = Client.getClient(activity.ROOT_MDZ_API).create(Service.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
-                        String auth = activity.BasicAuth();
+                        String auth = BasicAuth();
 
-                        // request
-                        RequestSend postRequest = new RequestSend(activity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
+                        //
+                        BaseActivity baseActivity = (BaseActivity) getActivity();
+
+                        //
+                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.SELL, itemIdSelected, true);
 
                         // send query
-                        Call<Void> call = api.sendRequest(auth, postRequest);
+                        Call<Void> call = api.sendRequest(auth, request);
 
                         // request
                         call.enqueue(new Callback<Void>() {
@@ -668,10 +680,9 @@ public class ZBuyFragment extends BaseFragment implements
                                 if (response.code() == 201) {
                                     dialog.dismiss();
 
-                                    // hide swipeRefresh / shimmerAnim / spinner
                                     swipeRefreshItem.setRefreshing(false);
-                                    hideShimmerAnimation(mShimmerViewContainer);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
 
                                     // clear list request
                                     requestList.clear();
@@ -684,10 +695,9 @@ public class ZBuyFragment extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                // hide swipeRefresh / shimmerAnim / spinner
                                 swipeRefreshItem.setRefreshing(false);
-                                hideShimmerAnimation(mShimmerViewContainer);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -724,12 +734,12 @@ public class ZBuyFragment extends BaseFragment implements
     }
 
     /**
-     * Display popup post new offer
+     * Popup to write new sell answer
      */
     public void showAnswerOfferPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -742,7 +752,7 @@ public class ZBuyFragment extends BaseFragment implements
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
 
         // drop down unit element
-        String[] unitTypeName = activity.getNames(Request.UnitType.class);
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
 
         // set adapter for spinner
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
@@ -765,7 +775,7 @@ public class ZBuyFragment extends BaseFragment implements
 
         // set dialog message
         builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -805,14 +815,17 @@ public class ZBuyFragment extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        Service api = Client.getClient(activity.ROOT_MDZ_API).create(Service.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
-                        String auth = activity.BasicAuth();
+                        String auth = BasicAuth();
 
-                        showShortToast(activity, "requestId : " + requestId);
+                        //
+                        BaseActivity baseActivity = (BaseActivity) getActivity();
 
-                        OfferSend offerSend = new OfferSend(requestId, activity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
+                        showShortToast(baseActivity, "requestId : " + requestId);
+
+                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);
@@ -825,21 +838,18 @@ public class ZBuyFragment extends BaseFragment implements
                                     dialog.dismiss();
                                     requestList.clear();
 
-                                    // hide swipeRefresh / shimmerAnim / spinner
                                     swipeRefreshItem.setRefreshing(false);
-                                    hideShimmerAnimation(mShimmerViewContainer);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
 
-                                    // refresh
+                                    // refresh list
                                     onRefresh();
                                 } else {
-                                    // dismiss dialog
                                     dialog.dismiss();
 
-                                    // hide swipeRefresh / shimmerAnim / spinner
                                     swipeRefreshItem.setRefreshing(false);
-                                    hideShimmerAnimation(mShimmerViewContainer);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
 
                                     // alert
                                     new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -858,10 +868,9 @@ public class ZBuyFragment extends BaseFragment implements
 
                             @Override
                             public void onFailure(Call<Void> call, Throwable t) {
-                                // hide swipeRefresh / shimmerAnim / spinner
                                 swipeRefreshItem.setRefreshing(false);
-                                hideShimmerAnimation(mShimmerViewContainer);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
@@ -918,9 +927,9 @@ public class ZBuyFragment extends BaseFragment implements
         // drop down element
         List<String> itemsName = new ArrayList<>();
         final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < _categoryList.size(); i++) {
-            itemsName.add(_categoryList.get(i).getName());
-            itemsId.add(_categoryList.get(i).getId());
+        for (int i = 0; i < listCategory.size(); i++) {
+            itemsName.add(listCategory.get(i).getName());
+            itemsId.add(listCategory.get(i).getId());
         }
         itemsName.add(getResources().getString(R.string.app_other_category));
 
@@ -988,19 +997,19 @@ public class ZBuyFragment extends BaseFragment implements
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
                         //
-                        Service api = Client.getClient(activity.ROOT_MDZ_API).create(Service.class);
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
-                        String auth = activity.BasicAuth();
+                        String auth = BasicAuth();
 
                         Map<String, String> map = new HashMap<>();
-                        map.put("type", "BUY");
+                        map.put("type", "SELL");
                         if (category != getResources().getString(R.string.app_other_category)) {
                             String id = "";
 
-                            for (int i = 0; i < _categoryList.size(); i++) {
-                                if (_categoryList.get(i).equals(category)) {
-                                    id = _categoryList.get(i).getId();
+                            for (int i = 0; i < listCategory.size(); i++) {
+                                if (listCategory.get(i).equals(category)) {
+                                    id = listCategory.get(i).getId();
                                     break;
                                 }
                             }
@@ -1008,7 +1017,6 @@ public class ZBuyFragment extends BaseFragment implements
                             map.put("templateId", id);
                         }
 
-                        // // //
                         if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
                             map.put("product", product);
                         }
@@ -1021,7 +1029,6 @@ public class ZBuyFragment extends BaseFragment implements
                             @Override
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                 if (response.code() == 200) {
-                                    // dismiss dialog
                                     dialog.dismiss();
 
                                     // verification
@@ -1042,9 +1049,8 @@ public class ZBuyFragment extends BaseFragment implements
                                                 // class model to mapping gson
                                                 Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                                                // // // Request.Type.valueOf("BUY").ordinal()
-                                                // // // Request.Type.SELL
-                                                if (request.getType().name() == "BUY") {
+                                                // // // Request.Type.valueOf("SELL").ordinal()
+                                                if (request.getType().name() == "SELL") {
                                                     // new class model to set all values
                                                     Request req = new Request();
 
@@ -1084,6 +1090,9 @@ public class ZBuyFragment extends BaseFragment implements
                                                     // generate a random color
                                                     req.setColor(getRandomMaterialColor("400"));
 
+                                                    // clear list request
+                                                    requestList.clear();
+
                                                     // adding request to requests array
                                                     requestList.add(req);
 
@@ -1103,24 +1112,22 @@ public class ZBuyFragment extends BaseFragment implements
 
                                                 // notifying list adapter about data changes
                                                 // so that it renders the list view with updated data
-                                                ZBuyAdapter.notifyDataSetChanged();
+                                                ZSellAdapter.notifyDataSetChanged();
                                             }
-
                                         }
                                     }
-                                    // hide swipeRefresh / shimmerAnim / spinner
                                     swipeRefreshItem.setRefreshing(false);
-                                    hideShimmerAnimation(mShimmerViewContainer);
                                     hideLoadingView();
+                                    hideShimmerAnimation(mShimmerViewContainer);
                                 }
+
                             }
 
                             @Override
                             public void onFailure(Call<JsonObject> call, Throwable t) {
-                                // hide swipeRefresh / shimmerAnim / spinner
                                 swipeRefreshItem.setRefreshing(false);
-                                hideShimmerAnimation(mShimmerViewContainer);
                                 hideLoadingView();
+                                hideShimmerAnimation(mShimmerViewContainer);
 
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))

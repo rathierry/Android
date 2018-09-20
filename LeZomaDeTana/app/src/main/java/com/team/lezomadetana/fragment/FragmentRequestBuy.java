@@ -36,7 +36,7 @@ import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
 import com.team.lezomadetana.activity.MainActivity;
-import com.team.lezomadetana.adapter.XRequestsAdapter;
+import com.team.lezomadetana.adapter.RequestsAdapter;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.Page;
@@ -60,8 +60,8 @@ import retrofit2.Response;
  * Created by RaThierry on 18/09/2018.
  */
 
-public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
-        XRequestsAdapter.RequestAdapterListener {
+public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+        RequestsAdapter.RequestAdapterListener {
 
     // ===========================================================
     // Constants
@@ -85,7 +85,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     private List<Request> requests = new ArrayList<>();
     private List<ProductTemplate> templates = new ArrayList<>();
     private RecyclerView recyclerView;
-    private XRequestsAdapter mAdapter;
+    private RequestsAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private String itemNameSelected;
@@ -94,6 +94,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private boolean isOnResume = false;
 
     // ===========================================================
     // Constructors
@@ -118,7 +119,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_blank, container, false);
+                inflater.inflate(R.layout.fragment_request_buy, container, false);
 
         // current activity
         baseActivity = ((BaseActivity) getActivity());
@@ -142,7 +143,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
         swipeRefreshLayout.setOnRefreshListener(this);
 
         // adapter
-        mAdapter = new XRequestsAdapter(getContext(), requests, this, this);
+        mAdapter = new RequestsAdapter(getContext(), requests, this, this);
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -194,18 +195,19 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && rootView != null) {
+            isOnResume = true;
             onResume();
-            showShortToast(getContext(), "- setUserVisibleHint -");
         }
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-        if (getUserVisibleHint()) {
+        if (isOnResume) {
             onRefresh();
             showShortToast(getContext(), "- onResume -");
+            isOnResume = false;
         }
+        super.onResume();
     }
 
     @Override
@@ -581,7 +583,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     private void addNewRequest() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_request, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -793,7 +795,7 @@ public class XBlankFragment extends BaseFragment implements SwipeRefreshLayout.O
     private void answerRequest(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));

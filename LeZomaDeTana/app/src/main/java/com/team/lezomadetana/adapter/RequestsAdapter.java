@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
-import com.team.lezomadetana.fragment.XBlankFragment;
+import com.team.lezomadetana.fragment.FragmentRequestBuy;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * Created by RaThierry on 18/09/2018.
  **/
 
-public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // ===========================================================
     // Constants
@@ -43,7 +43,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context mContext;
     private List<Request> requests;
     private RequestAdapterListener listener;
-    private XBlankFragment xBlankFragment;
+    private FragmentRequestBuy fragmentRequestBuy;
 
     private boolean isLoadingAdded = false;
 
@@ -51,11 +51,11 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Constructors
     // ===========================================================
 
-    public XRequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, XBlankFragment xBlankFragment) {
+    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestBuy fragmentRequestBuy) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
-        this.xBlankFragment = xBlankFragment;
+        this.fragmentRequestBuy = fragmentRequestBuy;
     }
 
     // ===========================================================
@@ -76,7 +76,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 viewHolder = getViewHolder(parent, inflater);
                 break;
             case VIEW_LOADING:
-                View v2 = inflater.inflate(R.layout.item_progress, parent, false);
+                View v2 = inflater.inflate(R.layout.progress_bar, parent, false);
                 viewHolder = new LoadingVH(v2);
 
                 break;
@@ -87,7 +87,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         RecyclerView.ViewHolder viewHolder;
-        View v1 = inflater.inflate(R.layout.layout_request_row, parent, false);
+        View v1 = inflater.inflate(R.layout.row_for_request, parent, false);
         viewHolder = new RequestVH(v1);
         return viewHolder;
     }
@@ -153,7 +153,7 @@ public class XRequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             case VIEW_LOADING:
                 // show next page
-                xBlankFragment.loadNextPage();
+                fragmentRequestBuy.loadNextPage();
                 break;
         }
     }

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -379,7 +378,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
     private void showAnswerOfferPopup(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_post_offer, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));

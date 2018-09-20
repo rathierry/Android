@@ -7,18 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,14 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -44,22 +33,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
-import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.receive.User;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
-import com.team.lezomadetana.model.send.UserRegisterSend;
 import com.team.lezomadetana.utils.CameraUtils;
-import com.team.lezomadetana.utils.CircleTransform;
 import com.team.lezomadetana.view.UrlImageView;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 import okhttp3.ResponseBody;
@@ -634,7 +617,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
     private void showConfirmPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_confirm_user_update, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.confirm_user_update, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom));
