@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -47,6 +48,17 @@ public class FragmentChat extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
+        MenuItem itemMenuSearch = menu.findItem(R.id.action_search);
+        MenuItem itemMenuPayment = menu.findItem(R.id.action_payment);
+        MenuItem itemMenuInfo = menu.findItem(R.id.action_information);
+
+        itemMenuSearch.setEnabled(false);
+        itemMenuSearch.setVisible(false);
+        itemMenuPayment.setEnabled(false);
+        itemMenuPayment.setVisible(false);
+        itemMenuInfo.setEnabled(false);
+        itemMenuInfo.setVisible(false);
     }
 
 
