@@ -128,11 +128,10 @@ public class UserUpdateInfoActivity extends BaseActivity {
         /*((BaseActivity)activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
 
-        // // //
+        // init
+        initSpinnerForRegion();
         passwordOnFocusChange();
-
-        // // //
-        showDefaultValue();
+        //showDefaultValue();
 
         // event: onClick avatar image
         _avatarImage.setOnClickListener(new View.OnClickListener() {
@@ -223,6 +222,33 @@ public class UserUpdateInfoActivity extends BaseActivity {
     // ===========================================================
 
     /**
+     * ...
+     */
+    private void initSpinnerForRegion() {
+        // drop down element
+        List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, regions);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        _regionSpinner.setAdapter(arrayAdapter);
+
+        // event onClick
+        _regionSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                region = parent.getItemAtPosition(position).toString();
+
+                // showing clicked spinner item name and position
+                showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
+            }
+        });
+    }
+
+    /**
      * On focus change password and re-password's input
      */
     private void passwordOnFocusChange() {
@@ -277,17 +303,19 @@ public class UserUpdateInfoActivity extends BaseActivity {
      * ...
      */
     private void showDefaultValue() {
-        showLoadingView("Miandry ...");
+        // show spinner
+        showLoadingView(getResources().getString(R.string.app_spinner));
 
+        // api
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
 
         // create basic authentication
         String auth = BasicAuth();
 
+        // user info
+        final UserCredentialResponse cUser = getCurrentUser(this);
 
         // send query
-
-        final UserCredentialResponse cUser = getCurrentUser(this);
         Call<JsonObject> call = api.getUserById(auth, cUser.getId());
         // request
         call.enqueue(new Callback<JsonObject>() {
@@ -307,7 +335,6 @@ public class UserUpdateInfoActivity extends BaseActivity {
                     Log.d("pouaaa", user.toString());
 
                     _nameText.setText(user.getName());
-                    //_firstNameText;
                     _phoneText.setText(user.getUsername());
                     _regionSpinner.setText(user.getRegion());
 
@@ -318,41 +345,12 @@ public class UserUpdateInfoActivity extends BaseActivity {
                         applyProfilePicture(_avatarImage, user.getProfileImageUrl());
                     }
                     hideLoadingView();
-
                 }
-
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
-            }
-        });
-    }
-
-    /**
-     * ...
-     */
-    private void initSpinnerForRegion() {
-        // drop down element
-        List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, regions);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        _regionSpinner.setAdapter(arrayAdapter);
-
-        // event onClick
-        _regionSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                region = parent.getItemAtPosition(position).toString();
-
-                // showing clicked spinner item name and position
-                showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
+                // message
             }
         });
     }
