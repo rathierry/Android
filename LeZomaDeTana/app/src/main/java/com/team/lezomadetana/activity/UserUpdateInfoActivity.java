@@ -129,9 +129,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
         ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
 
         // init
-        initSpinnerForRegion();
         passwordOnFocusChange();
-        //showDefaultValue();
+        showDefaultValue();
 
         // event: onClick avatar image
         _avatarImage.setOnClickListener(new View.OnClickListener() {
