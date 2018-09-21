@@ -38,7 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector">
 
                 <EditText
                     android:id="@+id/user_update_input_name"
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 android:visibility="gone">
 
 
@@ -78,7 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector">
 
                 <EditText
                     android:id="@+id/user_update_input_phone"
@@ -93,7 +96,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <!-- Region Text Label -->
-            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                 android:id="@+id/user_update_material_design_spinner_region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,7 +110,17 @@
                 android:textColorHint="@color/color_black"
                 android:textSize="20sp"
                 android:visibility="visible"
-                app:met_floatingLabel="highlight" />
+                app:met_floatingLabel="highlight" />-->
+
+            <Spinner
+                android:id="@+id/user_update_material_design_spinner_region"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
+                android:fontFamily="monospace"
+                android:spinnerMode="dropdown" />
 
             <!-- Address Label -->
             <android.support.design.widget.TextInputLayout
@@ -116,6 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 android:visibility="gone">
 
                 <EditText
@@ -137,6 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 android:visibility="gone">
 
                 <EditText
@@ -156,6 +171,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/color_black">
 
@@ -177,6 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/payment_edit_text_bg_selector"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/color_black">
 

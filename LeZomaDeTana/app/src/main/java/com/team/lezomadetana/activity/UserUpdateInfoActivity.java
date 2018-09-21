@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,11 +19,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -38,7 +43,6 @@ import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.utils.CameraUtils;
 import com.team.lezomadetana.view.UrlImageView;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
 import java.util.Arrays;
@@ -68,7 +72,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
     private EditText _nameText;
     private EditText _firstNameText;
     private EditText _phoneText;
-    private MaterialBetterSpinner _regionSpinner;
+    private Spinner _regionSpinner;
     private EditText _addressText;
     private EditText _passwordText;
     private EditText _rePasswordText;
@@ -89,6 +93,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
     private Context context;
     private Activity activity;
+    private List<String> regions;
 
     private boolean isImageChanged;
 
@@ -129,6 +134,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
 
         // init
+        initSpinnerForRegion();
         passwordOnFocusChange();
         showDefaultValue();
 
@@ -147,7 +153,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 if (validate()) {
                     changedUser.setName(_nameText.getText().toString());
                     changedUser.setUsername(_phoneText.getText().toString());
-                    changedUser.setRegion(_regionSpinner.getText().toString());
+                    changedUser.setRegion(/*_regionSpinner.getText().toString()*/region);
                     changedUser.setPassword(_passwordText.getText().toString());
                     // // //
                     if (IsUserInfoChange()) {
@@ -225,24 +231,62 @@ public class UserUpdateInfoActivity extends BaseActivity {
      */
     private void initSpinnerForRegion() {
         // drop down element
-        List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
+        regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
 
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, regions);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, regions) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
 
-        // attaching data adapter to spinner
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_secondary_text_icons_white));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_statusbar_translucent));
+                }
+
+                return view;
+            }
+        };
+
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         _regionSpinner.setAdapter(arrayAdapter);
 
         // event onClick
-        _regionSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                region = parent.getItemAtPosition(position).toString();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                region = (String) parent.getItemAtPosition(position);
 
                 // showing clicked spinner item name and position
                 showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
@@ -299,6 +343,17 @@ public class UserUpdateInfoActivity extends BaseActivity {
     }
 
     /**
+     * set selected item of spinner programmatically
+     */
+    private void setSpinnerSelection(Spinner spinner, List<String> array, String text) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(text)) {
+                spinner.setSelection(i);
+            }
+        }
+    }
+
+    /**
      * ...
      */
     private void showDefaultValue() {
@@ -335,8 +390,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
                     _nameText.setText(user.getName());
                     _phoneText.setText(user.getUsername());
-                    _regionSpinner.setText(user.getRegion());
-
+                    setSpinnerSelection(_regionSpinner, regions, user.getRegion());
                     _passwordText.setText(user.getPassword());
                     _rePasswordText.setText(user.getPassword());
 
@@ -520,11 +574,10 @@ public class UserUpdateInfoActivity extends BaseActivity {
     }
 
     /**
-     * ...
+     * Check if info user are changed
      */
     private boolean IsUserInfoChange() {
         boolean isChanged = true;
-
 
         if (defaultUser.getName().equals(changedUser.getName()) && defaultUser.getUsername().equals(changedUser.getUsername()) && defaultUser.getRegion().equals(changedUser.getRegion()) && defaultUser.getPassword().equals(changedUser.getPassword())) {
             isChanged = false;
@@ -543,7 +596,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         name = _nameText.getText().toString();
         firstName = _firstNameText.getText().toString();
         phone = _phoneText.getText().toString();
-        region = _regionSpinner.getText().toString();
+        /*region = _regionSpinner.getText().toString();*/
         address = _addressText.getText().toString();
         password = _passwordText.getText().toString();
         rePassword = _rePasswordText.getText().toString();
@@ -579,7 +632,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         }
         // region
         else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains(getResources().getString(R.string.user_register_input_text_region))) {
-            _regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
+            //_regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
             _regionSpinner.requestFocus();
             valid = false;
         }
@@ -620,7 +673,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         _nameText.setError(null);
         _firstNameText.setError(null);
         _phoneText.setError(null);
-        _regionSpinner.setError(null);
+        //_regionSpinner.setError(null);
         _addressText.setError(null);
         _passwordText.setError(null);
         _rePasswordText.setError(null);
@@ -640,7 +693,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
     }
 
     /**
-     * ...
+     * Confirm update info user
      */
     private void showConfirmPopup() {
         // get prompts xml view
@@ -688,6 +741,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
                             passEdit.setError("tsy mety");
                             return;
                         }
+
+                        dialog.dismiss();
 
                         // show spinner
                         showLoadingView(getResources().getString(R.string.app_spinner));
