@@ -44,25 +44,35 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Created by Hery Andoniaina on 18/09/2018.
+ **/
 
 public class UserUpdateInfoActivity extends BaseActivity {
 
-    RelativeLayout _layout;
-    UrlImageView _avatarImage;
-    EditText _nameText;
-    EditText _firstNameText;
-    EditText _phoneText;
-    MaterialBetterSpinner _regionSpinner;
-    EditText _addressText;
-    EditText _passwordText;
-    EditText _rePasswordText;
-    Button _btnSignUp;
+    // ===========================================================
+    // Constants
+    // ===========================================================
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
+
+    private RelativeLayout _layout;
+    private UrlImageView _avatarImage;
+    private EditText _nameText;
+    private EditText _firstNameText;
+    private EditText _phoneText;
+    private MaterialBetterSpinner _regionSpinner;
+    private EditText _addressText;
+    private EditText _passwordText;
+    private EditText _rePasswordText;
+    private Button _btnSignUp;
 
     // input values
     private String name;
@@ -80,7 +90,19 @@ public class UserUpdateInfoActivity extends BaseActivity {
     private Context context;
     private Activity activity;
 
-    private  boolean isImageChanged;
+    private boolean isImageChanged;
+
+    // ===========================================================
+    // Constructors
+    // ===========================================================
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
+
+    // ===========================================================
+    // Methods from SuperClass
+    // ===========================================================
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,41 +128,99 @@ public class UserUpdateInfoActivity extends BaseActivity {
         /*((BaseActivity)activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
 
+        // // //
+        passwordOnFocusChange();
+
+        // // //
+        showDefaultValue();
+
+        // event: onClick avatar image
         _avatarImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getUserAvatar();
             }
         });
-        passwordOnFocusChange();
-        showDefaultValue();
 
-
-
+        // event: onClick sign up btn
         _btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validate()){
+                if (validate()) {
                     changedUser.setName(_nameText.getText().toString());
                     changedUser.setUsername(_phoneText.getText().toString());
                     changedUser.setRegion(_regionSpinner.getText().toString());
                     changedUser.setPassword(_passwordText.getText().toString());
-
-                    if(IsUserInfoChange()){
+                    // // //
+                    if (IsUserInfoChange()) {
                         showConfirmPopup();
+                    } else {
+                        showLongToast(context, "Tsy nisy niova");
                     }
-                    else {
-                        showLongToast(context,"Tsy nisy niova");
-                    }
-
                 }
             }
         });
-
-
     }
 
+    // receiving activity result method will be called after closing the camera
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        switch (requestCode) {
+            case CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
+                // Make sure the request was successful (captured the image)
+                if (resultCode == RESULT_OK) {
+                    // refreshing the gallery
+                    CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
+                    isImageChanged = true;
+                    // successfully captured the image
+                    // display it in image view
+                    previewCapturedImage();
+                } else if (resultCode == RESULT_CANCELED) {
+                    // user cancelled Image capture
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
+                } else {
+                    // failed to capture image
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
+                }
+                break;
+
+            case CAMERA_GALLERY_IMAGE_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    // Recycle unused bitmaps
+                    if (_bitmapImage != null) {
+                        _bitmapImage.recycle();
+                    }
+                    _bitmapImage = CameraUtils.getImageFromGallery(this, data);
+                    // preview image
+                    _avatarImage.setImageBitmap(_bitmapImage);
+                    isImageChanged = true;
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // user cancelled Image capture
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
+                } else {
+                    // failed to capture image
+                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
+
+    // ===========================================================
+    // Private Methods
+    // ===========================================================
 
     /**
      * On focus change password and re-password's input
@@ -193,9 +273,10 @@ public class UserUpdateInfoActivity extends BaseActivity {
         });
     }
 
-
-    private void showDefaultValue()
-    {
+    /**
+     * ...
+     */
+    private void showDefaultValue() {
         showLoadingView("Miandry ...");
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
@@ -204,21 +285,17 @@ public class UserUpdateInfoActivity extends BaseActivity {
         String auth = BasicAuth();
 
 
-
-
         // send query
 
         final UserCredentialResponse cUser = getCurrentUser(this);
-        Call<JsonObject> call = api.getUserById(auth,cUser.getId());
+        Call<JsonObject> call = api.getUserById(auth, cUser.getId());
         // request
         call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response)
-            {
-                if(response.code() == 200)
-                {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
                     JsonObject jUser = response.body().getAsJsonObject();
-                    User user = new Gson().fromJson(jUser,User.class);
+                    User user = new Gson().fromJson(jUser, User.class);
                     defaultUser = user;
                     changedUser = new User();
 
@@ -227,7 +304,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                     changedUser.setCreationTime(user.getCreationTime());
 
 
-                    Log.d("pouaaa",user.toString());
+                    Log.d("pouaaa", user.toString());
 
                     _nameText.setText(user.getName());
                     //_firstNameText;
@@ -237,8 +314,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
                     _passwordText.setText(user.getPassword());
                     _rePasswordText.setText(user.getPassword());
 
-                    if(user.getProfileImageUrl() !=null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())){
-                        applyProfilePicture(_avatarImage,user.getProfileImageUrl());
+                    if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())) {
+                        applyProfilePicture(_avatarImage, user.getProfileImageUrl());
                     }
                     hideLoadingView();
 
@@ -253,6 +330,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
         });
     }
 
+    /**
+     * ...
+     */
     private void initSpinnerForRegion() {
         // drop down element
         List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
@@ -275,55 +355,6 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
             }
         });
-    }
-
-
-    // receiving activity result method will be called after closing the camera
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case CAMERA_CAPTURE_IMAGE_REQUEST_CODE:
-                // Make sure the request was successful (captured the image)
-                if (resultCode == RESULT_OK) {
-                    // refreshing the gallery
-                    CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
-                    isImageChanged = true;
-                    // successfully captured the image
-                    // display it in image view
-                    previewCapturedImage();
-                } else if (resultCode == RESULT_CANCELED) {
-                    // user cancelled Image capture
-                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
-                } else {
-                    // failed to capture image
-                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
-                }
-                break;
-
-            case CAMERA_GALLERY_IMAGE_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    // Recycle unused bitmaps
-                    if (_bitmapImage != null) {
-                        _bitmapImage.recycle();
-                    }
-                    _bitmapImage = CameraUtils.getImageFromGallery(this, data);
-                    // preview image
-                    _avatarImage.setImageBitmap(_bitmapImage);
-                    isImageChanged = true;
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    // user cancelled Image capture
-                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_canceled));
-                } else {
-                    // failed to capture image
-                    showCameraAlertDialog(getResources().getString(R.string.user_register_camera_error_failed));
-                }
-                break;
-
-            default:
-                break;
-        }
     }
 
     /**
@@ -491,19 +522,19 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 }).show();
     }
 
-
-    private boolean IsUserInfoChange()
-    {
+    /**
+     * ...
+     */
+    private boolean IsUserInfoChange() {
         boolean isChanged = true;
 
 
-        if(defaultUser.getName().equals(changedUser.getName()) && defaultUser.getUsername().equals(changedUser.getUsername()) && defaultUser.getRegion().equals(changedUser.getRegion()) && defaultUser.getPassword().equals(changedUser.getPassword())){
+        if (defaultUser.getName().equals(changedUser.getName()) && defaultUser.getUsername().equals(changedUser.getUsername()) && defaultUser.getRegion().equals(changedUser.getRegion()) && defaultUser.getPassword().equals(changedUser.getPassword())) {
             isChanged = false;
         }
 
         return isChanged;
     }
-
 
     /**
      * Validate form
@@ -585,7 +616,6 @@ public class UserUpdateInfoActivity extends BaseActivity {
         return valid;
     }
 
-
     /**
      * Clear inputs error
      */
@@ -612,8 +642,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
         _rePasswordText.clearFocus();
     }
 
-
-
+    /**
+     * ...
+     */
     private void showConfirmPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
@@ -626,12 +657,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
         builder.setView(mView);
 
         // init view
-
         final EditText passEdit = (EditText) mView.findViewById(R.id.confirm_user_update_passworda);
 
         // drop down element
-
-
 
         // set dialog message
         builder
@@ -646,6 +674,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
+                // view
                 Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
                 Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
 
@@ -654,11 +683,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 buttonOK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // values
-
-
+                        // value
                         String pass = passEdit.getText().toString();
-                        // product
 
                         // category
                         if (password.isEmpty() || TextUtils.isEmpty(password)) {
@@ -681,7 +707,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                         userCredential.setUsername(userCredentialResponse.getUsername());
                         userCredential.setPassword(pass);
 
-                        Call<UserCredentialResponse> call = api.checkCredential(auth,userCredential);
+                        Call<UserCredentialResponse> call = api.checkCredential(auth, userCredential);
 
                         // request
                         call.enqueue(new Callback<UserCredentialResponse>() {
@@ -705,31 +731,28 @@ public class UserUpdateInfoActivity extends BaseActivity {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                             if (response.code() == 201) {
-
-                                                baseActivity.saveCurrentUser(context,urep);
+                                                baseActivity.saveCurrentUser(context, urep);
                                                 baseActivity.onBackPressed();
-                                            }
-                                            else
-                                                {
-                                                    hideLoadingView();
-                                                    new AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom))
-                                                            .setIcon(android.R.drawable.ic_dialog_alert)
-                                                            .setTitle("Olana")
-                                                            .setMessage("Misy tsy mety")
-                                                            .setCancelable(false)
-                                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                                    dialog.dismiss();
-                                                                }
-                                                            })
-                                                            .show();
+                                            } else {
+                                                hideLoadingView();
+                                                new AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom))
+                                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                                        .setTitle("Olana")
+                                                        .setMessage("Misy tsy mety")
+                                                        .setCancelable(false)
+                                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .show();
                                             }
                                         }
 
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            // hide spinner
                                             hideLoadingView();
-
                                             // alert
                                             new AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom))
                                                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -744,13 +767,10 @@ public class UserUpdateInfoActivity extends BaseActivity {
                                                     .show();
                                         }
                                     });
-
-
-                                }
-                                    else{
-
-
+                                } else {
+                                    // hide spinner
                                     hideLoadingView();
+                                    // alert
                                     new AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom))
                                             .setIcon(android.R.drawable.ic_dialog_alert)
                                             .setTitle("Olana")
@@ -767,10 +787,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(Call<UserCredentialResponse> call, Throwable t) {
-                                // hide swipeRefresh / shimmerAnim / spinner
-
+                                // hide spinner
                                 hideLoadingView();
-
                                 // alert
                                 new AlertDialog.Builder(new android.view.ContextThemeWrapper(context, R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -785,7 +803,6 @@ public class UserUpdateInfoActivity extends BaseActivity {
                                         .show();
                             }
                         });
-
                     }
                 });
 
@@ -805,4 +822,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
         dialog.show();
     }
 
+    // ===========================================================
+    // Inner Classes/Interfaces
+    // ===========================================================
 }

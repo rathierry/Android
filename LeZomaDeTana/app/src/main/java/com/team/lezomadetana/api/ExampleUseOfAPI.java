@@ -26,6 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ExampleUseOfAPI {
+
     // FETCH
     public static void getAllRequest() {
 
@@ -68,6 +69,7 @@ public class ExampleUseOfAPI {
         });
     }
 
+    //
     public static void updateUser() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
@@ -110,9 +112,8 @@ public class ExampleUseOfAPI {
 
     }
 
-
+    //
     public static void getAllRequestWithPage() {
-
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
         // create basic authentication
@@ -137,7 +138,6 @@ public class ExampleUseOfAPI {
                     pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
                     Log.d("REQUESTS Page Info", "" + pageInfo);
 
-
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
                     List<Request> requests = null;
 
@@ -149,24 +149,17 @@ public class ExampleUseOfAPI {
 
                         }
                         Log.d("REQUESTS", "" + requests);
-
                     }
-
-
                 }
-
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
             }
         });
     }
 
-
     // SEARCH
-
     public static void getSearchRequest() {
 
         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
@@ -210,7 +203,6 @@ public class ExampleUseOfAPI {
             }
         });
     }
-
 
     // TEMPLATE
     public static void getAllProductTemplate() {
@@ -256,7 +248,6 @@ public class ExampleUseOfAPI {
 
     }
 
-
     // POST item
     public static void sendRequest() {
 
@@ -293,7 +284,6 @@ public class ExampleUseOfAPI {
 
 
     }
-
 
     // Transation Jeton2Jegon
     // ecran Handefa vola
@@ -335,7 +325,6 @@ public class ExampleUseOfAPI {
 
     }
 
-
     // Transation Ariary2Jegon
     // ecran Hampiditra vola
     public static void sendTransactionAr2Jt() {
@@ -374,7 +363,6 @@ public class ExampleUseOfAPI {
 
 
     }
-
 
     // Transation Jegon2Ariary
     // Hamoaka vola
@@ -415,7 +403,7 @@ public class ExampleUseOfAPI {
 
     }
 
-
+    //
     public void ExplicationEnum() {
         //variable du type enum UnitType
         Request.UnitType unitType;
@@ -436,10 +424,8 @@ public class ExampleUseOfAPI {
 
     }
 
-
+    //
     public static String BasicAuth() {
         return "Basic " + Base64.encodeToString((BaseActivity.APP_USER_NAME + ":" + BaseActivity.APP_PASSWORD).getBytes(), Base64.NO_WRAP);
     }
-
-
 }

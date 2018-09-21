@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/fragment_buy_post_request_quantity_text"
-                    android:inputType="numberDecimal"
+                    android:inputType="number"
                     android:textSize="20sp"
                     android:typeface="monospace" />
             </android.support.design.widget.TextInputLayout>

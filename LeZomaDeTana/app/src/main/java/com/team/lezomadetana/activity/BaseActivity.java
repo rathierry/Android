@@ -130,8 +130,6 @@ public class BaseActivity extends AppCompatActivity {
     // Methods from SuperClass
     // ===========================================================
 
-
-
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
@@ -444,8 +442,6 @@ public class BaseActivity extends AppCompatActivity {
             imgProfile.setImageResource(R.mipmap.ic_launcher_round);
         }
     }
-
-
 
     // ===========================================================
     // Inner Classes/Interfaces

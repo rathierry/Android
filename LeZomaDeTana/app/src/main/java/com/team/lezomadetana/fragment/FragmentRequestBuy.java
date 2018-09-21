@@ -585,7 +585,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private void addNewRequest() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_request, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_new_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -797,7 +797,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private void answerRequest(final String requestId) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_answer_offer, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -808,6 +808,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         // init view
         final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
+        final EditText editTextPrice = (EditText) mView.findViewById(R.id.dialog_offer_price_text);
 
         // drop down unit element
         String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
@@ -855,6 +856,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                         // values
                         String quantity = editTextQuantity.getText().toString();
                         String unitType = spinnerUnitType.getText().toString();
+                        String price = editTextPrice.getText().toString();
 
                         // quantity
                         if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
@@ -868,19 +870,27 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             spinnerUnitType.requestFocus();
                             return;
                         }
+                        // price
+                        if (price.isEmpty() || TextUtils.isEmpty(price)) {
+                            editTextPrice.setError(getResources().getString(R.string.fragment_buy_post_request_price_error_empty));
+                            editTextPrice.requestFocus();
+                            return;
+                        }
 
                         // show spinner
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
-                        //
+                        // api
                         Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
                         String auth = baseActivity.BasicAuth();
 
+                        // test
                         showShortToast(baseActivity, "requestId : " + requestId);
 
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
+                        // mapping model
+                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);

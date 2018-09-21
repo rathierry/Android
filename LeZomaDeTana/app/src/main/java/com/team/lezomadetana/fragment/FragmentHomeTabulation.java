@@ -100,7 +100,7 @@ public class FragmentHomeTabulation extends BaseFragment {
                 // turn appBarLayout to visible
                 appBarLayout.setVisibility(View.VISIBLE);
             }
-        }, 500);
+        }, 1);
 
         // return current view
         return rootView;
@@ -125,8 +125,9 @@ public class FragmentHomeTabulation extends BaseFragment {
             @Override
             public void run() {
                 appBarLayout.setVisibility(View.VISIBLE);
+                hideShimmerAnimation(mShimmerViewContainer);
             }
-        }, 500);
+        }, 1);
     }
 
     @Override

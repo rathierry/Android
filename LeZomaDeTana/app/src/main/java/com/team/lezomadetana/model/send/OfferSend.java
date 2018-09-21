@@ -20,6 +20,7 @@ public class OfferSend {
     private String userId;
     private Integer quantity;
     private Request.UnitType unitType;
+    private Float price;
     private Boolean accepted;
 
     // ===========================================================
@@ -29,11 +30,12 @@ public class OfferSend {
     public OfferSend() {
     }
 
-    public OfferSend(String requestId, String userId, Integer quantity, Request.UnitType unitType, Boolean accepted) {
+    public OfferSend(String requestId, String userId, Integer quantity, Request.UnitType unitType, Float price, Boolean accepted) {
         this.requestId = requestId;
         this.userId = userId;
         this.quantity = quantity;
         this.unitType = unitType;
+        this.price = price;
         this.accepted = accepted;
     }
 
@@ -79,6 +81,14 @@ public class OfferSend {
 
     public void setAccepted(Boolean accepted) {
         this.accepted = accepted;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
     }
 
     // ===========================================================

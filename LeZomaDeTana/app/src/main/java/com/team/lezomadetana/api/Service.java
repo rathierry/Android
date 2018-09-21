@@ -125,12 +125,12 @@ public interface Service {
     @GET("/rest/userWallets")
     Call<JsonObject> getAllWallet(@Header("Authorization") String auth);
 
-    //transaction jeton jeton
+    //transaction jeton -> jeton
     @POST("/rest/transactionRequests")
     Call<Void> commitTransaction(@Header("Authorization") String auth, @Body TransactionSend transactionSend);
 
 
-    //transaction ariary jeton
+    //transaction ariary -> jeton
     @POST("/rest/mobileBankingRequests")
     Call<Void> commitTransactionAriary2Jeton(@Header("Authorization") String auth, @Body TransactionAriaryJeton transactionSend);
 

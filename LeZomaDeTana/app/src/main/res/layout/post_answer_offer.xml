@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/fragment_buy_post_request_quantity_text"
-                    android:inputType="numberDecimal"
+                    android:inputType="number"
                     android:textSize="20sp"
                     android:typeface="monospace" />
             </android.support.design.widget.TextInputLayout>
@@ -59,6 +59,25 @@
                 android:textSize="20sp"
                 android:visibility="visible"
                 app:met_floatingLabel="highlight" />
+
+            <!-- Price Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/dialog_offer_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/dialog_offer_price_text"
+                    style="@style/ediTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fragment_buy_post_request_price_hint"
+                    android:inputType="number"
+                    android:textSize="20sp"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 

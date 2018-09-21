@@ -108,16 +108,6 @@ public class MainActivity extends BaseActivity {
         imageViewBg = (ImageView) navView.findViewById(R.id.img_header_bg);
         imageViewProfile = (ImageView) navView.findViewById(R.id.img_profile);
 
-        imageViewProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(MainActivity.this,UserUpdateInfoActivity.class));
-                drawerLayout.closeDrawers();
-
-            }
-        });
-
         // set toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 
@@ -137,38 +127,20 @@ public class MainActivity extends BaseActivity {
             loadDefaultFragment();
         }
 
-
-    }
-
-    private void showAvatarImage() {
-        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
-
-        // create basic authentication
-        String auth = BasicAuth();
-
-        // get user
-        final UserCredentialResponse cUser = getCurrentUser(this);
-
-        // send query
-        Call<JsonObject> call = api.getUserById(auth, cUser.getId());
-        // request
-        call.enqueue(new Callback<JsonObject>() {
+        // event onClick
+        imageViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.code() == 200) {
-                    JsonObject jUser = response.body().getAsJsonObject();
-                    User user = new Gson().fromJson(jUser, User.class);
-                    Log.d("pouaaa", user.toString());
-
-                    if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())) {
-                        applyProfilePicture(imageViewProfile, user.getProfileImageUrl());
+            public void onClick(View v) {
+                // hide drawer menu
+                drawerLayout.closeDrawers();
+                // wait few second
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // start activity
+                        startActivity(new Intent(MainActivity.this, UserUpdateInfoActivity.class));
                     }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                //
+                }, 300);
             }
         });
     }
@@ -297,6 +269,39 @@ public class MainActivity extends BaseActivity {
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    private void showAvatarImage() {
+        Service api = Client.getClient(BaseActivity.ROOT_MDZ_USER_API).create(Service.class);
+
+        // create basic authentication
+        String auth = BasicAuth();
+
+        // get user
+        final UserCredentialResponse cUser = getCurrentUser(this);
+
+        // send query
+        Call<JsonObject> call = api.getUserById(auth, cUser.getId());
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.code() == 200) {
+                    JsonObject jUser = response.body().getAsJsonObject();
+                    User user = new Gson().fromJson(jUser, User.class);
+                    Log.d("pouaaa", user.toString());
+
+                    if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty() && !TextUtils.isEmpty(user.getProfileImageUrl())) {
+                        applyProfilePicture(imageViewProfile, user.getProfileImageUrl());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                //
+            }
+        });
+    }
 
     /***
      * Load navigation menu header information
