@@ -112,7 +112,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         Button buttonAnswer = (Button) rootView.findViewById(R.id.answer);
 
         // loading
-        showLoadingView("Miandry");
+        showLoadingView(getResources().getString(R.string.app_spinner));
 
         // fetch data in serializable
         request = (Request) getArguments().getSerializable("request");
