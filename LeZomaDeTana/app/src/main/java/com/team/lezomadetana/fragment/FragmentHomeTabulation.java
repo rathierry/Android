@@ -85,7 +85,7 @@ public class FragmentHomeTabulation extends BaseFragment {
             public void run() {
                 // set tab
                 viewPagerAdapter.addFragment(new FragmentRequestBuy(), getResources().getString(R.string.fragment_buy_tab_layout_search_item));
-                viewPagerAdapter.addFragment(new ZSellFragment(), getResources().getString(R.string.fragment_buy_tab_layout_available_item));
+                viewPagerAdapter.addFragment(new FragmentRequestSell(), getResources().getString(R.string.fragment_buy_tab_layout_available_item));
 
                 // set adapter
                 viewPager.setAdapter(viewPagerAdapter);

@@ -8,16 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -25,10 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -42,10 +34,7 @@ import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.Page;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
-import com.team.lezomadetana.model.send.OfferSend;
-import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.utils.PaginationScrollListener;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +46,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by RaThierry on 18/09/2018.
+ * Created by RaThierry on 21/09/2018.
  */
 
-public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
         RequestsAdapter.RequestAdapterListener {
 
     // ===========================================================
@@ -94,6 +83,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private boolean startFirst = false;
     private boolean isOnResume = false;
 
     // ===========================================================
@@ -119,7 +109,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout for this fragment or reuse the existing one
         rootView = getView() != null ? getView() :
-                inflater.inflate(R.layout.fragment_request_buy, container, false);
+                inflater.inflate(R.layout.fragment_request_sell, container, false);
 
         // current activity
         baseActivity = ((BaseActivity) getActivity());
@@ -153,9 +143,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
 
         // scroll recycler
         onScrollRecyclerView();
-
-        // download all category
-        getAllCategory();
 
         return rootView;
     }
@@ -195,16 +182,25 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && rootView != null) {
-            isOnResume = true;
-            onResume();
+            if (!startFirst) {
+                //showShortToast(getContext(), "< download category >");
+                getAllCategory();
+                startFirst = true;
+            } else {
+                isOnResume = true;
+                onResume();
+            }
         }
     }
 
     @Override
     public void onResume() {
+        /*if (getUserVisibleHint()) {
+            showShortToast(getContext(), "< getUserVisibleHint >");
+        }*/
         if (isOnResume) {
             onRefresh();
-            //showShortToast(getContext(), "- onResume -");
+            //showShortToast(getContext(), "< onResume >");
             isOnResume = false;
         }
         super.onResume();
@@ -214,7 +210,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     public void onRefresh() {
         resetPagination();
         loadFirstPage();
-        //showShortToast(getContext(), "- onRefresh -");
+        //showShortToast(getContext(), "< onRefresh >");
     }
 
     @Override
@@ -385,9 +381,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      * Reset pagination
      */
     private void resetPagination() {
-        showLongToast(getContext(), "- PAGE_SIZE = " + PAGE_SIZE +
-                "\n- TOTAL_PAGES = " + TOTAL_PAGES +
-                "\n- currentPage = " + currentPage);
+        showLongToast(getContext(), "> PAGE_SIZE = " + PAGE_SIZE +
+                "\n> TOTAL_PAGES = " + TOTAL_PAGES +
+                "\n> currentPage = " + currentPage);
         PAGE_SIZE = PAGE_ELEM;
         currentPage = 0;
     }
@@ -396,6 +392,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      * Load first page
      */
     private void loadFirstPage() {
+        //showShortToast(getContext(), "< loadFirstPage >");
+
         swipeRefreshLayout.setRefreshing(true);
 
         // set retrofit api
@@ -405,13 +403,13 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         String auth = baseActivity.BasicAuth();
 
         // params
-        showShortToast(getContext(), "[FIRST] page\ncurrentPage = " + currentPage);
+        showShortToast(getContext(), "<FIRST> page\ncurrentPage = " + currentPage);
 
         // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
         map.put("sort", "creationTime,desc");
-        map.put("type", "BUY");
+        map.put("type", "SELL");
         // first page is always begin by 0
         map.put("page", String.valueOf(currentPage));
         // get first page of 21 element
@@ -453,7 +451,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
                             // generate a random color
-                            request.setColor(getRandomMaterialColor("400"));
+                            request.setColor(getRandomMaterialColor("500"));
 
                             // adding request to requests array
                             requests.add(request);
@@ -499,13 +497,13 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         String auth = baseActivity.BasicAuth();
 
         // params
-        showShortToast(getContext(), "[NEXT] page\ncurrentPage = " + currentPage);
+        showShortToast(getContext(), "<NEXT> page\ncurrentPage = " + currentPage);
 
         // for example, http://api.madawin.mg/rest/requests?sort=creationTime,desc&type=BUY&page=0&size=20
         Map map = new HashMap<>();
         // filter
         map.put("sort", "creationTime,desc");
-        map.put("type", "BUY");
+        map.put("type", "SELL");
         // then page is begin by 1
         map.put("page", String.valueOf(currentPage));
         // get first page of 21 element
@@ -548,7 +546,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             Request request = new Gson().fromJson(filter.get(i), Request.class);
 
                             // generate a random color
-                            request.setColor(getRandomMaterialColor("400"));
+                            request.setColor(getRandomMaterialColor("500"));
 
                             // adding request to requests array
                             requests.add(request);
@@ -583,204 +581,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      * Display popup post new item
      */
     private void addNewRequest() {
-        // get prompts xml view
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_request, null);
-
-        // create alert builder and cast view
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-
-        // set prompts xml to alert dialog builder
-        builder.setView(mView);
-
-        // init view
-        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
-        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_unit_type);
-        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.fragment_post_item_editText_quantity);
-        final EditText editTextPrice = (EditText) mView.findViewById(R.id.fragment_post_item_editText_price);
-        final EditText editTextProduct = (EditText) mView.findViewById(R.id.fragment_post_item_editText_product);
-
-        // drop down element
-        List<String> itemsName = new ArrayList<>();
-        final List<String> itemsId = new ArrayList<>();
-        for (int i = 0; i < templates.size(); i++) {
-            itemsName.add(templates.get(i).getName());
-            itemsId.add(templates.get(i).getId());
-        }
-        itemsName.add(getResources().getString(R.string.app_other_category));
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinnerCategory.setAdapter(arrayAdapter);
-
-        // event onClick
-        spinnerCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemNameSelected = parent.getItemAtPosition(position).toString();
-
-                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
-                    // item'clicked position
-                    itemIdSelected = itemsId.get(position);
-
-                    // showing clicked spinner item name and position
-                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
-                }
-            }
-        });
-
-
-        // drop down unit element
-        String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
-
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinnerUnitType.setAdapter(arrayAdapter2);
-
-        // event onClick
-        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
-
-
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item: " + itemUnitTypeSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
-            }
-        });
-
-        // set dialog message
-        builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
-                .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
-                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
-                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
-
-        // create alert dialog
-        final android.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-
-                // validate
-                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
-                buttonOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // values
-                        String category = spinnerCategory.getText().toString();
-                        String quantity = editTextQuantity.getText().toString();
-                        String unitType = spinnerUnitType.getText().toString();
-                        String price = editTextPrice.getText().toString();
-                        String product = editTextProduct.getText().toString();
-                        // product
-                        if (product.isEmpty() || TextUtils.isEmpty(product)) {
-                            editTextProduct.setError(getResources().getString(R.string.fragment_buy_post_request_product_hint));
-                            editTextProduct.requestFocus();
-                            return;
-                        }
-                        // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
-                            spinnerCategory.requestFocus();
-                            return;
-                        }
-                        // quantity
-                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
-                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
-                            editTextQuantity.requestFocus();
-                            return;
-                        }
-                        // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
-                            spinnerUnitType.requestFocus();
-                            return;
-                        }
-                        // price
-                        if (price.isEmpty() || TextUtils.isEmpty(price)) {
-                            editTextPrice.setError(getResources().getString(R.string.fragment_buy_post_request_price_error_empty));
-                            editTextPrice.requestFocus();
-                            return;
-                        }
-
-                        // show spinner
-                        showLoadingView(getResources().getString(R.string.app_spinner));
-
-                        //
-                        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
-
-                        // create basic authentication
-                        String auth = baseActivity.BasicAuth();
-
-                        // request
-                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
-
-                        // send query
-                        Call<Void> call = api.sendRequest(auth, postRequest);
-
-                        // request
-                        call.enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                if (response.code() == 201) {
-                                    dialog.dismiss();
-                                    requests.clear();
-                                    hideLoadingView();
-                                    onRefresh();
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                                // hide spinner
-                                hideLoadingView();
-
-                                // alert
-                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
-
-                    }
-                });
-
-                // cancel
-                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                buttonCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        // change the alert dialog background color
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
-        dialog.show();
+        // TODO
     }
 
     /**
@@ -788,172 +589,17 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      */
     private void searchRequest() {
         // TODO
-        showLongToast(getContext(), "- searchRequest -");
+        showLongToast(getContext(), "< searchRequest >");
     }
 
     /**
      * Display popup post new offer
      */
     private void answerRequest(final String requestId) {
-        // get prompts xml view
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.post_offer, null);
-
-        // create alert builder and cast view
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-
-        // set prompts xml to alert dialog builder
-        builder.setView(mView);
-
-        // init view
-        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
-        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
-
-        // drop down unit element
-        String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinnerUnitType.setAdapter(arrayAdapter2);
-
-        // event onClick
-        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
-
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position);
-            }
-        });
-
-        // set dialog message
-        builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
-                .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
-                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
-                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
-
-        // create alert dialog
-        final android.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-
-                // validate
-                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
-                buttonOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // values
-                        String quantity = editTextQuantity.getText().toString();
-                        String unitType = spinnerUnitType.getText().toString();
-
-                        // quantity
-                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
-                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
-                            editTextQuantity.requestFocus();
-                            return;
-                        }
-                        // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
-                            spinnerUnitType.requestFocus();
-                            return;
-                        }
-
-                        // show spinner
-                        showLoadingView(getResources().getString(R.string.app_spinner));
-
-                        //
-                        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
-
-                        // create basic authentication
-                        String auth = baseActivity.BasicAuth();
-
-                        showShortToast(baseActivity, "requestId : " + requestId);
-
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), true);
-
-                        // send query
-                        Call<Void> call = api.sendOffer(auth, offerSend);
-
-                        // request
-                        call.enqueue(new Callback<Void>() {
-                            @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
-                                if (response.code() == 201) {
-                                    dialog.dismiss();
-                                    requests.clear();
-                                    hideLoadingView();
-                                    onRefresh();
-                                } else {
-                                    dialog.dismiss();
-                                    hideLoadingView();
-
-                                    // alert
-                                    new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                            .setIcon(android.R.drawable.ic_dialog_alert)
-                                            .setTitle(getResources().getString(R.string.app_server_error_title))
-                                            .setMessage(Html.fromHtml("<b>" + getResources().getString(R.string.app_server_error_message) + "</b>"))
-                                            .setCancelable(false)
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    dialog.dismiss();
-                                                }
-                                            })
-                                            .show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
-                                // hide spinner
-                                hideLoadingView();
-
-                                // alert
-                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
-
-                    }
-                });
-
-                // cancel
-                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                buttonCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        // change the alert dialog background color
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
-        dialog.show();
+        // TODO
     }
 
     // ===========================================================
     // Inner Classes/Interfaces
     // ===========================================================
-
 }

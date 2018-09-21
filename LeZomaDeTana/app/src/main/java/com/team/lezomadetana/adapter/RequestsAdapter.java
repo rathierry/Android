@@ -11,14 +11,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.fragment.FragmentRequestBuy;
-import com.team.lezomadetana.fragment.FragmentRequestsSell;
+import com.team.lezomadetana.fragment.FragmentRequestSell;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.utils.CircleTransform;
 
@@ -45,10 +47,11 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<Request> requests;
     private RequestAdapterListener listener;
     private FragmentRequestBuy fragmentRequestBuy;
-    private FragmentRequestsSell fragmentRequestSell;
+    private FragmentRequestSell fragmentRequestSell;
 
     private boolean isLoadingAdded = false;
     private boolean fromRequestBuyFragment = false;
+    private boolean fromRequestSellFragment = false;
 
     // ===========================================================
     // Constructors
@@ -62,12 +65,12 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.fromRequestBuyFragment = true;
     }
 
-    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestsSell fragmentRequestSell) {
+    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestSell fragmentRequestSell) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
         this.fragmentRequestSell = fragmentRequestSell;
-        this.fromRequestBuyFragment = false;
+        this.fromRequestSellFragment = true;
     }
 
     // ===========================================================
@@ -167,9 +170,10 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // show next page
                 if (fromRequestBuyFragment) {
                     fragmentRequestBuy.loadNextPage();
-                } else {
-                    // TODO
-                    //fragmentRequestSell.loadNextPage();
+                    Toast.makeText(mContext, "- fragmentRequestBuy.loadNextPage -", Toast.LENGTH_SHORT).show();
+                } else if (fromRequestSellFragment){
+                    fragmentRequestSell.loadNextPage();
+                    Toast.makeText(mContext, "< fragmentRequestSell.loadNextPage >", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -312,8 +316,11 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     protected class LoadingVH extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
         public LoadingVH(View itemView) {
             super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.load_more_progress);
         }
     }
 }

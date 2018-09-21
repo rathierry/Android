@@ -118,12 +118,12 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         request = (Request) getArguments().getSerializable("request");
 
         // initialize request's data
-        String totalOffer = "..null..";
+        String totalOffer = "";
         if (request.getOffers() != null) {
             totalOffer = String.valueOf(request.getOffers().size());
         }
-        String userName = "..null..";
-        String userImageUrl = "..null";
+        String userName = "";
+        String userImageUrl = "";
         if (request.getUser() != null) {
             userName = request.getUser().getName();
             userImageUrl = request.getUser().getProfileImageUrl();
@@ -147,7 +147,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
                 iconText.setVisibility(View.VISIBLE);
             }
         }
-        String itemImageUrl = "..null..";
+        String itemImageUrl = "";
         if (request.getAssetUrls().size() != 0) {
             itemImageUrl = request.getAssetUrls().get(0);
         }
