@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,6 +43,7 @@ import com.team.lezomadetana.model.receive.Page;
 import com.team.lezomadetana.model.receive.ProductTemplate;
 import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
+import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.utils.PaginationScrollListener;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -592,7 +594,206 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
      * Display popup post new item
      */
     private void addNewRequest() {
-        // TODO
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.post_request, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
+        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_unit_type);
+        final EditText editTextQuantity = (EditText) mView.findViewById(R.id.fragment_post_item_editText_quantity);
+        final EditText editTextPrice = (EditText) mView.findViewById(R.id.fragment_post_item_editText_price);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.fragment_post_item_editText_product);
+
+        // drop down element
+        List<String> itemsName = new ArrayList<>();
+        final List<String> itemsId = new ArrayList<>();
+        for (int i = 0; i < templates.size(); i++) {
+            itemsName.add(templates.get(i).getName());
+            itemsId.add(templates.get(i).getId());
+        }
+        itemsName.add(getResources().getString(R.string.app_other_category));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerCategory.setAdapter(arrayAdapter);
+
+        // event onClick
+        spinnerCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemNameSelected = parent.getItemAtPosition(position).toString();
+
+                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    // item'clicked position
+                    itemIdSelected = itemsId.get(position);
+
+                    // showing clicked spinner item name and position
+                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
+                }
+            }
+        });
+
+
+        // drop down unit element
+        String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
+
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerUnitType.setAdapter(arrayAdapter2);
+
+        // event onClick
+        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // item'clicked name
+                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+
+
+                // showing clicked spinner item name and position
+                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position + ") \nitemIdSelected = " + itemIdSelected);
+            }
+        });
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = spinnerCategory.getText().toString();
+                        String quantity = editTextQuantity.getText().toString();
+                        String unitType = spinnerUnitType.getText().toString();
+                        String price = editTextPrice.getText().toString();
+                        String product = editTextProduct.getText().toString();
+                        // product
+                        if (product.isEmpty() || TextUtils.isEmpty(product)) {
+                            editTextProduct.setError(getResources().getString(R.string.fragment_buy_post_request_product_hint));
+                            editTextProduct.requestFocus();
+                            return;
+                        }
+                        // category
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
+                            spinnerCategory.requestFocus();
+                            return;
+                        }
+                        // quantity
+                        if (quantity.isEmpty() || TextUtils.isEmpty(quantity)) {
+                            editTextQuantity.setError(getResources().getString(R.string.fragment_buy_post_request_quantity_error_empty));
+                            editTextQuantity.requestFocus();
+                            return;
+                        }
+                        // unitType
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
+                            spinnerUnitType.requestFocus();
+                            return;
+                        }
+                        // price
+                        if (price.isEmpty() || TextUtils.isEmpty(price)) {
+                            editTextPrice.setError(getResources().getString(R.string.fragment_buy_post_request_price_error_empty));
+                            editTextPrice.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        //
+                        BaseActivity baseActivity = (BaseActivity) getActivity();
+
+                        //
+                        RequestSend request = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Float.parseFloat(price), Request.Type.SELL, itemIdSelected, true);
+
+                        // send query
+                        Call<Void> call = api.sendRequest(auth, request);
+
+                        // request
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 201) {
+                                    dialog.dismiss();
+                                    requests.clear();
+                                    hideLoadingView();
+                                    onRefresh();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                // hide spinner
+                                hideLoadingView();
+
+                                // alert
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
     }
 
     /**
