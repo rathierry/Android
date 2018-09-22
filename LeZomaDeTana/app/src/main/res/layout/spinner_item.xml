@@ -4,6 +4,6 @@
     android:layout_height="wrap_content"
     android:fontFamily="sans-serif-medium"
     android:padding="12dp"
-    android:textAllCaps="true"
+    android:textAllCaps="false"
     android:textColor="@color/color_black"
-    android:textStyle="italic" />
+    android:textStyle="normal" />

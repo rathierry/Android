@@ -2,14 +2,18 @@ package com.team.lezomadetana.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
@@ -17,11 +21,15 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -36,7 +44,6 @@ import com.team.lezomadetana.model.send.UserCheckCredential;
 import com.team.lezomadetana.model.send.UserRegisterSend;
 import com.team.lezomadetana.utils.CameraUtils;
 import com.team.lezomadetana.view.UrlImageView;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
 import java.util.Arrays;
@@ -66,7 +73,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     private EditText _nameText;
     private EditText _firstNameText;
     private EditText _phoneText;
-    private MaterialBetterSpinner _regionSpinner;
+    private Spinner _regionSpinner;
     private EditText _addressText;
     private EditText _passwordText;
     private EditText _rePasswordText;
@@ -76,11 +83,13 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     private String name;
     private String firstName;
     private String phone;
-    private String region;
+    private String selectedItemOfRegions;
     private String address;
     private String password;
     private String rePassword;
     private Bitmap _bitmapImage;
+
+    private List<String> regions;
 
     // ===========================================================
     // Constructors
@@ -108,7 +117,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         _nameText = (EditText) findViewById(R.id.user_register_input_name);
         _firstNameText = (EditText) findViewById(R.id.user_register_input_firstname);
         _phoneText = (EditText) findViewById(R.id.user_register_input_phone);
-        _regionSpinner = (MaterialBetterSpinner) findViewById(R.id.user_register_material_design_spinner_region);
+        _regionSpinner = (Spinner) findViewById(R.id.user_register_region_spinner);
         _addressText = (EditText) findViewById(R.id.user_regitser_input_address);
         _passwordText = (EditText) findViewById(R.id.user_register_input_password);
         _rePasswordText = (EditText) findViewById(R.id.user_register_input_re_password);
@@ -116,7 +125,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
 
         // init function
         phoneNumberTextChangedListener();
-        initSpinnerForRegion();
+        initRegionSpinnerData();
         passwordOnFocusChange();
 
         // set image avatar to rounded
@@ -141,7 +150,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         _nameText.setError(null);
         _firstNameText.setError(null);
         _phoneText.setError(null);
-        _regionSpinner.setError(null);
+        //_regionSpinner.setError(null);
         _addressText.setError(null);
         _passwordText.setError(null);
         _rePasswordText.setError(null);
@@ -153,6 +162,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        resetAllInputText();
         finish();
         overridePendingTransitionExit();
     }
@@ -426,8 +436,11 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
                 if (charSequence.length() == 10) {
                     View view = UserRegisterActivity.this.getCurrentFocus();
                     if (view != null) {
-                        // take focus on region spinner drop down
-                        _regionSpinner.requestFocus();
+                        // take focus on selectedItemOfRegions spinner drop down
+                        //_regionSpinner.requestFocus();
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                 }
             }
@@ -440,30 +453,86 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * Initialize user region'spinner (drop down list)
+     * Initialize user selectedItemOfRegions'spinner (drop down list)
      */
-    private void initSpinnerForRegion() {
+    private void initRegionSpinnerData() {
         // drop down element
-        List<String> regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
+        regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
 
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, regions);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, regions) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
 
-        // attaching data adapter to spinner
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         _regionSpinner.setAdapter(arrayAdapter);
 
         // event onClick
-        _regionSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                region = parent.getItemAtPosition(position).toString();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemOfRegions = (String) parent.getItemAtPosition(position);
+                // showing selected spinner item name and position
+                if (position != 0) {
+                    showLongToast(parent.getContext(), "Region selected : " + selectedItemOfRegions + "\n(at position n° " + position + ")");
+                }
+            }
 
-                // showing clicked spinner item name and position
-                showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    /**
+     * Displaying Error if no item from a spinner is selected
+     */
+    private void setSpinnerError(Spinner spinner, String error) {
+        View selectedView = spinner.getSelectedView();
+        if (selectedView != null && selectedView instanceof TextView) {
+            spinner.requestFocus();
+            TextView selectedTextView = (TextView) selectedView;
+            selectedTextView.setError(error); // any name of the error will do
+            selectedTextView.setTextColor(Color.RED); //text color in which you want your error message to be displayed
+            // spinner.performClick(); // to open the spinner list if error is found.
+
+        }
     }
 
     /**
@@ -534,7 +603,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         showLoadingView(getResources().getString(R.string.app_spinner));
 
         // set user values
-        UserRegisterSend user = new UserRegisterSend(phone, name, password, region);
+        UserRegisterSend user = new UserRegisterSend(phone, name, password, selectedItemOfRegions);
 
         // set retrofit api
         Service api = Client.getClient(ROOT_MDZ_USER_API).create(Service.class);
@@ -625,7 +694,6 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         name = _nameText.getText().toString();
         firstName = _firstNameText.getText().toString();
         phone = _phoneText.getText().toString();
-        region = _regionSpinner.getText().toString();
         address = _addressText.getText().toString();
         password = _passwordText.getText().toString();
         rePassword = _rePasswordText.getText().toString();
@@ -659,10 +727,9 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
             _phoneText.requestFocus();
             valid = false;
         }
-        // region
-        else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains(getResources().getString(R.string.user_register_input_text_region))) {
-            _regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
-            _regionSpinner.requestFocus();
+        // selectedItemOfRegions
+        else if (selectedItemOfRegions.isEmpty() || TextUtils.isEmpty(selectedItemOfRegions) || selectedItemOfRegions.contains(getResources().getString(R.string.user_register_input_error_region))) {
+            setSpinnerError(_regionSpinner, getResources().getString(R.string.user_register_input_error_region));
             valid = false;
         }
         // address
@@ -721,7 +788,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         _nameText.setError(null);
         _firstNameText.setError(null);
         _phoneText.setError(null);
-        _regionSpinner.setError(null);
+        //_regionSpinner.setError(null);
         _addressText.setError(null);
         _passwordText.setError(null);
         _rePasswordText.setError(null);
@@ -753,7 +820,8 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         _nameText.setText("");
         _firstNameText.setText("");
         _phoneText.setText("");
-        _regionSpinner.setText(getResources().getString(R.string.user_register_input_text_region));
+        selectedItemOfRegions = getResources().getString(R.string.user_register_input_text_region);
+        _regionSpinner.setPrompt(getResources().getString(R.string.user_register_input_text_region));
         _addressText.setText("");
         _passwordText.setText("");
         _rePasswordText.setText("");

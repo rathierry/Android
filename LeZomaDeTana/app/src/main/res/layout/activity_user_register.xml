@@ -38,12 +38,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_text_input_layout">
 
                 <EditText
                     android:id="@+id/user_register_input_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_person_black"
                     android:hint="@string/user_register_input_hint_name"
                     android:inputType="textPersonName"
                     android:textColor="@color/color_black"
@@ -58,13 +60,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_text_input_layout"
                 android:visibility="gone">
-
 
                 <EditText
                     android:id="@+id/user_register_input_firstname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_person_black"
                     android:hint="@string/user_register_input_hint_firstName"
                     android:inputType="textPersonName"
                     android:textColor="@color/color_black"
@@ -78,12 +81,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_text_input_layout">
 
                 <EditText
                     android:id="@+id/user_register_input_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_phone_black"
                     android:hint="@string/user_login_input_hint_phone"
                     android:inputType="number"
                     android:textAlignment="viewStart"
@@ -93,21 +98,17 @@
             </android.support.design.widget.TextInputLayout>
 
             <!-- Region Text Label -->
-            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                android:id="@+id/user_register_material_design_spinner_region"
+            <Spinner
+                android:id="@+id/user_register_region_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/spinner_background"
+                android:drawableLeft="@drawable/ic_location_on_black"
                 android:fontFamily="monospace"
-                android:hint="@string/user_register_input_hint_region"
-                android:text="@string/user_register_input_text_region"
-                android:textColor="@color/color_black"
-                android:textColorHighlight="@color/color_black"
-                android:textColorHint="@color/color_black"
-                android:textSize="20sp"
-                android:visibility="visible"
-                app:met_floatingLabel="highlight" />
+                android:spinnerMode="dropdown"
+                android:visibility="visible" />
 
             <!-- Address Label -->
             <android.support.design.widget.TextInputLayout
@@ -116,19 +117,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_text_input_layout"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/user_regitser_input_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_location_on_black"
                     android:hint="@string/user_register_input_hint_address"
                     android:inputType="textPostalAddress"
                     android:textColor="@color/color_black"
                     android:textSize="20sp"
                     android:typeface="monospace" />
             </android.support.design.widget.TextInputLayout>
-
 
             <!--  Email Label -->
             <android.support.design.widget.TextInputLayout
@@ -137,13 +139,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_text_input_layout"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/user_register_input_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mailaka"
+                    android:drawableLeft="@drawable/ic_email_black"
+                    android:hint="@string/user_register_input_hint_email"
                     android:inputType="textEmailAddress"
                     android:textSize="20sp"
                     android:typeface="monospace" />
@@ -156,6 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_toggle"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/color_black">
 
@@ -163,6 +168,7 @@
                     android:id="@+id/user_register_input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_lock_black"
                     android:hint="@string/user_login_input_hint_password"
                     android:inputType="textPassword"
                     android:textColor="@color/color_black"
@@ -177,6 +183,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/round_corner_toggle"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/color_black">
 
@@ -184,6 +191,7 @@
                     android:id="@+id/user_register_input_re_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_lock_black"
                     android:hint="@string/user_register_input_hint_re_password"
                     android:inputType="textPassword"
                     android:textColor="@color/color_black"
@@ -199,8 +207,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="24dp"
                 android:layout_marginTop="24dp"
-                android:background="@color/colorPrimary"
-                android:fontFamily="serif-monospace"
+                android:background="@drawable/button_rounded_states_red"
                 android:text="@string/user_register_btn_submit"
                 android:textAlignment="center"
                 android:textAllCaps="true"

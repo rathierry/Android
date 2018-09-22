@@ -53,6 +53,7 @@
     <string name="user_register_input_hint_region">Faritra</string>
     <string name="user_register_input_text_region">Misafidy faritra</string>
     <string name="user_register_input_hint_address">Adiresy</string>
+    <string name="user_register_input_hint_email">Mailaka</string>
     <string name="user_register_input_hint_re_password">Amarino ny teny miafina</string>
     <string name="user_register_input_error_avatar">Alaivo ny sarinao</string>
     <string name="user_register_input_error_name">Mampidira anarana</string>
@@ -76,6 +77,7 @@
     <string name="user_register_camera_btn_ok">Mandehana any amin\'ny fikirana</string>
     <string name="user_register_camera_btn_cancel">Aoka ihany</string>
     <string-array name="array_regions">
+        <item>@string/user_register_input_error_region</item>
         <item>DIANA</item>
         <item>SAVA</item>
         <item>ITASY</item>
