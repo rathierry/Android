@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.api.Client;
-import com.team.lezomadetana.api.ExampleUseOfAPI;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
 import com.team.lezomadetana.model.send.UserCheckCredential;
@@ -47,7 +46,7 @@ public class UserLoginActivity extends BaseActivity implements View.OnClickListe
     private RelativeLayout _layout;
     private EditText _phoneText;
     private EditText _passwordText;
-    private TextView _forgotPaswwordText;
+    private TextView _forgotPasswordText;
     private Button _btnLogIn;
     private Button _btnRegister;
 
@@ -75,12 +74,12 @@ public class UserLoginActivity extends BaseActivity implements View.OnClickListe
         _layout = (RelativeLayout) findViewById(R.id.user_login_relativeLayout);
         _phoneText = (EditText) findViewById(R.id.user_login_input_phone);
         _passwordText = (EditText) findViewById(R.id.user_login_input_password);
-        _forgotPaswwordText = (TextView) findViewById(R.id.user_login_textView_forgot_password);
+        _forgotPasswordText = (TextView) findViewById(R.id.user_login_textView_forgot_password);
         _btnLogIn = (Button) findViewById(R.id.user_login_btn_validate);
         _btnRegister = (Button) findViewById(R.id.user_login_btn_register);
 
         // event listener
-        _forgotPaswwordText.setOnClickListener(this);
+        _forgotPasswordText.setOnClickListener(this);
         _btnLogIn.setOnClickListener(this);
         _btnRegister.setOnClickListener(this);
 
