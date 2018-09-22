@@ -46,7 +46,6 @@ import com.team.lezomadetana.model.receive.Request;
 import com.team.lezomadetana.model.send.OfferSend;
 import com.team.lezomadetana.model.send.RequestSend;
 import com.team.lezomadetana.utils.PaginationScrollListener;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -755,13 +754,13 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         // attaching data adapter to spinner
         spinnerUnitType.setAdapter(arrayAdapter2);
 
-        // event onClick
+        // event onSelect
         spinnerUnitType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedItemOfUnitType = parent.getItemAtPosition(position).toString();
                 if (position != 0) {
-                    showShortToast(parent.getContext(), "Item: " + selectedItemOfUnitType + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
+                    showShortToast(parent.getContext(), "Item: " + selectedItemOfUnitType);
                 }
             }
 
@@ -918,29 +917,81 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         builder.setView(mView);
 
         // init view
-        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.dialog_offer_unity);
+        final Spinner spinnerUnitType = (Spinner) mView.findViewById(R.id.dialog_offer_unity);
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.dialog_offer_quantity_text);
         final EditText editTextPrice = (EditText) mView.findViewById(R.id.dialog_offer_price_text);
 
         // drop down unit element
         String[] unitTypeName = BaseActivity.getNames(Request.UnitType.class);
 
+        // unit type list of data
+        List<String> listUnitType = new ArrayList<>();
+
+        // set array values
+        listUnitType.add(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
+        for (int i = 0; i < unitTypeName.length; i++) {
+            listUnitType.add(unitTypeName[i]);
+        }
+
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listUnitType) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter2.setDropDownViewResource(R.layout.spinner_item);
 
         // attaching data adapter to spinner
         spinnerUnitType.setAdapter(arrayAdapter2);
 
-        // event onClick
-        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // event onSelect
+        spinnerUnitType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedItemOfUnitType = parent.getItemAtPosition(position).toString();
+                if (position != 0) {
+                    showShortToast(parent.getContext(), "Item: " + selectedItemOfUnitType);
+                }
+            }
 
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + selectedItemOfUnitType + "\n(at position n° " + position);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
@@ -967,7 +1018,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                     public void onClick(View v) {
                         // values
                         String quantity = editTextQuantity.getText().toString();
-                        String unitType = spinnerUnitType.getText().toString();
+                        String unitType = selectedItemOfUnitType;
                         String price = editTextPrice.getText().toString();
 
                         // quantity
@@ -977,9 +1028,8 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                             return;
                         }
                         // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
-                            spinnerUnitType.requestFocus();
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint))) {
+                            setSpinnerError(spinnerUnitType, getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
                             return;
                         }
                         // price
