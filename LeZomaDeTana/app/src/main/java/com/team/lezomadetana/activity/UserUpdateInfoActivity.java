@@ -15,11 +15,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -82,7 +85,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
     private String name;
     private String firstName;
     private String phone;
-    private String region;
+    private String selectedItemOfRegions;
     private String address;
     private String password;
     private String rePassword;
@@ -134,7 +137,8 @@ public class UserUpdateInfoActivity extends BaseActivity {
         ((BaseActivity)activity).getSupportActionBar().setTitle("NY momba anao");*/
 
         // init
-        initSpinnerForRegion();
+        phoneNumberTextChangedListener();
+        initRegionSpinnerData();
         passwordOnFocusChange();
         showDefaultValue();
 
@@ -153,7 +157,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 if (validate()) {
                     changedUser.setName(_nameText.getText().toString());
                     changedUser.setUsername(_phoneText.getText().toString());
-                    changedUser.setRegion(/*_regionSpinner.getText().toString()*/region);
+                    changedUser.setRegion(/*_regionSpinner.getText().toString()*/selectedItemOfRegions);
                     changedUser.setPassword(_passwordText.getText().toString());
                     // // //
                     if (IsUserInfoChange()) {
@@ -227,9 +231,41 @@ public class UserUpdateInfoActivity extends BaseActivity {
     // ===========================================================
 
     /**
-     * ...
+     * Change listener on phone number's text
      */
-    private void initSpinnerForRegion() {
+    private void phoneNumberTextChangedListener() {
+        // phone edit text
+        _phoneText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // TODO in future
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 10) {
+                    View view = UserUpdateInfoActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        // take focus on selectedItemOfRegions spinner drop down
+                        //_regionSpinner.requestFocus();
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // TODO in future
+            }
+        });
+    }
+
+    /**
+     * Initialize user selectedItemOfRegions'spinner (drop down list)
+     */
+    private void initRegionSpinnerData() {
         // drop down element
         regions = Arrays.asList(getResources().getStringArray(R.array.array_regions));
 
@@ -255,17 +291,19 @@ public class UserUpdateInfoActivity extends BaseActivity {
                 if (position == 0) {
                     // set the hint text color gray
                     tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
                 } else {
                     tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
                 }
 
                 // background
                 if (position % 2 == 1) {
                     // set the alternate item background color
-                    tv.setBackgroundColor(getResources().getColor(R.color.md_secondary_text_icons_white));
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
                 } else {
                     // Set the item background color
-                    tv.setBackgroundColor(getResources().getColor(R.color.md_statusbar_translucent));
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
                 }
 
                 return view;
@@ -279,16 +317,43 @@ public class UserUpdateInfoActivity extends BaseActivity {
         _regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                region = (String) parent.getItemAtPosition(position);
-
+                selectedItemOfRegions = (String) parent.getItemAtPosition(position);
                 // showing clicked spinner item name and position
-                showLongToast(parent.getContext(), "Region selected : " + region + "\n(at position n° " + position + ")");
+                if (position != 0) {
+                    showLongToast(parent.getContext(), "Region selected : " + selectedItemOfRegions + "\n(at position n° " + position + ")");
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    /**
+     * set selected item of spinner programmatically
+     */
+    private void setSpinnerSelection(Spinner spinner, List<String> array, String text) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(text)) {
+                spinner.setSelection(i);
+            }
+        }
+    }
+
+    /**
+     * Displaying Error if no item from a spinner is selected
+     */
+    private void setSpinnerError(Spinner spinner, String error) {
+        View selectedView = spinner.getSelectedView();
+        if (selectedView != null && selectedView instanceof TextView) {
+            spinner.requestFocus();
+            TextView selectedTextView = (TextView) selectedView;
+            selectedTextView.setError(error); // any name of the error will do
+            selectedTextView.setTextColor(Color.RED); //text color in which you want your error message to be displayed
+            // spinner.performClick(); // to open the spinner list if error is found.
+
+        }
     }
 
     /**
@@ -343,18 +408,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
     }
 
     /**
-     * set selected item of spinner programmatically
-     */
-    private void setSpinnerSelection(Spinner spinner, List<String> array, String text) {
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).equals(text)) {
-                spinner.setSelection(i);
-            }
-        }
-    }
-
-    /**
-     * ...
+     * Set values from DB
      */
     private void showDefaultValue() {
         // show spinner
@@ -596,7 +650,6 @@ public class UserUpdateInfoActivity extends BaseActivity {
         name = _nameText.getText().toString();
         firstName = _firstNameText.getText().toString();
         phone = _phoneText.getText().toString();
-        /*region = _regionSpinner.getText().toString();*/
         address = _addressText.getText().toString();
         password = _passwordText.getText().toString();
         rePassword = _rePasswordText.getText().toString();
@@ -630,9 +683,9 @@ public class UserUpdateInfoActivity extends BaseActivity {
             _phoneText.requestFocus();
             valid = false;
         }
-        // region
-        else if (region.isEmpty() || TextUtils.isEmpty(region) || region.contains(getResources().getString(R.string.user_register_input_text_region))) {
-            //_regionSpinner.setError(getResources().getString(R.string.user_register_input_error_region));
+        // selectedItemOfRegions
+        else if (selectedItemOfRegions.isEmpty() || TextUtils.isEmpty(selectedItemOfRegions) || selectedItemOfRegions.contains(getResources().getString(R.string.user_register_input_error_region))) {
+            setSpinnerError(_regionSpinner, getResources().getString(R.string.user_register_input_error_region));
             _regionSpinner.requestFocus();
             valid = false;
         }
@@ -707,13 +760,11 @@ public class UserUpdateInfoActivity extends BaseActivity {
         builder.setView(mView);
 
         // init view
-        final EditText passEdit = (EditText) mView.findViewById(R.id.confirm_user_update_passworda);
-
-        // drop down element
+        final EditText passEdit = (EditText) mView.findViewById(R.id.confirm_user_update_password);
 
         // set dialog message
         builder
-                .setTitle("Fanamarihana")
+                .setTitle(getResources().getString(R.string.app_remarq_text_title))
                 .setIcon(R.drawable.ic_info_black)
                 .setCancelable(false)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
@@ -738,7 +789,7 @@ public class UserUpdateInfoActivity extends BaseActivity {
 
                         // category
                         if (password.isEmpty() || TextUtils.isEmpty(password)) {
-                            passEdit.setError("tsy mety");
+                            passEdit.setError(getResources().getString(R.string.user_login_input_error_password));
                             return;
                         }
 

@@ -54,20 +54,23 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-
             <!--
                 <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
             -->
-
-
             <!--
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             -->
         </activity>
+        <!-- screen: update info user -->
+        <activity
+            android:name=".activity.UserUpdateInfoActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <!-- screen: capture qr code -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -89,11 +92,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name=".activity.UserUpdateInfoActivity"
-            android:label="@string/title_activity_user_update_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

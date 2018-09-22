@@ -18,8 +18,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="android:windowBackground">@color/colorPrimary</item>-->
-        <item name="colorControlNormal">@color/color_green</item>
-        <item name="colorControlActivated">@color/color_blue</item>
+        <item name="colorControlNormal">@color/color_black</item>
+        <item name="colorControlActivated">@color/color_black</item>
         <item name="colorControlHighlight">@color/iron</item>
         <item name="android:textColorHint">@color/color_black</item>
         <!--<item name="colorButtonNormal">@color/colorPrimaryDarker</item>-->

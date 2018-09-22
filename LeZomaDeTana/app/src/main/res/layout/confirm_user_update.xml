@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_centerInParent="true"
     android:background="@color/color_white"
     android:descendantFocusability="beforeDescendants"
@@ -13,38 +13,36 @@
     android:paddingRight="?listPreferredItemPaddingRight">
 
     <!-- Info -->
-
     <TextView
-
-        style="@style/ediTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tena anova marina ve?"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/user_update_profil_text_title"
+        android:textColor="@color/color_red"
         android:textSize="20sp"
         android:typeface="monospace" />
 
-
-    <!-- product -->
+    <!-- label: password -->
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/round_corner_toggle"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/color_black">
 
-
         <EditText
-            android:id="@+id/confirm_user_update_passworda"
-            style="@style/ediTextStyle"
+            android:id="@+id/confirm_user_update_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="teny miafina ankehitriny"
+            android:drawableLeft="@drawable/ic_lock_black"
+            android:hint="@string/user_update_profil_input_hint_password"
             android:inputType="textPassword"
             android:textSize="20sp"
             android:typeface="monospace" />
     </android.support.design.widget.TextInputLayout>
-
 
 </LinearLayout>

@@ -20,6 +20,7 @@
     <string name="app_no_list_offer_message">Tsy misy olona namaly.</string>
     <string name="app_send_request_on_failure_title">Angona mpizara</string>
     <string name="app_send_request_on_failure_message">Tsy lasa ilay API</string>
+    <string name="app_remarq_text_title">Fanamarinana</string>
 
     <!-- transition screen duration -->
     <integer name="slide_animation_duration">300</integer>
@@ -101,6 +102,10 @@
         <item>ANDROY</item>
         <item>ANOSY</item>
     </string-array>
+
+    <!-- screen: user-update-profil -->
+    <string name="user_update_profil_text_title">Tena anova marina ve?</string>
+    <string name="user_update_profil_input_hint_password">Teny miafina ankehitriny</string>
 
     <!-- screen: MainActivity -->
     <string name="activity_main_menu_business">Raharaham-barotra</string><!-- not add a text -->
@@ -199,6 +204,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_user_update_info">UserUpdateInfoActivity</string>
 
 </resources>
