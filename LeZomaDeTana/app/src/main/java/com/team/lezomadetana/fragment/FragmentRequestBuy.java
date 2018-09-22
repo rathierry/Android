@@ -233,7 +233,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     @Override
     public void onButtonAnswerClicked(int position, Request request) {
         // show answer popup
-        answerRequest(request.getId());
+        answerRequest(request);
     }
 
     // ===========================================================
@@ -892,7 +892,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     /**
      * Display popup post new offer
      */
-    private void answerRequest(final String requestId) {
+    private void answerRequest(final Request request) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.post_answer_offer, null);
@@ -912,7 +912,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
 
         // unit type list of data
-        List<String> listUnitType = new ArrayList<>();
+        final List<String> listUnitType = new ArrayList<>();
 
         // set array values
         listUnitType.add(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
@@ -982,6 +982,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
             }
         });
 
+        // set unit type value from DB
+        setSpinnerSelection(spinnerUnitType, listUnitType, request.getUnitType().name());
+
         // set dialog message
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
@@ -1036,10 +1039,10 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                         String auth = baseActivity.BasicAuth();
 
                         // test
-                        showShortToast(baseActivity, "requestId : " + requestId);
+                        showShortToast(baseActivity, "requestId : " + request.getId());
 
                         // mapping model
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
+                        OfferSend offerSend = new OfferSend(request.getId(), baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);

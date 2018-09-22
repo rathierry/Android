@@ -187,7 +187,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Hamaly ve?", Toast.LENGTH_SHORT).show();
-                showAnswerOfferPopup(request.getId());
+                showAnswerOfferPopup(request);
             }
         });
 
@@ -377,7 +377,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
     /**
      * Display popup post new offer
      */
-    private void showAnswerOfferPopup(final String requestId) {
+    private void showAnswerOfferPopup(final Request request) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.post_answer_offer, null);
@@ -467,6 +467,9 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
             }
         });
 
+        // set unit type value from DB
+        setSpinnerSelection(spinnerUnitType, listUnitType, request.getUnitType().name());
+
         // set dialog message
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
@@ -523,9 +526,9 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
                         //
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
-                        showShortToast(baseActivity, "requestId : " + requestId);
+                        showShortToast(baseActivity, "requestId : " + request.getId());
 
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
+                        OfferSend offerSend = new OfferSend(request.getId(), baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);

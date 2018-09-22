@@ -242,7 +242,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     @Override
     public void onButtonAnswerClicked(int position, Request request) {
         // show answer popup
-        answerRequest(request.getId());
+        answerRequest(request);
     }
 
     // ===========================================================
@@ -905,7 +905,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     /**
      * Display popup post new offer
      */
-    private void answerRequest(final String requestId) {
+    private void answerRequest(final Request request) {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
         final View mView = layoutInflaterAndroid.inflate(R.layout.post_answer_offer, null);
@@ -995,6 +995,9 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
             }
         });
 
+        // set unit type value from DB
+        setSpinnerSelection(spinnerUnitType, listUnitType, request.getUnitType().name());
+
         // set dialog message
         builder
                 .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
@@ -1051,9 +1054,11 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                         //
                         BaseActivity baseActivity = (BaseActivity) getActivity();
 
-                        showShortToast(baseActivity, "requestId : " + requestId);
+                        // set unit type value from DB
+                        showShortToast(baseActivity, "requestId : " + request.getId());
 
-                        OfferSend offerSend = new OfferSend(requestId, baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
+                        // mapping class model
+                        OfferSend offerSend = new OfferSend(request.getId(), baseActivity.getCurrentUser(getContext()).getId(), Integer.parseInt(quantity), Request.UnitType.valueOf(unitType), Float.parseFloat(price), true);
 
                         // send query
                         Call<Void> call = api.sendOffer(auth, offerSend);

@@ -25,6 +25,7 @@ import com.team.lezomadetana.model.receive.Request;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -318,6 +319,17 @@ public class BaseFragment extends Fragment {
             selectedTextView.setTextColor(Color.RED); //text color in which you want your error message to be displayed
             // spinner.performClick(); // to open the spinner list if error is found.
 
+        }
+    }
+
+    /**
+     * set selected item of spinner programmatically
+     */
+    public void setSpinnerSelection(Spinner spinner, List<String> array, String text) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(text)) {
+                spinner.setSelection(i);
+            }
         }
     }
 
