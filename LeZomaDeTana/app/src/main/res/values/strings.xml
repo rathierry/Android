@@ -31,7 +31,7 @@
     <string name="user_login_input_error_phone">Mampidira laharana finday (tarehimarika 10)</string>
     <string name="user_login_input_hint_password">Teny miafina</string>
     <string name="user_login_input_error_password">Ampidiro ny teny miafina</string>
-    <string name="user_login_text_forgot_password">Teny miafina dino</string>
+    <string name="user_login_text_forgot_password">Teny miafina adino</string>
     <string name="user_login_input_hint_forgot_password">Mampidira laharana finday</string>
     <string name="user_login_btn_submit">E K E N A</string>
     <string name="user_login_error_title">Fidirana</string>

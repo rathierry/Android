@@ -15,7 +15,7 @@
     <dimen name="activity_user_login_imageView_layout_marginTop">15dp</dimen>
     <dimen name="activity_user_login_phone_text_input_layout_width">350dp</dimen>
     <dimen name="activity_user_login_phone_text_input_layout_marginTop">150dp</dimen>
-    <dimen name="activity_user_login_phone_edit_text_size">20sp</dimen>
+    <dimen name="activity_user_login_phone_edit_text_size">18sp</dimen>
     <dimen name="activity_user_login_password_text_input_layout_width">350dp</dimen>
     <dimen name="activity_user_login_password_text_input_layout_marginTop">225dp</dimen>
     <dimen name="activity_user_login_password_edit_text_size">20sp</dimen>

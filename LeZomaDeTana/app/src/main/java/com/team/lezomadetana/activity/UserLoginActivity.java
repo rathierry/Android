@@ -96,8 +96,9 @@ public class UserLoginActivity extends BaseActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         _layout.requestFocus();
-        _phoneText.setError(null);
-        _passwordText.setError(null);
+        clearAllInputError();
+        clearAllInputFocus();
+        resetAllInputText();
     }
 
     /**

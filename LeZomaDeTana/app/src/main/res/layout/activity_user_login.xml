@@ -7,7 +7,9 @@
     android:layout_height="match_parent"
     android:background="@color/color_white"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingRight="?listPreferredItemPaddingRight">
 
     <!--<TextView
         android:id="@+id/user_login_textView_title"
@@ -44,13 +46,14 @@
         android:layout_below="@+id/user_login_imageView_logo"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/activity_user_login_phone_text_input_layout_marginTop">
+        android:layout_marginTop="@dimen/activity_user_login_phone_text_input_layout_marginTop"
+        android:background="@drawable/round_corner_text_input_layout">
 
         <EditText
             android:id="@+id/user_login_input_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="serif-monospace"
+            android:drawableLeft="@drawable/ic_phone_black"
             android:hint="@string/user_login_input_hint_phone"
             android:inputType="number"
             android:textAlignment="viewStart"
@@ -70,6 +73,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/activity_user_login_password_text_input_layout_marginTop"
+        android:background="@drawable/round_corner_toggle"
         android:gravity="center"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/color_black">
@@ -78,7 +82,7 @@
             android:id="@+id/user_login_input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="serif-monospace"
+            android:drawableLeft="@drawable/ic_lock_black"
             android:hint="@string/user_login_input_hint_password"
             android:inputType="textPassword"
             android:textAlignment="viewStart"
@@ -95,7 +99,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/user_login_text_input_layout_password"
         android:layout_marginTop="@dimen/activity_user_login_textView_forgot_password_layout_marginTop"
-        android:fontFamily="serif-monospace"
         android:text="@string/user_login_text_forgot_password"
         android:textAlignment="textEnd"
         android:textColor="@color/color_black"
@@ -110,8 +113,7 @@
         android:layout_below="@+id/user_login_textView_forgot_password"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/activity_user_login_btn_submit_layout_marginTop"
-        android:background="@color/colorPrimary"
-        android:fontFamily="serif-monospace"
+        android:background="@drawable/button_rounded_states_red"
         android:text="@string/user_login_btn_submit"
         android:textAlignment="center"
         android:textAllCaps="true"
@@ -125,8 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimaryDark"
-        android:fontFamily="serif-monospace"
+        android:background="@drawable/button_rounded_states_red"
         android:text="@string/user_login_btn_register"
         android:textAlignment="center"
         android:textAllCaps="true"
