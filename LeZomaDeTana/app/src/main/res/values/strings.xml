@@ -136,7 +136,7 @@
     <string name="fragment_buy_tab_layout_available_item">MIVAROTRA ENTANA</string>
     <string name="fragment_buy_post_request_title">Momba ilay entana</string>
     <string name="fragment_buy_post_request_product_hint">Hanao inona ianao?</string>
-    <string name="fragment_buy_post_request_category_hint">Sokajy</string>
+    <string name="fragment_buy_post_request_category_hint">Misafidiana sokajy iray</string>
     <string name="fragment_buy_post_request_category_select">Misafidiana</string>
     <string name="fragment_buy_post_request_category_text">Misafidiana iray</string>
     <string name="fragment_buy_post_request_quantity_text">Habetsahany</string>

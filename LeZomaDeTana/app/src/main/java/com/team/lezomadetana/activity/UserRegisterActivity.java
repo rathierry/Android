@@ -500,6 +500,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
             }
         };
 
+        // set drop down
         arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         _regionSpinner.setAdapter(arrayAdapter);
 

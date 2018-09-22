@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +28,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -88,9 +89,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private RequestsAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private String itemNameSelected;
-    private String itemIdSelected;
-    private String itemUnitTypeSelected;
+    private String selectedItemOfTemplates;
+    private String actualTemplatePosition;
+    private String selectedItemOfUnitType;
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -594,67 +595,167 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         builder.setView(mView);
 
         // init view
-        final MaterialBetterSpinner spinnerCategory = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
-        final MaterialBetterSpinner spinnerUnitType = (MaterialBetterSpinner) mView.findViewById(R.id.fragment_post_item_design_spinner_unit_type);
+        final Spinner spinnerCategory = (Spinner) mView.findViewById(R.id.fragment_post_item_design_spinner_category);
+        final Spinner spinnerUnitType = (Spinner) mView.findViewById(R.id.fragment_post_item_design_spinner_unit_type);
         final EditText editTextQuantity = (EditText) mView.findViewById(R.id.fragment_post_item_editText_quantity);
         final EditText editTextPrice = (EditText) mView.findViewById(R.id.fragment_post_item_editText_price);
         final EditText editTextProduct = (EditText) mView.findViewById(R.id.fragment_post_item_editText_product);
 
         // drop down element
-        List<String> itemsName = new ArrayList<>();
+        List<String> listTemplates = new ArrayList<>();
         final List<String> itemsId = new ArrayList<>();
+
+        // set array values
+        listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
         for (int i = 0; i < templates.size(); i++) {
-            itemsName.add(templates.get(i).getName());
+            listTemplates.add(templates.get(i).getName());
             itemsId.add(templates.get(i).getId());
         }
-        itemsName.add(getResources().getString(R.string.app_other_category));
+        listTemplates.add(getResources().getString(R.string.app_other_category));
 
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, itemsName);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listTemplates) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
 
         // attaching data adapter to spinner
         spinnerCategory.setAdapter(arrayAdapter);
 
         // event onClick
-        spinnerCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemNameSelected = parent.getItemAtPosition(position).toString();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                actualTemplatePosition = itemsId.get(position);
 
-                if (!((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
-                    // item'clicked position
-                    itemIdSelected = itemsId.get(position);
-
-                    // showing clicked spinner item name and position
-                    showShortToast(parent.getContext(), "Item: " + itemNameSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
+                // showing selected spinner item name and position
+                if (selectedItemOfTemplates.equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    showShortToast(parent.getContext(), selectedItemOfTemplates);
+                } else if (selectedItemOfTemplates.equals(getResources().getString(R.string.app_other_category))) {
+                    showShortToast(parent.getContext(), selectedItemOfTemplates);
+                } else {
+                    // toast
+                    showShortToast(parent.getContext(), "[[[\nItem: " + selectedItemOfTemplates + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
                 }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+        // // //
 
         // drop down unit element
         String[] unitTypeName = baseActivity.getNames(Request.UnitType.class);
 
+        // unit type list of data
+        List<String> listUnitType = new ArrayList<>();
+
+        // set array values
+        listUnitType.add(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
+        for (int i = 0; i < unitTypeName.length; i++) {
+            listUnitType.add(unitTypeName[i]);
+        }
 
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, unitTypeName);
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listUnitType) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter2.setDropDownViewResource(R.layout.spinner_item);
 
         // attaching data adapter to spinner
         spinnerUnitType.setAdapter(arrayAdapter2);
 
         // event onClick
-        spinnerUnitType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinnerUnitType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // item'clicked name
-                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemOfUnitType = parent.getItemAtPosition(position).toString();
+                if (position != 0) {
+                    showShortToast(parent.getContext(), "Item: " + selectedItemOfUnitType + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
+                }
+            }
 
-
-                // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item: " + itemUnitTypeSelected + "\nPosition: " + position + "\nid Item: " + itemIdSelected);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
@@ -680,9 +781,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     @Override
                     public void onClick(View v) {
                         // values
-                        String category = spinnerCategory.getText().toString();
+                        String category = selectedItemOfTemplates;
                         String quantity = editTextQuantity.getText().toString();
-                        String unitType = spinnerUnitType.getText().toString();
+                        String unitType = selectedItemOfUnitType;
                         String price = editTextPrice.getText().toString();
                         String product = editTextProduct.getText().toString();
                         // product
@@ -692,9 +793,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             return;
                         }
                         // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerCategory.setError(getResources().getString(R.string.fragment_buy_post_request_category_text));
-                            spinnerCategory.requestFocus();
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
                             return;
                         }
                         // quantity
@@ -704,9 +804,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             return;
                         }
                         // unitType
-                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            spinnerUnitType.setError(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
-                            spinnerUnitType.requestFocus();
+                        if (unitType.isEmpty() || TextUtils.isEmpty(unitType) || unitType.contains(getResources().getString(R.string.fragment_buy_post_request_unity_type_hint))) {
+                            setSpinnerError(spinnerUnitType, getResources().getString(R.string.fragment_buy_post_request_unity_type_hint));
                             return;
                         }
                         // price
@@ -726,7 +825,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                         String auth = baseActivity.BasicAuth();
 
                         // request
-                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), itemIdSelected, true);
+                        RequestSend postRequest = new RequestSend(baseActivity.getCurrentUser(getContext()).getId(), product, Request.UnitType.valueOf(unitType), Integer.parseInt(quantity), Request.Type.BUY, Float.parseFloat(price), actualTemplatePosition, true);
 
                         // send query
                         Call<Void> call = api.sendRequest(auth, postRequest);
@@ -825,10 +924,10 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // item'clicked name
-                itemUnitTypeSelected = parent.getItemAtPosition(position).toString();
+                selectedItemOfUnitType = parent.getItemAtPosition(position).toString();
 
                 // showing clicked spinner item name and position
-                showShortToast(parent.getContext(), "Item selected : " + itemUnitTypeSelected + "\n(at position n° " + position);
+                showShortToast(parent.getContext(), "Item selected : " + selectedItemOfUnitType + "\n(at position n° " + position);
             }
         });
 

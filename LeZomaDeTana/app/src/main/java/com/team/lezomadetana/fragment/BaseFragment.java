@@ -2,6 +2,7 @@ package com.team.lezomadetana.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -301,6 +304,21 @@ public class BaseFragment extends Fragment {
     public void hideShimmerAnimation(ShimmerFrameLayout shimmerFrameLayout) {
         shimmerFrameLayout.stopShimmerAnimation();
         shimmerFrameLayout.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Displaying Error if no item from a spinner is selected
+     */
+    public void setSpinnerError(Spinner spinner, String error) {
+        View selectedView = spinner.getSelectedView();
+        if (selectedView != null && selectedView instanceof TextView) {
+            spinner.requestFocus();
+            TextView selectedTextView = (TextView) selectedView;
+            selectedTextView.setError(error); // any name of the error will do
+            selectedTextView.setTextColor(Color.RED); //text color in which you want your error message to be displayed
+            // spinner.performClick(); // to open the spinner list if error is found.
+
+        }
     }
 
     // ===========================================================
