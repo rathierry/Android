@@ -51,18 +51,21 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private boolean isLoadingAdded = false;
     private boolean fromRequestBuyFragment = false;
+    private boolean searchRequestBuyFragment = false;
     private boolean fromRequestSellFragment = false;
+    private boolean searchRequestSellFragment = false;
 
     // ===========================================================
     // Constructors
     // ===========================================================
 
-    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestBuy fragmentRequestBuy) {
+    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestBuy fragmentRequestBuy, boolean searchRequestBuyFragment) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
         this.fragmentRequestBuy = fragmentRequestBuy;
         this.fromRequestBuyFragment = true;
+        this.searchRequestBuyFragment = searchRequestBuyFragment;
     }
 
     public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestSell fragmentRequestSell) {
@@ -71,6 +74,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.listener = listener;
         this.fragmentRequestSell = fragmentRequestSell;
         this.fromRequestSellFragment = true;
+        this.searchRequestSellFragment = false;
     }
 
     // ===========================================================
@@ -167,13 +171,23 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 break;
 
             case VIEW_LOADING:
-                // show next page
-                if (fromRequestBuyFragment) {
+                // 1) simple buy request list
+                if (fromRequestBuyFragment && !searchRequestBuyFragment) {
                     fragmentRequestBuy.loadNextPage();
                     Toast.makeText(mContext, "- fragmentRequestBuy.loadNextPage -", Toast.LENGTH_SHORT).show();
-                } else if (fromRequestSellFragment){
+                }
+                // 2) search buy request list
+                else if (fromRequestBuyFragment && searchRequestBuyFragment) {
+                    Toast.makeText(mContext, "- search / BUY / loadNextPage -", Toast.LENGTH_SHORT).show();
+                }
+                // 3) simple sell request list
+                else if (fromRequestSellFragment && !searchRequestSellFragment) {
                     fragmentRequestSell.loadNextPage();
                     Toast.makeText(mContext, "< fragmentRequestSell.loadNextPage >", Toast.LENGTH_SHORT).show();
+                }
+                // 4) search sell request list
+                else if (fromRequestSellFragment && searchRequestSellFragment) {
+                    Toast.makeText(mContext, "< search / SELL / loadNextPage >", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,6 +84,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
 
     private BaseActivity baseActivity;
     private MainActivity mainActivity;
+    private FragmentRequestBuy fragmentRequestBuy;
     private View rootView;
     private LinearLayoutManager mLayoutManager;
     private List<Request> requests = new ArrayList<>();
@@ -130,6 +132,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         // current activity
         baseActivity = ((BaseActivity) getActivity());
         mainActivity = ((MainActivity) getActivity());
+        fragmentRequestBuy = this;
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -151,14 +154,12 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 android.R.color.holo_green_light);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        // adapter
-        mAdapter = new RequestsAdapter(getContext(), requests, this, this);
+        // recycle view
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        recyclerView.setAdapter(mAdapter);
 
         // check switch button status
         checkSwitchStatus();
@@ -219,7 +220,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
             //showShortToast(getContext(), "- onResume -");
             isOnResume = false;
         }
-        hideSearchLayoutTitle();
         super.onResume();
     }
 
@@ -233,6 +233,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     public void onRefresh() {
         hideSearchLayoutTitle();
         resetPagination();
+        initSimpleAdapter();
         loadFirstPage();
     }
 
@@ -288,15 +289,29 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     // ===========================================================
 
     /**
+     * call adapter no search item
+     */
+    private void initSimpleAdapter() {
+        mAdapter = new RequestsAdapter(getContext(), requests, fragmentRequestBuy, fragmentRequestBuy, false);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * call adapter with search item
+     */
+    private void initSearchAdapter() {
+        mAdapter = new RequestsAdapter(getContext(), requests, fragmentRequestBuy, fragmentRequestBuy, true);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    /**
      * Check switch button status
      */
     private void checkSwitchStatus() {
         switchSearchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
-                if (bChecked) {
-                    //
-                } else {
+                if (!bChecked) {
                     hideSearchLayoutTitle();
                     onRefresh();
                 }
@@ -386,6 +401,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                 new Runnable() {
                                     @Override
                                     public void run() {
+                                        initSimpleAdapter();
                                         loadFirstPage();
                                     }
                                 }
@@ -644,6 +660,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
         for (int i = 0; i < templates.size(); i++) {
             listTemplates.add(templates.get(i).getName());
+            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
             itemsId.add(templates.get(i).getId());
         }
         listTemplates.add(getResources().getString(R.string.app_other_category));
@@ -695,21 +712,23 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         // attaching data adapter to spinner
         spinnerCategory.setAdapter(arrayAdapter);
 
-        // event onClick
+        // event onSelect
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
-                actualTemplatePosition = itemsId.get(position);
-
-                // showing selected spinner item name and position
-                if (selectedItemOfTemplates.equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else if (selectedItemOfTemplates.equals(getResources().getString(R.string.app_other_category))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else {
+                // check
+                if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    //
+                }
+                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    //
+                }
+                else {
+                    selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                    // get selected item position
+                    actualTemplatePosition = itemsId.get(position - 1);
                     // toast
-                    showShortToast(parent.getContext(), "[[[\nItem: " + selectedItemOfTemplates + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
+                    showShortToast(parent.getContext(), "[[[\nItem: " + selectedItemOfTemplates + "\nPosition: " + (position - 1) + "\nid Item: " + actualTemplatePosition);
                 }
             }
 
@@ -883,275 +902,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                 // hide spinner
                                 hideLoadingView();
 
-                                // alert
-                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
-
-                    }
-                });
-
-                // cancel
-                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
-                buttonCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        // change the alert dialog background color
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
-        dialog.show();
-    }
-
-    /**
-     * Display popup search request
-     */
-    private void searchRequest() {
-        // show layout title
-        // TODO TODO TODO
-        // showSearchLayoutTitle();
-
-        // get prompts xml view
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
-
-        // create alert builder and cast view
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-
-        // set prompts xml to alert dialog builder
-        builder.setView(mView);
-
-        // init view
-        final Spinner spinnerCategory = (Spinner) mView.findViewById(R.id.search_category);
-        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
-
-        // drop down element
-        List<String> listTemplates = new ArrayList<>();
-        final List<String> itemsId = new ArrayList<>();
-
-        // set array values
-        listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
-        for (int i = 0; i < templates.size(); i++) {
-            listTemplates.add(templates.get(i).getName());
-            itemsId.add(templates.get(i).getId());
-        }
-        listTemplates.add(getResources().getString(R.string.app_other_category));
-
-        // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listTemplates) {
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            @Override
-            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-
-                // color
-                if (position == 0) {
-                    // set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                    tv.setAllCaps(false);
-                } else {
-                    tv.setTextColor(Color.BLACK);
-                    tv.setAllCaps(true);
-                }
-
-                // background
-                if (position % 2 == 1) {
-                    // set the alternate item background color
-                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
-                } else {
-                    // Set the item background color
-                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
-                }
-
-                return view;
-            }
-        };
-
-        // set drop down
-        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-
-        // attaching data adapter to spinner
-        spinnerCategory.setAdapter(arrayAdapter);
-
-        // event onClick
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
-                actualTemplatePosition = itemsId.get(position);
-
-                // showing selected spinner item name and position
-                if (selectedItemOfTemplates.equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else if (selectedItemOfTemplates.equals(getResources().getString(R.string.app_other_category))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else {
-                    // toast
-                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-
-        // set dialog message
-        builder
-                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
-                .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
-                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
-                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
-
-        // create alert dialog
-        final android.app.AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
-                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-
-                // validate
-                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
-                buttonOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // values
-                        String category = selectedItemOfTemplates;
-                        String product = editTextProduct.getText().toString();
-                        // product
-
-                        // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
-                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
-                            spinnerCategory.requestFocus();
-                            return;
-                        }
-
-                        // show spinner
-                        showLoadingView(getResources().getString(R.string.app_spinner));
-
-                        //
-                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
-
-                        // create basic authentication
-                        String auth = BasicAuth();
-
-                        // add body params for API
-                        Map<String, String> map = new HashMap<>();
-                        // filter
-                        map.put("sort", "creationTime,desc");
-                        // first page is always begin by 0
-                        currentPage = PAGE_START;
-                        map.put("page", String.valueOf(currentPage));
-                        // get first page of 21 element
-                        map.put("size", String.valueOf(PAGE_SIZE));
-                        map.put("type", "BUY");
-                        if (category != getResources().getString(R.string.app_other_category)) {
-                            String id = "";
-
-                            for (int i = 0; i < templates.size(); i++) {
-                                if (templates.get(i).equals(category)) {
-                                    id = templates.get(i).getId();
-                                    break;
-                                }
-                            }
-
-                            map.put("templateId", id);
-                        }
-                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
-                            map.put("product", product);
-                        }
-
-                        // send query
-                        Call<JsonObject> call = api.searchRequest(auth, map);
-
-                        // request
-                        call.enqueue(new Callback<JsonObject>() {
-                            @Override
-                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                if (response.code() == 200) {
-                                    dialog.dismiss();
-
-                                    // verification
-                                    if (response.body() == null) {
-                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
-                                    } else {
-                                        // array filter
-                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
-
-                                        if (filter == null || (filter.size() == 0)) {
-                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
-                                        } else {
-                                            // clear list request
-                                            requests.clear();
-
-                                            // enable search title layout
-                                            showSearchLayoutTitle();
-
-                                            // parsing gson
-                                            for (int i = 0; i < filter.size(); i++) {
-                                                // class model to mapping gson
-                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
-
-                                                // generate a random color
-                                                request.setColor(getRandomMaterialColor("400"));
-
-                                                // adding request to requests array
-                                                requests.add(request);
-
-                                                // check last page
-                                                if (currentPage <= TOTAL_PAGES - 1) {
-                                                    mAdapter.addLoadingFooter();
-                                                } else {
-                                                    isLastPage = true;
-                                                }
-                                            }
-
-                                            // notifying list adapter about data changes
-                                            // so that it renders the list view with updated data
-                                            mAdapter.notifyDataSetChanged();
-
-                                            // hide swipe refresh
-                                            swipeRefreshLayout.setRefreshing(false);
-                                        }
-                                    }
-                                    hideLoadingView();
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<JsonObject> call, Throwable t) {
-                                // hide alert
-                                hideLoadingView();
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -1377,6 +1127,291 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                 // hide spinner
                                 hideLoadingView();
 
+                                // alert
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
+    }
+
+    /**
+     * Display popup search request
+     */
+    private void searchRequest() {
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final Spinner spinnerCategory = (Spinner) mView.findViewById(R.id.search_category);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
+
+        // drop down element
+        List<String> listTemplates = new ArrayList<>();
+        final List<String> itemsId = new ArrayList<>();
+
+        // set array values
+        listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
+        for (int i = 0; i < templates.size(); i++) {
+            listTemplates.add(templates.get(i).getName());
+            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
+            itemsId.add(templates.get(i).getId());
+        }
+        listTemplates.add(getResources().getString(R.string.app_other_category));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listTemplates) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+
+        // attaching data adapter to spinner
+        spinnerCategory.setAdapter(arrayAdapter);
+
+        // event onSelect
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // check
+                if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    //
+                }
+                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    //
+                }
+                else {
+                    selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                    // get selected item position
+                    actualTemplatePosition = itemsId.get(position - 1);
+                    // toast
+                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + (position - 1) + "\nid Item: " + actualTemplatePosition);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = selectedItemOfTemplates;
+                        String product = editTextProduct.getText().toString();
+                        // product
+
+                        // category
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
+                            spinnerCategory.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        // add body params for API
+                        Map<String, String> map = new HashMap<>();
+                        // filter
+                        map.put("sort", "creationTime,desc");
+                        // first page is always begin by 0
+                        currentPage = PAGE_START;
+                        map.put("page", String.valueOf(currentPage));
+                        // get first page of 6 element
+                        map.put("size", String.valueOf(PAGE_SIZE));
+                        // type of search
+                        map.put("type", "BUY");
+                        // id of template
+                        if (category != getResources().getString(R.string.app_other_category)) {
+                            String id = "";
+                            for (int i = 0; i < templates.size(); i++) {
+                                if (templates.get(i).equals(category)) {
+                                    id = templates.get(i).getId();
+                                    break;
+                                }
+                            }
+                            map.put("templateId", id);
+                        }
+                        // product search
+                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
+                            map.put("product", product);
+                        }
+
+                        // send query
+                        Call<JsonObject> call = api.searchRequest(auth, map);
+
+                        // request
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                if (response.code() == 200) {
+                                    dialog.dismiss();
+
+                                    // verification
+                                    if (response.body() == null) {
+                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                                    } else {
+                                        // array filter
+                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                                        if (filter == null || (filter.size() == 0)) {
+                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
+                                        } else {
+                                            // clear list request
+                                            requests.clear();
+
+                                            // call correct adapter
+                                            initSearchAdapter();
+
+                                            // parsing gson
+                                            for (int i = 0; i < filter.size(); i++) {
+                                                // class model to mapping gson
+                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                                                // generate a random color
+                                                request.setColor(getRandomMaterialColor("400"));
+
+                                                // adding request to requests array
+                                                requests.add(request);
+
+                                                // check last page
+                                                if (currentPage <= TOTAL_PAGES - 1) {
+                                                    mAdapter.addLoadingFooter();
+                                                } else {
+                                                    isLastPage = true;
+                                                }
+                                            }
+
+                                            // alert info
+                                            if (requests.size() == 0) {
+                                                // refsresh default data
+                                                onRefresh();
+
+                                                // message
+                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+
+                                            } else {
+                                                // enable search title layout
+                                                showSearchLayoutTitle();
+
+                                                // message
+                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + requests.size());
+
+                                                // notifying list adapter about data changes
+                                                // so that it renders the list view with updated data
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+
+                                            // hide swipe refresh
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    }
+                                    hideLoadingView();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                                // hide alert
+                                hideLoadingView();
                                 // alert
                                 new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                                         .setIcon(android.R.drawable.ic_dialog_alert)

@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -651,6 +652,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
         for (int i = 0; i < templates.size(); i++) {
             listTemplates.add(templates.get(i).getName());
+            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
             itemsId.add(templates.get(i).getId());
         }
         listTemplates.add(getResources().getString(R.string.app_other_category));
@@ -706,17 +708,19 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
-                actualTemplatePosition = itemsId.get(position);
-
-                // showing selected spinner item name and position
-                if (selectedItemOfTemplates.equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else if (selectedItemOfTemplates.equals(getResources().getString(R.string.app_other_category))) {
-                    showShortToast(parent.getContext(), selectedItemOfTemplates);
-                } else {
+                // check
+                if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    //
+                }
+                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    //
+                }
+                else {
+                    selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                    // get selected item position
+                    actualTemplatePosition = itemsId.get(position - 1);
                     // toast
-                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
+                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + (position - 1) + "\nid Item: " + actualTemplatePosition);
                 }
             }
 
@@ -924,14 +928,6 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
-    }
-
-    /**
-     * Display popup search request
-     */
-    private void searchRequest() {
-        // show layout title
-        showSearchLayoutTitle();
     }
 
     /**
@@ -1160,6 +1156,14 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
+    }
+
+    /**
+     * Display popup search request
+     */
+    private void searchRequest() {
+        // show layout title
+        showSearchLayoutTitle();
     }
 
     /**
