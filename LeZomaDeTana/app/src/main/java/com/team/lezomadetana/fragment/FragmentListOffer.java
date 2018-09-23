@@ -262,6 +262,14 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         Toast.makeText(getContext(), "onRefresh", Toast.LENGTH_SHORT).show();
     }
 
+    // ===========================================================
+    // Methods for Interfaces
+    // ===========================================================
+
+    // ===========================================================
+    // Public Methods
+    // ===========================================================
+
     /**
      * chooses a random color from array.xml
      */
@@ -277,14 +285,6 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         }
         return returnColor;
     }
-
-    // ===========================================================
-    // Methods for Interfaces
-    // ===========================================================
-
-    // ===========================================================
-    // Public Methods
-    // ===========================================================
 
     // ===========================================================
     // Private Methods
@@ -474,7 +474,7 @@ public class FragmentListOffer extends BaseFragment implements SwipeRefreshLayou
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 

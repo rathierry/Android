@@ -68,13 +68,13 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.searchRequestBuyFragment = searchRequestBuyFragment;
     }
 
-    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestSell fragmentRequestSell) {
+    public RequestsAdapter(Context mContext, List<Request> requests, RequestAdapterListener listener, FragmentRequestSell fragmentRequestSell, boolean searchRequestSellFragment) {
         this.mContext = mContext;
         this.requests = requests;
         this.listener = listener;
         this.fragmentRequestSell = fragmentRequestSell;
         this.fromRequestSellFragment = true;
-        this.searchRequestSellFragment = false;
+        this.searchRequestSellFragment = searchRequestSellFragment;
     }
 
     // ===========================================================
@@ -174,12 +174,12 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // 1) simple buy request list
                 if (fromRequestBuyFragment && !searchRequestBuyFragment) {
                     fragmentRequestBuy.loadNextPage();
-                    Toast.makeText(mContext, "- fragmentRequestBuy.loadNextPage -", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext, "- fragmentRequestBuy.loadNextPage -", Toast.LENGTH_SHORT).show();
                 }
                 // 2) search buy request list
                 else if (fromRequestBuyFragment && searchRequestBuyFragment) {
                     fragmentRequestBuy.loadSearchNextPage();
-                    Toast.makeText(mContext, "- search / BUY / loadNextPage -", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext, "- search / BUY / loadNextPage -", Toast.LENGTH_SHORT).show();
                 }
                 // 3) simple sell request list
                 else if (fromRequestSellFragment && !searchRequestSellFragment) {

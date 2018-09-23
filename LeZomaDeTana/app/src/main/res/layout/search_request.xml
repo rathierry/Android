@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/user_register_relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    android:background="@color/color_white"
+    android:layout_gravity="center"
+    android:background="@color/transparent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:paddingLeft="?listPreferredItemPaddingLeft"
-    android:paddingRight="?listPreferredItemPaddingRight">
+    android:gravity="center">
 
-    <!-- product -->
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/fragment_post_item_text_input_layout_quantity"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/round_corner_text_input_layout">
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="?listPreferredItemPaddingLeft"
+        android:paddingRight="?listPreferredItemPaddingRight">
 
-        <EditText
-            android:id="@+id/search_product"
-            style="@style/ediTextStyle"
+        <!-- product -->
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/fragment_post_item_text_input_layout_quantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/fragment_buy_search_request_product_hint"
-            android:inputType="text"
-            android:textSize="18sp"
-            android:typeface="monospace" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/round_corner_text_input_layout">
 
-    <!-- Category search -->
-    <Spinner
-        android:id="@+id/search_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/spinner_background"
-        android:fontFamily="monospace"
-        android:spinnerMode="dropdown"
-        android:visibility="visible" />
+            <EditText
+                android:id="@+id/search_product"
+                style="@style/ediTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fragment_buy_search_request_product_hint"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:typeface="monospace" />
+        </android.support.design.widget.TextInputLayout>
 
-</LinearLayout>
+        <!-- Category search -->
+        <Spinner
+            android:id="@+id/search_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/spinner_background"
+            android:fontFamily="monospace"
+            android:spinnerMode="dropdown"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+</RelativeLayout>

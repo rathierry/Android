@@ -84,6 +84,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
 
     private BaseActivity baseActivity;
     private MainActivity mainActivity;
+    private FragmentRequestSell fragmentRequestSell;
     private View rootView;
     private LinearLayoutManager mLayoutManager;
     private List<Request> requests = new ArrayList<>();
@@ -98,11 +99,12 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     private String selectedItemOfTemplates;
     private String actualTemplatePosition;
     private String selectedItemOfUnitType;
+    private String product;
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private boolean startFirst = false;
     private boolean isOnResume = false;
+    private boolean startFirst = false;
 
     // ===========================================================
     // Constructors
@@ -132,6 +134,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         // current activity
         baseActivity = ((BaseActivity) getActivity());
         mainActivity = ((MainActivity) getActivity());
+        fragmentRequestSell = this;
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -153,14 +156,12 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                 android.R.color.holo_green_light);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        // adapter
-        mAdapter = new RequestsAdapter(getContext(), requests, this, this);
+        // recycle view
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         // ... = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        recyclerView.setAdapter(mAdapter);
 
         // check switch button status
         checkSwitchStatus();
@@ -226,7 +227,6 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
             onRefresh();
             isOnResume = false;
         }
-        hideSearchLayoutTitle();
         super.onResume();
     }
 
@@ -240,6 +240,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     public void onRefresh() {
         hideSearchLayoutTitle();
         resetPagination();
+        initSimpleAdapter();
         loadFirstPage();
     }
 
@@ -271,22 +272,6 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     // ===========================================================
 
     /**
-     * Check switch button status
-     */
-    private void checkSwitchStatus() {
-        switchSearchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
-                if (bChecked) {
-                    //
-                } else {
-                    hideSearchLayoutTitle();
-                }
-            }
-        });
-    }
-
-    /**
      * chooses a random color from array.xml
      */
     public int getRandomMaterialColor(String typeColor) {
@@ -309,6 +294,37 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * call adapter no search item
+     */
+    private void initSimpleAdapter() {
+        mAdapter = new RequestsAdapter(getContext(), requests, fragmentRequestSell, fragmentRequestSell, false);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * call adapter with search item
+     */
+    private void initSearchAdapter() {
+        mAdapter = new RequestsAdapter(getContext(), requests, fragmentRequestSell, fragmentRequestSell, true);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * Check switch button status
+     */
+    private void checkSwitchStatus() {
+        switchSearchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (!bChecked) {
+                    hideSearchLayoutTitle();
+                    onRefresh();
+                }
+            }
+        });
+    }
 
     /**
      * Scroll in recycle view
@@ -392,6 +408,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                                 new Runnable() {
                                     @Override
                                     public void run() {
+                                        initSimpleAdapter();
                                         loadFirstPage();
                                     }
                                 }
@@ -438,8 +455,6 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
      * Load first page
      */
     private void loadFirstPage() {
-        //showShortToast(getContext(), "< loadFirstPage >");
-
         swipeRefreshLayout.setRefreshing(true);
 
         // set retrofit api
@@ -458,7 +473,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         map.put("type", "SELL");
         // first page is always begin by 0
         map.put("page", String.valueOf(currentPage));
-        // get first page of 21 element
+        // get first page of 5 element
         map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
@@ -471,7 +486,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                 // verification
                 if (response.body() == null) {
                     swipeRefreshLayout.setRefreshing(false);
-                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // info page
                     final Page pageInfo;
@@ -484,6 +499,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
+                    // verification
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
                         showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
@@ -503,10 +519,10 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                             requests.add(request);
 
                             // check last page
-                            if (currentPage <= TOTAL_PAGES - 1) {
-                                mAdapter.addLoadingFooter();
-                            } else {
+                            if (currentPage == TOTAL_PAGES - 1) {
                                 isLastPage = true;
+                            } else {
+                                mAdapter.addLoadingFooter();
                             }
                         }
 
@@ -552,7 +568,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         map.put("type", "SELL");
         // then page is begin by 1
         map.put("page", String.valueOf(currentPage));
-        // get first page of 21 element
+        // get first page of 5 element
         map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
@@ -565,7 +581,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                 // verification
                 if (response.body() == null) {
                     hideLoadingView();
-                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // info page
                     final Page pageInfo;
@@ -581,7 +597,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                     // verification
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
-                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
+                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         mAdapter.removeLoadingFooter();
                         isLoading = false;
@@ -809,7 +825,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
@@ -1030,7 +1046,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
         builder
                 .setTitle(getResources().getString(R.string.fragment_sell_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
@@ -1162,8 +1178,285 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
      * Display popup search request
      */
     private void searchRequest() {
-        // show layout title
-        showSearchLayoutTitle();
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.search_request, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final Spinner spinnerCategory = (Spinner) mView.findViewById(R.id.search_category);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
+
+        // drop down element
+        List<String> listTemplates = new ArrayList<>();
+        final List<String> itemsId = new ArrayList<>();
+
+        // set array values
+        listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
+        for (int i = 0; i < templates.size(); i++) {
+            listTemplates.add(templates.get(i).getName());
+            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
+            itemsId.add(templates.get(i).getId());
+        }
+        listTemplates.add(getResources().getString(R.string.app_other_category));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listTemplates) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+
+        // attaching data adapter to spinner
+        spinnerCategory.setAdapter(arrayAdapter);
+
+        // event onSelect
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // get item name
+                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                // check
+                if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    //
+                }
+                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                    //
+                }
+                else {
+                    // get selected item position
+                    actualTemplatePosition = itemsId.get(position - 1);
+                    // toast
+                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + (position - 1) + "\nid Item: " + actualTemplatePosition);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(true)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = selectedItemOfTemplates;
+                        product = editTextProduct.getText().toString();
+
+                        // category
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
+                            spinnerCategory.requestFocus();
+                            return;
+                        }
+
+                        // hide dialog
+                        dialog.dismiss();
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        // api
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        // add body params for API
+                        Map<String, String> map = new HashMap<>();
+                        // filter
+                        map.put("sort", "creationTime,desc");
+                        // first page is always begin by 0
+                        currentPage = PAGE_START;
+                        map.put("page", String.valueOf(currentPage));
+                        // get first page of 6 element
+                        map.put("size", String.valueOf(PAGE_SIZE));
+                        // type of search
+                        map.put("type", "SELL");
+                        // id of template
+                        if (category != getResources().getString(R.string.app_other_category)) {
+                            String id = "";
+                            for (int i = 0; i < templates.size(); i++) {
+                                if (templates.get(i).equals(category)) {
+                                    id = templates.get(i).getId();
+                                    break;
+                                }
+                            }
+                            map.put("templateId", id);
+                        }
+                        // product search
+                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
+                            map.put("product", product);
+                        }
+
+                        // send query
+                        Call<JsonObject> call = api.searchRequest(auth, map);
+
+                        // request
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                // verification
+                                if (response.body() == null) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
+                                } else if (response.code() == 200) {
+                                    Log.e("REQUESTS", "" + response.body().toString());
+                                    showShortToast(getContext(), response.body().toString());
+
+                                    // info page
+                                    final Page pageInfo;
+                                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                                    Log.e("REQUESTS", "" + pageInfo);
+                                    showShortToast(getContext(), pageInfo.toString());
+
+                                    // set total pages value
+                                    TOTAL_PAGES = pageInfo.getTotalPages();
+                                    showShortToast(getContext(), "currentPage = " + currentPage +
+                                            "\nTOTAL_PAGES = " + String.valueOf(TOTAL_PAGES));
+
+                                    // array filter
+                                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                                    if (filter == null || (filter.size() == 0)) {
+                                        showShortToast(getContext(), "Filter NULL or SIZE = " + filter.size());
+                                        showAlertDialog(getResources().getString(R.string.fragment_buy_switch_text_title), R.drawable.ic_notification_important_black, "Tsy nahitana valiny");
+                                    } else {
+                                        showShortToast(getContext(), "filter.size() = " + filter.size());
+
+                                        // display search layout
+                                        showSearchLayoutTitle();
+
+                                        // clear list request
+                                        requests.clear();
+
+                                        // call correct adapter
+                                        initSearchAdapter();
+
+                                        // parsing gson
+                                        for (int i = 0; i < filter.size(); i++) {
+                                            // class model to mapping gson
+                                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                                            // generate a random color
+                                            request.setColor(getRandomMaterialColor("500"));
+
+                                            // adding request to requests array
+                                            requests.add(request);
+
+                                            // check last page
+                                            if (currentPage == TOTAL_PAGES - 1) {
+                                                isLastPage = true;
+                                                showShortToast(getContext(), "isLastPage");
+                                            } else {
+                                                mAdapter.addLoadingFooter();
+                                                showShortToast(getContext(), "mAdapter.addLoadingFooter()");
+                                            }
+                                        }
+
+                                        // notifying list adapter about data changes
+                                        // so that it renders the list view with updated data
+                                        mAdapter.notifyDataSetChanged();
+
+                                        showShortToast(getContext(), "requests.size() = " + requests.size());
+                                    }
+                                }
+                                hideLoadingView();
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                                // hide alert
+                                hideLoadingView();
+                                // alert
+                                showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_send_request_on_failure_message));
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
+    }
+
+    /**
+     * Load next search page
+     */
+    public void loadSearchNextPage() {
+        //
     }
 
     /**

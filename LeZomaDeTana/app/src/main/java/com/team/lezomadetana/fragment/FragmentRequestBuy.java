@@ -467,7 +467,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         map.put("type", "BUY");
         // first page is always begin by 0
         map.put("page", String.valueOf(currentPage));
-        // get first page of 21 element
+        // get first page of 5 element
         map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
@@ -480,7 +480,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 // verification
                 if (response.body() == null) {
                     swipeRefreshLayout.setRefreshing(false);
-                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // info page
                     final Page pageInfo;
@@ -493,9 +493,10 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     // array filter
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
+                    // verification
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
-                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
+                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // clear the inbox
                         requests.clear();
@@ -512,10 +513,10 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             requests.add(request);
 
                             // check last page
-                            if (currentPage <= TOTAL_PAGES - 1) {
-                                mAdapter.addLoadingFooter();
-                            } else {
+                            if (currentPage == TOTAL_PAGES - 1) {
                                 isLastPage = true;
+                            } else {
+                                mAdapter.addLoadingFooter();
                             }
                         }
 
@@ -561,7 +562,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         map.put("type", "BUY");
         // then page is begin by 1
         map.put("page", String.valueOf(currentPage));
-        // get first page of 21 element
+        // get first page of 5 element
         map.put("size", String.valueOf(PAGE_SIZE));
 
         // send query
@@ -574,7 +575,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 // verification
                 if (response.body() == null) {
                     hideLoadingView();
-                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // info page
                     final Page pageInfo;
@@ -590,7 +591,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     // verification
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
-                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_filter_data_null));
+                        showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         mAdapter.removeLoadingFooter();
                         isLoading = false;
@@ -717,6 +718,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // get item name
+                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
                 // check
                 if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
                     //
@@ -725,7 +728,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     //
                 }
                 else {
-                    selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
                     // get selected item position
                     actualTemplatePosition = itemsId.get(position - 1);
                     // toast
@@ -818,7 +820,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
@@ -1037,7 +1039,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
@@ -1244,6 +1246,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // get item name
+                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
                 // check
                 if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
                     //
@@ -1252,7 +1256,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     //
                 }
                 else {
-                    selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
                     // get selected item position
                     actualTemplatePosition = itemsId.get(position - 1);
                     // toast
@@ -1270,7 +1273,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         builder
                 .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
                 .setIcon(R.drawable.ic_info_black)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
                 .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
 
@@ -1290,10 +1293,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                         // values
                         String category = selectedItemOfTemplates;
                         product = editTextProduct.getText().toString();
-                        // product
 
                         // category
-                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
                             setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
                             spinnerCategory.requestFocus();
                             return;
@@ -1348,7 +1350,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                 // verification
                                 if (response.body() == null) {
                                     swipeRefreshLayout.setRefreshing(false);
-                                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                                 } else if (response.code() == 200) {
                                     Log.e("REQUESTS", "" + response.body().toString());
                                     showShortToast(getContext(), response.body().toString());
@@ -1418,17 +1420,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                 // hide alert
                                 hideLoadingView();
                                 // alert
-                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
-                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                        .show();
+                                showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_send_request_on_failure_message));
                             }
                         });
 
@@ -1519,6 +1511,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
 
                     if (filter == null || (filter.size() == 0)) {
                         showLongToast(getContext(), "Filter NULL or SIZE = 0");
+                        showAlertDialog(getResources().getString(R.string.fragment_buy_switch_text_title), R.drawable.ic_notification_important_black, "Tsy nahitana valiny");
                     } else {
                         // call correct adapter
                         // initSearchAdapter();
