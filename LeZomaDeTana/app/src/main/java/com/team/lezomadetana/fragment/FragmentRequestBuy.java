@@ -59,6 +59,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.team.lezomadetana.activity.BaseActivity.BasicAuth;
+
 /**
  * Created by RaThierry on 18/09/2018.
  */
@@ -296,6 +298,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     //
                 } else {
                     hideSearchLayoutTitle();
+                    onRefresh();
                 }
             }
         });
@@ -919,7 +922,268 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      */
     private void searchRequest() {
         // show layout title
-        showSearchLayoutTitle();
+        // TODO TODO TODO
+        // showSearchLayoutTitle();
+
+        // get prompts xml view
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
+        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
+
+        // create alert builder and cast view
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+
+        // set prompts xml to alert dialog builder
+        builder.setView(mView);
+
+        // init view
+        final Spinner spinnerCategory = (Spinner) mView.findViewById(R.id.search_category);
+        final EditText editTextProduct = (EditText) mView.findViewById(R.id.search_product);
+
+        // drop down element
+        List<String> listTemplates = new ArrayList<>();
+        final List<String> itemsId = new ArrayList<>();
+
+        // set array values
+        listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
+        for (int i = 0; i < templates.size(); i++) {
+            listTemplates.add(templates.get(i).getName());
+            itemsId.add(templates.get(i).getId());
+        }
+        listTemplates.add(getResources().getString(R.string.app_other_category));
+
+        // set adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, listTemplates) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+
+        // attaching data adapter to spinner
+        spinnerCategory.setAdapter(arrayAdapter);
+
+        // event onClick
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemOfTemplates = (String) parent.getItemAtPosition(position).toString();
+                actualTemplatePosition = itemsId.get(position);
+
+                // showing selected spinner item name and position
+                if (selectedItemOfTemplates.equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
+                    showShortToast(parent.getContext(), selectedItemOfTemplates);
+                } else if (selectedItemOfTemplates.equals(getResources().getString(R.string.app_other_category))) {
+                    showShortToast(parent.getContext(), selectedItemOfTemplates);
+                } else {
+                    // toast
+                    showShortToast(parent.getContext(), ">>>\nItem: " + selectedItemOfTemplates + "\nPosition: " + position + "\nid Item: " + actualTemplatePosition);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+        // set dialog message
+        builder
+                .setTitle(getResources().getString(R.string.fragment_buy_post_request_title))
+                .setIcon(R.drawable.ic_info_black)
+                .setCancelable(false)
+                .setPositiveButton(R.string.user_login_forgot_pass_btn_ok, null)
+                .setNegativeButton(R.string.user_login_forgot_pass_btn_cancel, null);
+
+        // create alert dialog
+        final android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonOK = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                Button buttonCancel = ((android.app.AlertDialog) dialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
+
+                // validate
+                buttonOK.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_dark));
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // values
+                        String category = selectedItemOfTemplates;
+                        String product = editTextProduct.getText().toString();
+                        // product
+
+                        // category
+                        if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_select))) {
+                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
+                            spinnerCategory.requestFocus();
+                            return;
+                        }
+
+                        // show spinner
+                        showLoadingView(getResources().getString(R.string.app_spinner));
+
+                        //
+                        Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
+
+                        // create basic authentication
+                        String auth = BasicAuth();
+
+                        // add body params for API
+                        Map<String, String> map = new HashMap<>();
+                        // filter
+                        map.put("sort", "creationTime,desc");
+                        // first page is always begin by 0
+                        currentPage = PAGE_START;
+                        map.put("page", String.valueOf(currentPage));
+                        // get first page of 21 element
+                        map.put("size", String.valueOf(PAGE_SIZE));
+                        map.put("type", "BUY");
+                        if (category != getResources().getString(R.string.app_other_category)) {
+                            String id = "";
+
+                            for (int i = 0; i < templates.size(); i++) {
+                                if (templates.get(i).equals(category)) {
+                                    id = templates.get(i).getId();
+                                    break;
+                                }
+                            }
+
+                            map.put("templateId", id);
+                        }
+                        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
+                            map.put("product", product);
+                        }
+
+                        // send query
+                        Call<JsonObject> call = api.searchRequest(auth, map);
+
+                        // request
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                if (response.code() == 200) {
+                                    dialog.dismiss();
+
+                                    // verification
+                                    if (response.body() == null) {
+                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                                    } else {
+                                        // array filter
+                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                                        if (filter == null || (filter.size() == 0)) {
+                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
+                                        } else {
+                                            // clear list request
+                                            requests.clear();
+
+                                            // enable search title layout
+                                            showSearchLayoutTitle();
+
+                                            // parsing gson
+                                            for (int i = 0; i < filter.size(); i++) {
+                                                // class model to mapping gson
+                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                                                // generate a random color
+                                                request.setColor(getRandomMaterialColor("400"));
+
+                                                // adding request to requests array
+                                                requests.add(request);
+
+                                                // check last page
+                                                if (currentPage <= TOTAL_PAGES - 1) {
+                                                    mAdapter.addLoadingFooter();
+                                                } else {
+                                                    isLastPage = true;
+                                                }
+                                            }
+
+                                            // notifying list adapter about data changes
+                                            // so that it renders the list view with updated data
+                                            mAdapter.notifyDataSetChanged();
+
+                                            // hide swipe refresh
+                                            swipeRefreshLayout.setRefreshing(false);
+                                        }
+                                    }
+                                    hideLoadingView();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                                // hide alert
+                                hideLoadingView();
+                                // alert
+                                new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setTitle(getResources().getString(R.string.app_send_request_on_failure_title))
+                                        .setMessage(getResources().getString(R.string.app_send_request_on_failure_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+
+                    }
+                });
+
+                // cancel
+                buttonCancel.setTextColor(ContextCompat.getColor(getContext(), android.R.color.holo_red_dark));
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // change the alert dialog background color
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialog.show();
     }
 
     /**

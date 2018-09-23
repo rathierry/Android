@@ -144,7 +144,7 @@
     <string name="fragment_buy_post_request_unity_type_hint">Karazam-pamaram-bondrona</string>
     <string name="fragment_buy_post_request_price_hint">Vidiny</string>
     <string name="fragment_buy_post_request_price_error_empty">Ohatrinona ny vidiny?</string>
-    <string name="fragment_buy_search_request_product_hint">Apetrao ny hafatrao</string>
+    <string name="fragment_buy_search_request_product_hint">Entana karohina</string>
     <string name="fragment_buy_btn_answer_request_text">Hamaly</string>
     <string name="fragment_buy_btn_get_request_text">Alaina</string>
     <string name="fragment_buy_footer_menu_add_text">Hanampy</string>

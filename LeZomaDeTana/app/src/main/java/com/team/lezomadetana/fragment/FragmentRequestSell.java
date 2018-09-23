@@ -836,7 +836,7 @@ public class FragmentRequestSell extends BaseFragment implements SwipeRefreshLay
                         }
                         // category
                         if (category.isEmpty() || TextUtils.isEmpty(category) || category.contains(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
-                            setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
+                            new HashMap<>();setSpinnerError(spinnerCategory, getResources().getString(R.string.fragment_buy_post_request_category_hint));
                             return;
                         }
                         // quantity
