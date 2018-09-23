@@ -99,6 +99,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private String selectedItemOfTemplates;
     private String actualTemplatePosition;
     private String selectedItemOfUnitType;
+    private String product;
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -1167,7 +1168,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private void searchRequest() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.search_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
@@ -1288,7 +1289,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     public void onClick(View v) {
                         // values
                         String category = selectedItemOfTemplates;
-                        String product = editTextProduct.getText().toString();
+                        product = editTextProduct.getText().toString();
                         // product
 
                         // category
@@ -1298,10 +1299,13 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                             return;
                         }
 
+                        // hide dialog
+                        dialog.dismiss();
+
                         // show spinner
                         showLoadingView(getResources().getString(R.string.app_spinner));
 
-                        //
+                        // api
                         Service api = Client.getClient(BaseActivity.ROOT_MDZ_API).create(Service.class);
 
                         // create basic authentication
@@ -1341,71 +1345,72 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                         call.enqueue(new Callback<JsonObject>() {
                             @Override
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                if (response.code() == 200) {
-                                    dialog.dismiss();
+                                // verification
+                                if (response.body() == null) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                                } else if (response.code() == 200) {
+                                    Log.e("REQUESTS", "" + response.body().toString());
+                                    showShortToast(getContext(), response.body().toString());
 
-                                    // verification
-                                    if (response.body() == null) {
-                                        showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                                    // info page
+                                    final Page pageInfo;
+                                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                                    Log.e("REQUESTS", "" + pageInfo);
+                                    showShortToast(getContext(), pageInfo.toString());
+
+                                    // set total pages value
+                                    TOTAL_PAGES = pageInfo.getTotalPages();
+                                    showShortToast(getContext(), "currentPage = " + currentPage +
+                                            "\nTOTAL_PAGES = " + String.valueOf(TOTAL_PAGES));
+
+                                    // array filter
+                                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                                    if (filter == null || (filter.size() == 0)) {
+                                        showShortToast(getContext(), "Filter NULL or SIZE = " + filter.size());
+                                        showAlertDialog(getResources().getString(R.string.fragment_buy_switch_text_title), R.drawable.ic_notification_important_black, "Tsy nahitana valiny");
                                     } else {
-                                        // array filter
-                                        JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+                                        showShortToast(getContext(), "filter.size() = " + filter.size());
 
-                                        if (filter == null || (filter.size() == 0)) {
-                                            showLongToast(getContext(), "Filter NULL or SIZE = 0");
-                                        } else {
-                                            // clear list request
-                                            requests.clear();
+                                        // display search layout
+                                        showSearchLayoutTitle();
 
-                                            // call correct adapter
-                                            initSearchAdapter();
+                                        // clear list request
+                                        requests.clear();
 
-                                            // parsing gson
-                                            for (int i = 0; i < filter.size(); i++) {
-                                                // class model to mapping gson
-                                                Request request = new Gson().fromJson(filter.get(i), Request.class);
+                                        // call correct adapter
+                                        initSearchAdapter();
 
-                                                // generate a random color
-                                                request.setColor(getRandomMaterialColor("400"));
+                                        // parsing gson
+                                        for (int i = 0; i < filter.size(); i++) {
+                                            // class model to mapping gson
+                                            Request request = new Gson().fromJson(filter.get(i), Request.class);
 
-                                                // adding request to requests array
-                                                requests.add(request);
+                                            // generate a random color
+                                            request.setColor(getRandomMaterialColor("400"));
 
-                                                // check last page
-                                                if (currentPage <= TOTAL_PAGES - 1) {
-                                                    mAdapter.addLoadingFooter();
-                                                } else {
-                                                    isLastPage = true;
-                                                }
-                                            }
+                                            // adding request to requests array
+                                            requests.add(request);
 
-                                            // alert info
-                                            if (requests.size() == 0) {
-                                                // refsresh default data
-                                                onRefresh();
-
-                                                // message
-                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
-
+                                            // check last page
+                                            if (currentPage == TOTAL_PAGES - 1) {
+                                                isLastPage = true;
+                                                showShortToast(getContext(), "isLastPage");
                                             } else {
-                                                // enable search title layout
-                                                showSearchLayoutTitle();
-
-                                                // message
-                                                showLongToast(getContext(), getResources().getString(R.string.app_filter_data_size) + " " + requests.size());
-
-                                                // notifying list adapter about data changes
-                                                // so that it renders the list view with updated data
-                                                mAdapter.notifyDataSetChanged();
+                                                mAdapter.addLoadingFooter();
+                                                showShortToast(getContext(), "mAdapter.addLoadingFooter()");
                                             }
-
-                                            // hide swipe refresh
-                                            swipeRefreshLayout.setRefreshing(false);
                                         }
-                                    }
-                                    hideLoadingView();
-                                }
 
+                                        // notifying list adapter about data changes
+                                        // so that it renders the list view with updated data
+                                        mAdapter.notifyDataSetChanged();
+
+                                        showShortToast(getContext(), "requests.size() = " + requests.size());
+                                    }
+                                }
+                                hideLoadingView();
                             }
 
                             @Override
@@ -1444,6 +1449,118 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
+    }
+
+    /**
+     * Load next search page
+     */
+    public void loadSearchNextPage() {
+        // specific values for the next page
+        isLoading = true;
+        currentPage += 1;
+
+        // set retrofit api
+        Service api = Client.getClient(baseActivity.ROOT_MDZ_API).create(Service.class);
+
+        // create basic authentication
+        String auth = baseActivity.BasicAuth();
+
+        // params
+        showShortToast(getContext(), "[NEXT] page\ncurrentPage = " + currentPage);
+
+        // add body params for API
+        Map<String, String> map = new HashMap<>();
+        // filter
+        map.put("sort", "creationTime,desc");
+        // then page is begin by 1
+        map.put("page", String.valueOf(currentPage));
+        // get first page of 6 element
+        map.put("size", String.valueOf(PAGE_SIZE));
+        // type of search
+        map.put("type", "BUY");
+        // id of template
+        if (selectedItemOfTemplates != getResources().getString(R.string.app_other_category)) {
+            String id = "";
+            for (int i = 0; i < templates.size(); i++) {
+                if (templates.get(i).equals(selectedItemOfTemplates)) {
+                    id = templates.get(i).getId();
+                    break;
+                }
+            }
+            map.put("templateId", id);
+        }
+        // product search
+        if (!product.isEmpty() || !TextUtils.isEmpty(product)) {
+            map.put("product", product);
+        }
+
+        // send query
+        Call<JsonObject> call = api.searchRequest(auth, map);
+
+        // request
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // verification
+                if (response.body() == null) {
+                    hideLoadingView();
+                    showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_response_body_null));
+                } else if (response.code() == 200) {
+                    // info page
+                    final Page pageInfo;
+                    pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
+                    Log.d("REQUESTS", "" + pageInfo);
+
+                    // set total pages value
+                    TOTAL_PAGES = pageInfo.getTotalPages();
+
+                    // array filter
+                    JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
+
+                    if (filter == null || (filter.size() == 0)) {
+                        showLongToast(getContext(), "Filter NULL or SIZE = 0");
+                    } else {
+                        // call correct adapter
+                        // initSearchAdapter();
+                        mAdapter.removeLoadingFooter();
+                        isLoading = false;
+
+                        // parsing gson
+                        for (int i = 0; i < filter.size(); i++) {
+                            // class model to mapping gson
+                            Request request = new Gson().fromJson(filter.get(i), Request.class);
+
+                            // generate a random color
+                            request.setColor(getRandomMaterialColor("400"));
+
+                            // adding request to requests array
+                            requests.add(request);
+
+                            // check last page
+                            if (currentPage == TOTAL_PAGES - 1) {
+                                isLastPage = true;
+                            } else {
+                                mAdapter.addLoadingFooter();
+                            }
+                        }
+
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
+                        mAdapter.notifyDataSetChanged();
+
+                        // hide swipe refresh
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+                hideLoadingView();
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                showAlertDialog(getResources().getString(R.string.app_send_request_on_failure_title), R.drawable.ic_warning_black, getResources().getString(R.string.app_send_request_on_failure_message));
+            }
+        });
     }
 
     /**

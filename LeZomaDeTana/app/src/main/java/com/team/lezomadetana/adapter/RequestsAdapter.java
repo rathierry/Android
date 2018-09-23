@@ -178,6 +178,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
                 // 2) search buy request list
                 else if (fromRequestBuyFragment && searchRequestBuyFragment) {
+                    fragmentRequestBuy.loadSearchNextPage();
                     Toast.makeText(mContext, "- search / BUY / loadNextPage -", Toast.LENGTH_SHORT).show();
                 }
                 // 3) simple sell request list

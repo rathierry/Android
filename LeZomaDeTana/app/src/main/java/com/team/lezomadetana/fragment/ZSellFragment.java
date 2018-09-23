@@ -920,7 +920,7 @@ public class ZSellFragment extends BaseFragment implements
     private void showSearchRequestPopup() {
         // get prompts xml view
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getContext());
-        final View mView = layoutInflaterAndroid.inflate(R.layout.layout_search_request, null);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.search_request, null);
 
         // create alert builder and cast view
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
