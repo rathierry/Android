@@ -27,8 +27,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -67,8 +70,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     // Constants
     // ===========================================================
 
-    private static int PAGE_START = 0;
-    private static int PAGE_ELEM = 6;
     // limiting to 20 for this screen, since total pages in actual API is very large.
     private int TOTAL_PAGES = 0;
     private int PAGE_SIZE = PAGE_ELEM;
@@ -87,6 +88,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     private RecyclerView recyclerView;
     private RequestsAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RelativeLayout relativeLayoutForSearchResult;
+    private TextView textViewForSearchTitle;
+    private Switch switchSearchButton;
 
     private String selectedItemOfTemplates;
     private String actualTemplatePosition;
@@ -134,6 +138,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         });
 
         // init view
+        relativeLayoutForSearchResult = (RelativeLayout) rootView.findViewById(R.id.fragment_request_buy_switch_layout_search_result);
+        textViewForSearchTitle = (TextView) rootView.findViewById(R.id.fragment_request_buy_switch_text_view_title);
+        switchSearchButton = (Switch) rootView.findViewById(R.id.fragment_request_buy_switch_button);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_s);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light,
@@ -150,6 +157,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
+
+        // check switch button status
+        checkSwitchStatus();
 
         // scroll recycler
         onScrollRecyclerView();
@@ -207,14 +217,21 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
             //showShortToast(getContext(), "- onResume -");
             isOnResume = false;
         }
+        hideSearchLayoutTitle();
         super.onResume();
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        hideSearchLayoutTitle();
+    }
+
+    @Override
     public void onRefresh() {
+        hideSearchLayoutTitle();
         resetPagination();
         loadFirstPage();
-        //showShortToast(getContext(), "- onRefresh -");
     }
 
     @Override
@@ -267,6 +284,22 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     // ===========================================================
     // Private Methods
     // ===========================================================
+
+    /**
+     * Check switch button status
+     */
+    private void checkSwitchStatus() {
+        switchSearchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    //
+                } else {
+                    hideSearchLayoutTitle();
+                }
+            }
+        });
+    }
 
     /**
      * Scroll in recycle view
@@ -885,8 +918,8 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
      * Display popup search request
      */
     private void searchRequest() {
-        // TODO
-        showLongToast(getContext(), "- searchRequest -");
+        // show layout title
+        showSearchLayoutTitle();
     }
 
     /**
@@ -1112,6 +1145,24 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         // change the alert dialog background color
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
         dialog.show();
+    }
+
+    /**
+     * Enable search layout title
+     */
+    private void showSearchLayoutTitle() {
+        textViewForSearchTitle.setText(getResources().getString(R.string.fragment_buy_switch_text_title));
+        switchSearchButton.setChecked(true);
+        relativeLayoutForSearchResult.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Disable search layout title
+     */
+    private void hideSearchLayoutTitle() {
+        textViewForSearchTitle.setText("");
+        switchSearchButton.setChecked(false);
+        relativeLayoutForSearchResult.setVisibility(View.GONE);
     }
 
     // ===========================================================

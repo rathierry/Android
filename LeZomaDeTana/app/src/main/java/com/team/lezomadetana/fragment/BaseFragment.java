@@ -46,6 +46,10 @@ public class BaseFragment extends Fragment {
     public static int SPLASH_TIME_OUT = 2000;
     public static int LOADING_TIME_OUT = 3000;
 
+    // pagination
+    public static int PAGE_START = 0;
+    public static int PAGE_ELEM = 6;
+
     private ProgressDialog _progressDialog;
     private android.support.v7.app.AlertDialog _alertDialog;
     private BaseFragment activeFragment = null;
