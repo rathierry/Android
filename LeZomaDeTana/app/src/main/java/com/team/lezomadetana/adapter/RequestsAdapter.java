@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -184,11 +183,12 @@ public class RequestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // 3) simple sell request list
                 else if (fromRequestSellFragment && !searchRequestSellFragment) {
                     fragmentRequestSell.loadNextPage();
-                    Toast.makeText(mContext, "< fragmentRequestSell.loadNextPage >", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext, "< fragmentRequestSell.loadNextPage >", Toast.LENGTH_SHORT).show();
                 }
                 // 4) search sell request list
                 else if (fromRequestSellFragment && searchRequestSellFragment) {
-                    Toast.makeText(mContext, "< search / SELL / loadNextPage >", Toast.LENGTH_SHORT).show();
+                    fragmentRequestSell.loadSearchNextPage();
+                    //Toast.makeText(mContext, "< search / SELL / loadNextPage >", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

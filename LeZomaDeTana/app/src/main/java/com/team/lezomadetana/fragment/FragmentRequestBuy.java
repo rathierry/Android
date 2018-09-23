@@ -218,7 +218,6 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
     public void onResume() {
         if (isOnResume) {
             onRefresh();
-            //showShortToast(getContext(), "- onResume -");
             isOnResume = false;
         }
         super.onResume();
@@ -370,14 +369,14 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 // verification
                 if (response.body() == null) {
                     hideLoadingView();
-                    showLongToast(getContext(), getResources().getString(R.string.app_response_body_null));
+                    showAlertDialog("Category", R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                 } else if (response.code() == 200) {
                     // sort using result(s)
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("productTemplates").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
                         hideLoadingView();
-                        showLongToast(getContext(), getResources().getString(R.string.app_filter_data_null));
+                        showAlertDialog("Category", R.drawable.ic_notification_important_black, getResources().getString(R.string.app_filter_data_null));
                     } else {
                         // class model to mapping gson
                         List<ProductTemplate> productTemplates = null;
@@ -662,7 +661,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
         for (int i = 0; i < templates.size(); i++) {
             listTemplates.add(templates.get(i).getName());
-            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
+            //showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
             itemsId.add(templates.get(i).getId());
         }
         listTemplates.add(getResources().getString(R.string.app_other_category));
@@ -723,11 +722,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 // check
                 if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
                     //
-                }
-                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                } else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
                     //
-                }
-                else {
+                } else {
                     // get selected item position
                     actualTemplatePosition = itemsId.get(position - 1);
                     // toast
@@ -1190,7 +1187,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         listTemplates.add(getResources().getString(R.string.fragment_buy_post_request_category_hint));
         for (int i = 0; i < templates.size(); i++) {
             listTemplates.add(templates.get(i).getName());
-            showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
+            //showShortToast(getContext(), "name: " + templates.get(i).getName() + "\nid: " + templates.get(i).getId());
             itemsId.add(templates.get(i).getId());
         }
         listTemplates.add(getResources().getString(R.string.app_other_category));
@@ -1251,11 +1248,9 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                 // check
                 if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.fragment_buy_post_request_category_hint))) {
                     //
-                }
-                else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
+                } else if (((AppCompatTextView) view).getText().equals(getResources().getString(R.string.app_other_category))) {
                     //
-                }
-                else {
+                } else {
                     // get selected item position
                     actualTemplatePosition = itemsId.get(position - 1);
                     // toast
@@ -1353,13 +1348,13 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                     showAlertDialog(getResources().getString(R.string.fragment_buy_toolBar_title), R.drawable.ic_notification_important_black, getResources().getString(R.string.app_response_body_null));
                                 } else if (response.code() == 200) {
                                     Log.e("REQUESTS", "" + response.body().toString());
-                                    showShortToast(getContext(), response.body().toString());
+                                    //showShortToast(getContext(), response.body().toString());
 
                                     // info page
                                     final Page pageInfo;
                                     pageInfo = new Gson().fromJson(response.body().get("page").getAsJsonObject(), Page.class);
                                     Log.e("REQUESTS", "" + pageInfo);
-                                    showShortToast(getContext(), pageInfo.toString());
+                                    //showShortToast(getContext(), pageInfo.toString());
 
                                     // set total pages value
                                     TOTAL_PAGES = pageInfo.getTotalPages();
@@ -1370,7 +1365,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                                     if (filter == null || (filter.size() == 0)) {
-                                        showShortToast(getContext(), "Filter NULL or SIZE = " + filter.size());
+                                        //showShortToast(getContext(), "Filter NULL or SIZE = " + filter.size());
                                         showAlertDialog(getResources().getString(R.string.fragment_buy_switch_text_title), R.drawable.ic_notification_important_black, "Tsy nahitana valiny");
                                     } else {
                                         showShortToast(getContext(), "filter.size() = " + filter.size());
@@ -1401,7 +1396,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                                                 showShortToast(getContext(), "isLastPage");
                                             } else {
                                                 mAdapter.addLoadingFooter();
-                                                showShortToast(getContext(), "mAdapter.addLoadingFooter()");
+                                                //showShortToast(getContext(), "mAdapter.addLoadingFooter()");
                                             }
                                         }
 
@@ -1466,7 +1461,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
         map.put("sort", "creationTime,desc");
         // then page is begin by 1
         map.put("page", String.valueOf(currentPage));
-        // get first page of 6 element
+        // get first page of 5 element
         map.put("size", String.valueOf(PAGE_SIZE));
         // type of search
         map.put("type", "BUY");
@@ -1510,7 +1505,7 @@ public class FragmentRequestBuy extends BaseFragment implements SwipeRefreshLayo
                     JsonArray filter = response.body().get("_embedded").getAsJsonObject().get("requests").getAsJsonArray();
 
                     if (filter == null || (filter.size() == 0)) {
-                        showLongToast(getContext(), "Filter NULL or SIZE = 0");
+                        //showShortToast(getContext(), "Filter NULL or SIZE = 0");
                         showAlertDialog(getResources().getString(R.string.fragment_buy_switch_text_title), R.drawable.ic_notification_important_black, "Tsy nahitana valiny");
                     } else {
                         // call correct adapter
