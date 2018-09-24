@@ -54,6 +54,11 @@ public class BaseFragment extends Fragment {
     private android.support.v7.app.AlertDialog _alertDialog;
     private BaseFragment activeFragment = null;
 
+
+
+
+
+
     // ===========================================================
     // Constructors
     // ===========================================================
@@ -65,6 +70,9 @@ public class BaseFragment extends Fragment {
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
+
+
+
 
     @Override
     public void onPause() {

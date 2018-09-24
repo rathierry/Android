@@ -266,6 +266,7 @@ public class FragmentPaymentSendMoney extends BaseFragment {
                                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
                                                             dialog.dismiss();
+                                                            mainActivity.getFragmentPayment().refreshMadCoin();
                                                             // back to payment fragment
                                                             activity.navItemIndex = 3;
                                                             mainActivity.onBackPressed();

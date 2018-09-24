@@ -68,6 +68,10 @@ public class MainActivity extends BaseActivity {
     private ImageView imageViewBg;
     private ImageView imageViewProfile;
 
+
+
+    private FragmentPayment fragmentPayment;
+
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
 
@@ -86,6 +90,16 @@ public class MainActivity extends BaseActivity {
     // ===========================================================
     // Methods from SuperClass
     // ===========================================================
+
+    public FragmentPayment getFragmentPayment() {
+        return fragmentPayment;
+    }
+
+    public void setFragmentPayment(FragmentPayment fragmentPayment) {
+        this.fragmentPayment = fragmentPayment;
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

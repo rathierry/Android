@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 
 /**
  * Created by RaThierry on 15/09/2018.
@@ -73,7 +74,7 @@ public class FragmentPaymentMenu extends BaseFragment implements View.OnClickLis
         layout_payment_give_money.setOnClickListener(this);
         layout_payment_send_money.setOnClickListener(this);
         layout_payment_get_money.setOnClickListener(this);
-
+        ((MainActivity)activity).getFragmentPayment().refreshMadCoin();
         return rootView;
     }
 
@@ -96,6 +97,8 @@ public class FragmentPaymentMenu extends BaseFragment implements View.OnClickLis
                 break;
         }
     }
+
+
 
     // ===========================================================
     // Methods for Interfaces

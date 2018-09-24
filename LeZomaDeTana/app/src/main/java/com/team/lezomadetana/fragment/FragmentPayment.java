@@ -19,6 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
+import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.receive.UserCredentialResponse;
@@ -95,8 +96,8 @@ public class FragmentPayment extends BaseFragment {
         switchToMenuPaymentFragment(new FragmentPaymentMenu());
 
         // fetch user mad coin
-        refreshMadCoin();
 
+        ((MainActivity)activity).setFragmentPayment(this);
         return rootView;
     }
 
