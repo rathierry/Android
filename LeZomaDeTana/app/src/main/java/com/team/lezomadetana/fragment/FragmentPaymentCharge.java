@@ -99,7 +99,6 @@ public class FragmentPaymentCharge extends BaseFragment {
         // init view
         editTextAmount = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_amount);
         spinnerOperatorCode = (Spinner) rootView.findViewById(R.id.fragment_payment_charge_spinner_operator);
-        spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.md_status_bar_translucent));
         editTextPhone = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_phone);
         btnSend = (Button) rootView.findViewById(R.id.fragment_payment_charge_btn_send);
 
@@ -340,6 +339,7 @@ public class FragmentPaymentCharge extends BaseFragment {
         editTextAmount.setError(null);
         spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.transparent));
         editTextPhone.setError(null);
+        editTextPhone.setError(null);
     }
 
     /**
@@ -347,7 +347,7 @@ public class FragmentPaymentCharge extends BaseFragment {
      */
     private void clearAllInputFocus() {
         editTextAmount.clearFocus();
-        spinnerOperatorCode.clearFocus();
+        editTextPhone.clearFocus();
         editTextPhone.clearFocus();
     }
 
@@ -357,6 +357,7 @@ public class FragmentPaymentCharge extends BaseFragment {
     private void resetAllInputText() {
         editTextAmount.setText("");
         spinnerOperatorCode.setPrompt(getResources().getString(R.string.fragment_payment_charge_phone_code_error));
+        editTextPhone.setText("");
         editTextPhone.setText("");
     }
 
