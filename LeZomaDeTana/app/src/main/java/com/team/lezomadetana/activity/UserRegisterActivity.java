@@ -504,7 +504,7 @@ public class UserRegisterActivity extends BaseActivity implements View.OnClickLi
         arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         _regionSpinner.setAdapter(arrayAdapter);
 
-        // event onClick
+        // event onSelect
         _regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

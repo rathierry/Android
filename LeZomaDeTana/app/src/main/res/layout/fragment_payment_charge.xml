@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -41,37 +40,48 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <EditText
-                android:id="@+id/fragment_payment_charge_edit_text_amount"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:layout_gravity="start|center"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="1dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="0.2"
-                android:background="@drawable/payment_edit_text_bg_selector"
-                android:fontFamily="monospace"
-                android:gravity="end|center"
-                android:hint="@string/fragment_payment_charge_amount_hint_text"
-                android:inputType="number"
-                android:maxLines="1"
-                android:paddingRight="?listPreferredItemPaddingRight"
-                android:textAllCaps="true"
-                android:textColor="@color/color_white"
-                android:textColorHint="@color/color_white"
-                android:textStyle="bold" />
+                android:background="@drawable/round_corner_text_input_layout_dark_grey">
 
-            <TextView
+                <EditText
+                    android:id="@+id/fragment_payment_charge_edit_text_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_money_black"
+                    android:gravity="end|center"
+                    android:hint="@string/fragment_payment_charge_amount_hint_text"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingRight="?listPreferredItemPaddingRight"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="end|center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="0.8"
-                android:background="@drawable/payment_edit_text_bg_selector"
-                android:fontFamily="monospace"
-                android:gravity="center"
-                android:text="@string/app_payment_symbole_type_ariary_text"
-                android:textAllCaps="true"
-                android:textColor="@color/color_white"
-                android:textStyle="bold" />
+                android:background="@drawable/round_corner_text_input_layout_dark_grey">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/app_payment_symbole_type_ariary_text"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_black"
+                    android:textStyle="bold" />
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
@@ -95,36 +105,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            <Spinner
                 android:id="@+id/fragment_payment_charge_spinner_operator"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:background="@drawable/spinner_background"
                 android:fontFamily="monospace"
-                android:gravity="center|start"
-                android:text="@string/fragment_payment_charge_phone_hint_spinner"
-                android:textColor="@color/color_black"
-                android:textColorHighlight="@color/color_black"
-                android:visibility="visible"
-                app:met_floatingLabel="none" />
+                android:gravity="center"
+                android:spinnerMode="dropdown"
+                android:visibility="visible" />
 
-            <EditText
-                android:id="@+id/fragment_payment_charge_edit_text_phone"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="8dp"
                 android:layout_toRightOf="@+id/fragment_payment_charge_spinner_operator"
-                android:background="@drawable/payment_edit_text_bg_selector"
-                android:fontFamily="monospace"
-                android:hint="@string/fragment_payment_charge_phone_hint_text"
-                android:inputType="number"
-                android:maxLength="7"
-                android:maxLines="1"
-                android:textAllCaps="true"
-                android:textColor="@color/color_white"
-                android:textColorHint="@color/color_white"
-                android:textStyle="bold" />
+                android:background="@drawable/round_corner_text_input_layout_dark_grey">
+
+                <EditText
+                    android:id="@+id/fragment_payment_charge_edit_text_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/ic_phone_black"
+                    android:gravity="end|center"
+                    android:hint="@string/user_login_input_hint_phone"
+                    android:inputType="number"
+                    android:maxLength="7"
+                    android:maxLines="1"
+                    android:textAllCaps="true"
+                    android:textColor="@color/color_black"
+                    android:textStyle="bold"
+                    android:typeface="monospace" />
+            </android.support.design.widget.TextInputLayout>
 
         </RelativeLayout>
 
@@ -139,7 +158,7 @@
             android:id="@+id/fragment_payment_charge_btn_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDarker"
+            android:background="@drawable/button_rounded_states_red"
             android:fontFamily="monospace"
             android:text="@string/fragment_payment_charge_btn_submit"
             android:textAllCaps="false"

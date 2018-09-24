@@ -1,6 +1,7 @@
 package com.team.lezomadetana.fragment;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.team.lezomadetana.R;
 import com.team.lezomadetana.activity.BaseActivity;
@@ -24,7 +27,6 @@ import com.team.lezomadetana.activity.MainActivity;
 import com.team.lezomadetana.api.Client;
 import com.team.lezomadetana.api.Service;
 import com.team.lezomadetana.model.send.TransactionAriaryJeton;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +51,7 @@ public class FragmentPaymentCharge extends BaseFragment {
 
     private BaseActivity activity;
     private MainActivity mainActivity;
-    private MaterialBetterSpinner spinnerOperatorCode;
+    private Spinner spinnerOperatorCode;
     private EditText editTextAmount;
     private EditText editTextPhone;
     private Button btnSend;
@@ -96,7 +98,8 @@ public class FragmentPaymentCharge extends BaseFragment {
 
         // init view
         editTextAmount = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_amount);
-        spinnerOperatorCode = (MaterialBetterSpinner) rootView.findViewById(R.id.fragment_payment_charge_spinner_operator);
+        spinnerOperatorCode = (Spinner) rootView.findViewById(R.id.fragment_payment_charge_spinner_operator);
+        spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.md_status_bar_translucent));
         editTextPhone = (EditText) rootView.findViewById(R.id.fragment_payment_charge_edit_text_phone);
         btnSend = (Button) rootView.findViewById(R.id.fragment_payment_charge_btn_send);
 
@@ -153,21 +156,66 @@ public class FragmentPaymentCharge extends BaseFragment {
         List<String> codeOperator = Arrays.asList(getResources().getStringArray(R.array.array_code_operator));
 
         // set adapter for spinner
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, codeOperator);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_grey, codeOperator) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                // color
+                if (position == 0) {
+                    // set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                    tv.setAllCaps(false);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setAllCaps(true);
+                }
+
+                // background
+                if (position % 2 == 1) {
+                    // set the alternate item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_50));
+                } else {
+                    // Set the item background color
+                    tv.setBackgroundColor(getResources().getColor(R.color.md_blue_grey_100));
+                }
+
+                return view;
+            }
+        };
+
+        // set drop down
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_item_grey);
 
         // attaching data adapter to spinner
         spinnerOperatorCode.setAdapter(arrayAdapter);
 
         // event onClick
-        spinnerOperatorCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinnerOperatorCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // item'clicked name
                 codeOperatorText = parent.getItemAtPosition(position).toString();
-
                 // showing clicked spinner item name and position
-                showLongToast(parent.getContext(), "Code selected: " + codeOperatorText + "\nPosition: " + position + ")");
+                if (position != 0) {
+                    showLongToast(parent.getContext(), "Code selected: " + codeOperatorText + "\nPosition: " + position + ")");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
@@ -180,7 +228,6 @@ public class FragmentPaymentCharge extends BaseFragment {
             public void onClick(View v) {
                 // set values
                 amountText = editTextAmount.getText().toString().replaceAll(",", "");
-                codeOperatorText = spinnerOperatorCode.getText().toString();
                 phoneText = editTextPhone.getText().toString();
                 String phoneNumberText = codeOperatorText + phoneText;
 
@@ -190,17 +237,11 @@ public class FragmentPaymentCharge extends BaseFragment {
                     editTextAmount.requestFocus();
                 }
                 // code operator
-                else if (codeOperatorText.isEmpty() || TextUtils.isEmpty(codeOperatorText) || codeOperatorText.contains(getResources().getString(R.string.fragment_payment_charge_phone_hint_spinner))) {
-                    spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                    spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_white));
-                    editTextPhone.setError(getResources().getString(R.string.fragment_payment_charge_phone_code_error));
-                    editTextPhone.requestFocus();
+                else if (codeOperatorText.isEmpty() || TextUtils.isEmpty(codeOperatorText) || codeOperatorText.contains(getResources().getString(R.string.fragment_payment_charge_phone_code_error))) {
+                    setSpinnerError(spinnerOperatorCode, getResources().getString(R.string.fragment_payment_charge_phone_code_error));
                 }
                 // phone
                 else if (phoneNumberText.isEmpty() || TextUtils.isEmpty(phoneNumberText) || phoneNumberText.length() != 10) {
-                    spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.transparent));
-                    spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_black));
-                    // // //
                     editTextPhone.setError(getResources().getString(R.string.fragment_payment_charge_phone_text));
                     editTextPhone.requestFocus();
                 }
@@ -297,7 +338,6 @@ public class FragmentPaymentCharge extends BaseFragment {
     private void clearAllInputError() {
         editTextAmount.setError(null);
         spinnerOperatorCode.setBackgroundColor(getResources().getColor(R.color.transparent));
-        spinnerOperatorCode.setTextColor(getResources().getColor(R.color.color_black));
         editTextPhone.setError(null);
     }
 
@@ -315,7 +355,7 @@ public class FragmentPaymentCharge extends BaseFragment {
      */
     private void resetAllInputText() {
         editTextAmount.setText("");
-        spinnerOperatorCode.setText(getResources().getString(R.string.fragment_payment_charge_phone_hint_spinner));
+        spinnerOperatorCode.setPrompt(getResources().getString(R.string.fragment_payment_charge_phone_code_error));
         editTextPhone.setText("");
     }
 

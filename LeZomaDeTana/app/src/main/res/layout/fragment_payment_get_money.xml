@@ -30,7 +30,7 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/md_statusbar_translucent" />
+            android:background="@color/md_status_bar_translucent" />
 
         <ImageView
             android:id="@+id/fragment_payment_get_money_imageView_qr_code"

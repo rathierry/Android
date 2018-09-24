@@ -176,10 +176,11 @@
     <string name="fragment_payment_charge_amount_hint_text">mari-bola</string>
     <string name="fragment_payment_charge_phone_text">Laharana finday akana ny vola</string>
     <string name="fragment_payment_charge_phone_hint_spinner">03X</string>
-    <string name="fragment_payment_charge_phone_code_error">Misafidiana code</string>
+    <string name="fragment_payment_charge_phone_code_error">Kaody</string>
     <string name="fragment_payment_charge_phone_hint_text">XXXXXXX</string>
     <string name="fragment_payment_charge_btn_submit">Alefa ny fangatahana</string>
     <string-array name="array_code_operator">
+        <item>@string/fragment_payment_charge_phone_code_error</item>
         <item>032</item>
         <item>033</item>
         <item>034</item>
