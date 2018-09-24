@@ -1,194 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="top|center"
-    android:background="@drawable/bg_list_row"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:weightSum="4"
-    tools:context=".fragment.FragmentPaymentSendMoney">
+    android:background="@color/transparent">
 
-    <!-- 0.5 -->
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5">
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:scrollbars="none">
 
-        <TextView
+        <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fontFamily="monospace"
-            android:gravity="start|center"
-            android:text="@string/fragment_payment_send_money_text_view_qr_code"
-            android:textColor="@color/color_black"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <!-- 1 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@color/md_grey_50"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/fragment_payment_send_money_imageView_qr_code"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
             android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:src="@drawable/ic_qr_code" />
-
-    </LinearLayout>
-
-    <!-- 2 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:background="@color/md_grey_50"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingLeft="?listPreferredItemPaddingLeft"
-            android:paddingRight="?listPreferredItemPaddingRight">
+            android:weightSum="4"
+            tools:context=".fragment.FragmentPaymentSendMoney">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:gravity="start"
-                android:text="@string/fragment_payment_send_money_amount_text"
-                android:textColor="@color/color_black"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="4dp"
-                android:background="@color/transparent" />
-
+            <!-- 0.5 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <EditText
-                    android:id="@+id/fragment_payment_send_money_edit_text_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:layout_gravity="start|center"
-                    android:layout_marginEnd="1dp"
-                    android:layout_weight="0.2"
-                    android:background="@drawable/payment_edit_text_bg_selector"
-                    android:fontFamily="monospace"
-                    android:gravity="end|center"
-                    android:hint="@string/fragment_payment_charge_amount_hint_text"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:paddingRight="?listPreferredItemPaddingRight"
-                    android:textAllCaps="true"
-                    android:textColor="@color/color_white"
-                    android:textColorHint="@color/color_white"
-                    android:textStyle="bold" />
+                android:layout_weight="0.5">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="end|center"
-                    android:layout_weight="0.8"
-                    android:background="@drawable/payment_edit_text_bg_selector"
                     android:fontFamily="monospace"
-                    android:gravity="center"
-                    android:text="@string/app_payment_symbole_type_ariary_text"
-                    android:textAllCaps="true"
+                    android:gravity="start|center"
+                    android:text="@string/fragment_payment_send_money_text_view_qr_code"
+                    android:textColor="@color/color_black"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/md_grey_50"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/fragment_payment_send_money_imageView_qr_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_qr_code" />
+
+            </LinearLayout>
+
+            <!-- 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@color/md_grey_50"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingLeft="?listPreferredItemPaddingLeft"
+                    android:paddingRight="?listPreferredItemPaddingRight">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:gravity="start"
+                        android:text="@string/fragment_payment_send_money_amount_text"
+                        android:textColor="@color/color_black"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@color/transparent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginEnd="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="0.2"
+                            android:background="@drawable/round_corner_text_input_layout_dark_grey">
+
+                            <EditText
+                                android:id="@+id/fragment_payment_send_money_edit_text_amount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableLeft="@drawable/ic_money_black"
+                                android:gravity="end|center"
+                                android:hint="@string/fragment_payment_charge_amount_hint_text"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:paddingRight="?listPreferredItemPaddingRight"
+                                android:textAllCaps="true"
+                                android:textStyle="bold"
+                                android:typeface="monospace" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="0.8"
+                            android:background="@drawable/round_corner_text_input_layout_dark_grey">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="@string/app_payment_symbole_type_ariary_text"
+                                android:textAllCaps="true"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                        </android.support.design.widget.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/transparent" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:gravity="start"
+                        android:text="@string/fragment_payment_give_money_password_text"
+                        android:textColor="@color/color_black"
+                        android:textStyle="bold" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_corner_toggle_grey"
+                        android:gravity="center"
+                        app:hintEnabled="false"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="@color/color_black">
+
+                        <EditText
+                            android:id="@+id/fragment_payment_send_money_edit_text_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|center"
+                            android:background="@null"
+                            android:fontFamily="monospace"
+                            android:gravity="left|center"
+                            android:hint="@string/fragment_payment_give_money_password_hint"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:textAllCaps="true"
+                            android:textStyle="bold" />
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 0.5 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:paddingLeft="?listPreferredItemPaddingLeft"
+                android:paddingRight="?listPreferredItemPaddingRight"
+                android:paddingTop="5dp">
+
+                <Button
+                    android:id="@+id/fragment_payment_send_money_btn_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_rounded_states_red"
+                    android:fontFamily="monospace"
+                    android:text="@string/fragment_payment_send_money_btn_submit"
+                    android:textAllCaps="false"
                     android:textColor="@color/color_white"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/transparent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:gravity="start"
-                android:text="@string/fragment_payment_give_money_password_text"
-                android:textColor="@color/color_black"
-                android:textStyle="bold" />
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:layout_gravity="center"
-                android:background="@drawable/payment_edit_text_bg_selector"
-                android:gravity="center"
-                app:hintEnabled="false"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/color_black">
-
-                <EditText
-                    android:id="@+id/fragment_payment_send_money_edit_text_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center"
-                    android:background="@null"
-                    android:fontFamily="monospace"
-                    android:gravity="left|center"
-                    android:hint="@string/fragment_payment_give_money_password_hint"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:textAllCaps="true"
-                    android:textColor="@color/color_white"
-                    android:textColorHint="@color/color_white"
-                    android:textStyle="bold" />
-            </android.support.design.widget.TextInputLayout>
-
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
-
-    <!-- 0.5 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="0.5"
-        android:gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?listPreferredItemPaddingLeft"
-        android:paddingRight="?listPreferredItemPaddingRight"
-        android:paddingTop="5dp">
-
-        <Button
-            android:id="@+id/fragment_payment_send_money_btn_send"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDarker"
-            android:fontFamily="monospace"
-            android:text="@string/fragment_payment_send_money_btn_submit"
-            android:textAllCaps="false"
-            android:textColor="@color/color_white"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
